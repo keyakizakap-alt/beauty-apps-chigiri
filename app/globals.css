@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  /* モバイルで横スクロールが発生しないようにする（受け入れ条件） */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: #fcfbf8;
+  color: #2e2a26;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .chigiri-card {
+    @apply rounded-card border border-beige/70 bg-white/80 shadow-[0_1px_2px_rgba(46,42,38,0.04)];
+  }
+
+  .chigiri-label {
+    @apply text-xs font-medium tracking-wide text-sumi/60;
+  }
+
+  .chigiri-chip {
+    @apply rounded-full border px-3 py-1.5 text-sm transition-colors;
+  }
+
+  .chigiri-chip-off {
+    @apply border-beige bg-white text-sumi/70 hover:border-ai/40;
+  }
+
+  .chigiri-chip-on {
+    @apply border-ai bg-ai text-white;
+  }
+}
+
+/* AI が処理中であることを示す、控えめな明滅 */
+@keyframes chigiri-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.chigiri-thinking-dot {
+  animation: chigiri-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chigiri-thinking-dot {
+    animation: none;
+    opacity: 0.7;
+  }
+}
