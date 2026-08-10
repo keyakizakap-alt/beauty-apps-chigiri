@@ -8,6 +8,23 @@ import type { AiMeta, Evidence } from "@/schemas/recommendation";
  * sourceCheckedAt が null の商品は「公式ページとの突合が未完了」であり、
  * 根拠が確認済みであるかのように表示しない（受け入れ条件）。
  */
+/**
+ * 外部送信を行わなかった理由。
+ * これらは障害ではなく設定どおりの動作なので、失敗表示と区別する。
+ */
+const PRIVACY_REASON_TEXT: Record<string, string> = {
+  user_local_only:
+    "「端末内のみ」設定のため、外部AIへは何も送っていません。説明文はサーバー内で組み立てています。",
+  disabled_by_operator:
+    "このサービスでは外部AIへの送信を無効にしています。説明文はサーバー内で組み立てています。",
+  not_configured:
+    "外部AIの接続情報が設定されていないため、説明文はサーバー内で組み立てています。",
+};
+
+function isPrivacyReason(reason: string | null): reason is string {
+  return reason !== null && reason in PRIVACY_REASON_TEXT;
+}
+
 export default function EvidencePanel({
   evidence,
   ai,
@@ -29,6 +46,16 @@ export default function EvidencePanel({
             <span className="ml-2 text-xs text-sumi/55">
               要求 {ai.requestedModel ?? "-"} ／ 応答 {ai.latencyMs ?? "-"}ms
               {ai.estimatedTokens != null && ` ／ 約${ai.estimatedTokens}トークン`}
+            </span>
+          </p>
+        ) : isPrivacyReason(ai.fallbackReason) ? (
+          // 外部へ送らなかった場合は「失敗」ではないので、そのように見せる
+          <p className="mt-1 text-sm">
+            <span className="font-medium text-matcha">
+              🔒 外部AIへは送信していません
+            </span>
+            <span className="mt-0.5 block text-xs leading-relaxed text-sumi/60">
+              {PRIVACY_REASON_TEXT[ai.fallbackReason]}
             </span>
           </p>
         ) : (

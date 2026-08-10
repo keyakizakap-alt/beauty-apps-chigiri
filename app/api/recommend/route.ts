@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const parsed = RecommendRequestSchema.safeParse(guarded.body);
   if (!parsed.success) return invalidInput();
 
-  const { profile, skipLlm } = parsed.data;
+  const { profile, skipLlm, allowExternalAi } = parsed.data;
 
   try {
     const { recommendation: base, allowedProductIds } =
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       profile,
       base,
       allowedProductIds,
-      { skip: skipLlm },
+      { skip: skipLlm, userAllowsExternalAi: allowExternalAi },
     );
 
     const output = RecommendationSchema.safeParse({ ...recommendation, ai });

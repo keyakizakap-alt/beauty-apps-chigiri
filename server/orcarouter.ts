@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { logLlmCall, type LlmTaskType } from "./logger";
+import { externalAiEnabledByOperator, type ExternalAiGrant } from "./ai-policy";
 
 /**
  * OrcaRouter クライアント（OpenAI 互換 API）。
@@ -70,11 +71,42 @@ export type CallOptions = {
   json?: boolean;
   temperature?: number;
   maxTokens?: number;
+  /**
+   * 外部送信の許可証。
+   * ai-policy.decideExternalAi() でしか作れないため、
+   * ポリシー判定を通らずにこの関数を呼ぶことはできない。
+   */
+  grant: ExternalAiGrant;
 };
 
 export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
   const requestedModel = modelFor(opts.tier);
   const started = Date.now();
+
+  // 多層防御: 許可証を持っていても、運用側のキルスイッチが優先する。
+  // 環境変数を切り替えた直後に、発行済みの許可証で送信されないようにする。
+  if (!externalAiEnabledByOperator()) {
+    const meta: LlmMeta = {
+      requestId: null,
+      requestedModel,
+      selectedModel: null,
+      latencyMs: 0,
+      estimatedTokens: null,
+    };
+    logLlmCall({
+      requestId: null,
+      task: opts.task,
+      requestedModel,
+      selectedModel: null,
+      latencyMs: 0,
+      ok: false,
+      jsonValid: null,
+      fallback: true,
+      fallbackReason: "disabled_by_operator",
+      estimatedTokens: null,
+    });
+    return { ok: false, error: "外部AIへの送信は無効化されています", meta };
+  }
 
   const apiKey = process.env.ORCAROUTER_API_KEY;
   if (!apiKey) {

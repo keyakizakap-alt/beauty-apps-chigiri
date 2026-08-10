@@ -7,6 +7,11 @@ export const RecommendRequestSchema = z.object({
   profile: ProfileSchema,
   /** true の場合 LLM を呼ばず決定論的説明のみを返す（テスト・デモ用） */
   skipLlm: z.boolean().default(false),
+  /**
+   * 外部AIサービスの利用を利用者が明示的に許可したか。
+   * 既定は false。省略された場合も「端末内のみ」として扱い、外部へ送らない。
+   */
+  allowExternalAi: z.boolean().default(false),
 });
 export type RecommendRequest = z.infer<typeof RecommendRequestSchema>;
 

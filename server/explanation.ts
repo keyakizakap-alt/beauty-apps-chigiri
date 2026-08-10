@@ -8,6 +8,7 @@ import {
 import { isKnownProductId } from "@/domain/recommendation/catalog";
 import { areExpressionsSafe } from "@/domain/recommendation/safety-rules";
 import { callOrcaRouter, isConfigured, parseJsonLoose } from "./orcarouter";
+import { decideExternalAi } from "./ai-policy";
 import {
   buildExplanationPrompt,
   EXPLANATION_SYSTEM,
@@ -47,7 +48,7 @@ export async function applyLlmExplanation(
   profile: Profile,
   base: Omit<Recommendation, "ai">,
   allowedProductIds: string[],
-  options?: { skip?: boolean },
+  options?: { skip?: boolean; userAllowsExternalAi?: boolean },
 ): Promise<ApplyResult> {
   if (options?.skip) {
     return {
@@ -55,8 +56,17 @@ export async function applyLlmExplanation(
       ai: { ...NO_AI, fallbackReason: "skipped_by_request" },
     };
   }
-  if (!isConfigured()) {
-    return { recommendation: base, ai: NO_AI };
+
+  const decision = decideExternalAi({
+    userAllows: options?.userAllowsExternalAi ?? false,
+    configured: isConfigured(),
+  });
+
+  if (!decision.allowed) {
+    return {
+      recommendation: base,
+      ai: { ...NO_AI, fallbackReason: decision.reason },
+    };
   }
   // 説明する対象がなければ呼ばない（不要な LLM 呼び出しをしない方針）
   if (base.routines.morning.steps.length + base.routines.night.steps.length === 0) {
@@ -69,6 +79,7 @@ export async function applyLlmExplanation(
   const result = await callOrcaRouter({
     task: "routine_explanation",
     tier: "quality",
+    grant: decision.grant,
     system: EXPLANATION_SYSTEM,
     user: buildExplanationPrompt(profile, base, allowedProductIds),
     json: true,
@@ -161,6 +172,16 @@ export async function applyLlmExplanation(
       night: merge(base.routines.night),
     },
     unused: base.unused.map((u) => {
+      // 除外条件（アレルギー・避けたい成分）に当たった商品の理由は、
+      // 決定論的に作った具体的な文面をそのまま使う。
+      // 該当成分名を外部AIへ送っていないため、LLM 側は具体名を書けず、
+      // 上書きさせると理由がかえって曖昧になる。
+      if (
+        u.reasonCode === "hard_filter_ingredient" ||
+        u.reasonCode === "hard_filter_texture"
+      ) {
+        return u;
+      }
       const r = unusedText.get(u.productId);
       return r ? { ...u, reason: r } : u;
     }),

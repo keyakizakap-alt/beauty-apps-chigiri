@@ -142,7 +142,14 @@ export function buildExplanationPrompt(
       肌傾向: SKIN_LABEL[profile.skinType],
       関心: profile.concerns.map((c) => CONCERN_LABEL[c]),
       避けたい使用感: profile.avoidTextures.map((t) => TEXTURE_LABEL[t] ?? t),
-      避けたい成分: profile.avoidIngredients.map((i) => INGREDIENT_LABEL[i] ?? i),
+      /*
+       * 避けたい成分（既知のアレルギーを含む）は健康に関わる情報のため、
+       * 具体名を外部へ送らず件数だけを渡す。
+       * 除外はすでに決定論的なハードフィルタで済んでおり、
+       * 説明文の生成に成分名そのものは必要ない。
+       * 除外された商品の理由文は、決定論的に作ったものを採用する。
+       */
+      避けたい成分: `${profile.avoidIngredients.length}件の指定あり（内容は送信していません）`,
       予算: profile.budgetYen,
       朝に使える時間: `${profile.morningMinutes}分`,
       夜に使える時間: `${profile.nightMinutes}分`,
