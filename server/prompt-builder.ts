@@ -4,6 +4,7 @@ import type { Recommendation } from "@/schemas/recommendation";
 import { CATEGORY_LABEL, claimText, getProduct } from "@/domain/recommendation/catalog";
 import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL, TEXTURE_LABEL } from "@/domain/recommendation/filters";
+import { asUserData } from "./prompt-safety";
 
 /**
  * プロンプト構築。
@@ -78,8 +79,7 @@ export function buildSlotExtractionPrompt(
       0,
     ),
     "",
-    "ユーザーの発言:",
-    message,
+    asUserData("USER_MESSAGE", message),
   ].join("\n");
 }
 

@@ -9,6 +9,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      // server-only はクライアント条件で解決されると例外を投げるため、
+      // テストでは空モジュールへ差し替える（本番ビルドには影響しない）。
+      "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
     },
   },
 });

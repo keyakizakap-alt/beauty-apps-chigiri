@@ -111,7 +111,7 @@ flowchart TD
 | `server/` | LLM 呼び出し、プロンプト | 商品選定、スコア変更 |
 | `schemas/` | 型と検証 | ロジック |
 
-`domain/` は Node 環境でそのまま単体テストできます（89 ケースはすべてここを対象にしています）。
+`domain/` は Node 環境でそのまま単体テストできます（177 ケースの大半がここと `server/` を対象にしています）。
 
 ## データフロー上の個人情報
 
@@ -121,5 +121,47 @@ flowchart TD
 | 手持ち商品 ID | ブラウザの localStorage | しない |
 | チャット本文 | メモリ上のみ | しない（ログにも残さない） |
 | LLM の観測メトリクス | 標準出力 | 本文を含まない形でのみ |
+| 買った／見送った／続いたの記録 | ブラウザの localStorage（同意後のみ） | しない |
+| コマース監査ログ | 標準出力＋直近200件 | 商品・販売者・価格・阻止理由のみ |
 
 MVP では DB を使いません。
+
+## エージェンティックコマース層
+
+```mermaid
+flowchart TD
+    UI["承認画面"] -->|"1. 候補要求"| OFFERS["/api/commerce/offers"]
+    OFFERS --> CMP["comparison.ts<br/>比較・不採用理由・転換点"]
+    CMP --> ADP["StaticCatalogAdapter"]
+    ADP --> CAT["商品カタログ"]
+    ADP --> MER["販売者レジストリ"]
+
+    UI -->|"2. ユーザーが承認"| HO["/api/commerce/handoff"]
+    HO --> VAL{"validateOffer<br/>価格・在庫・予算・除外・URL"}
+    VAL -->|"NG"| BLOCK["409 / handoff=null<br/>状態は承認待ちのまま"]
+    VAL -->|"OK"| TOK["HMAC署名トークン<br/>10分・単回使用"]
+
+    UI -->|"3. リンクを押す"| RED["/api/commerce/handoff/[token]"]
+    RED --> V{"署名・期限・未使用<br/>＋許可リスト再検証"}
+    V -->|"NG"| ERR["400 固定文言"]
+    V -->|"OK"| EXT["303 → 販売サイト"]
+
+    style BLOCK fill:#F3E1E2
+    style ERR fill:#F3E1E2
+    style EXT fill:#26415E,color:#fff
+```
+
+外部 URL がクライアントへ渡るのは、③ の 303 レスポンスの `Location` だけです。
+① ② の応答に含まれるのは内部パスのみで、クエリ文字列から遷移先を受け取る経路はありません。
+
+### 承認ゲートを型で強制する
+
+```ts
+transition(from, to, { userInitiated })  // userInitiated 省略時は false
+```
+
+`PURCHASE_HANDOFF_READY` は `USER_GATED` に含まれるため、
+`userInitiated: true` を明示的に渡さない限り `user_action_required` で失敗します。
+`AgentTrace.advance()` は失敗時に状態も記録も変えずに `false` を返すので、
+呼び出し側が戻り値を無視して先へ進むと、状態が承認待ちのまま残り、
+「承認済みとして扱われた」状態を作れません。

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
 import type { Product } from "@/schemas/product";
@@ -77,19 +78,45 @@ export default function RecommendationCard({
               </details>
             )}
 
-            <a
-              href={suggested.officialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block rounded-lg border border-ai px-3 py-1.5 text-xs text-ai"
-            >
-              公式サイトで確認する
-            </a>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <Link
+                href={`/approve?category=${suggestion.category}`}
+                className="rounded-lg bg-ai px-4 py-2.5 text-center text-xs font-medium text-white"
+              >
+                候補を比べて決める
+              </Link>
+              <a
+                href={suggested.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-ai px-4 py-2.5 text-center text-xs text-ai"
+              >
+                公式サイトで確認する
+              </a>
+            </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-sumi/50">
+              「候補を比べて決める」では、他の候補との比較・販売者・送料の扱い・
+              選ばなかった理由を確認したうえで、承認するかどうかを選べます。
+              承認するまで販売サイトへは移動しません。
+            </p>
           </div>
         ) : (
-          <p className="mt-2 rounded-lg bg-kinari px-3 py-3 text-sm leading-relaxed text-sumi/75">
-            {rec.noPurchaseNeededReason ?? "買い足しは必要ありません。"}
-          </p>
+          <div className="mt-3 rounded-xl bg-matchaSoft px-4 py-4">
+            <p className="flex items-center gap-2 text-sm font-medium text-matcha">
+              <span aria-hidden>🌿</span>
+              今回、買い足しは必要ありません
+            </p>
+            <p className="mt-1.5 text-xs leading-relaxed text-sumi/75">
+              {rec.noPurchaseNeededReason ??
+                "手持ちの商品だけで必要な役割がそろっています。"}
+            </p>
+            <Link
+              href="/ledger"
+              className="mt-2.5 inline-block text-xs text-matcha underline underline-offset-2"
+            >
+              買わずに済んだ記録を見る
+            </Link>
+          </div>
         )}
 
         {rec.purchaseSuggestions.length > 0 && (

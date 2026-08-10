@@ -18,6 +18,8 @@ import {
   askForInventory,
   fallbackChatReply,
 } from "@/server/fallback-explanation";
+import { guardJsonRequest, invalidInput, isFailure } from "@/server/api-guard";
+import { RATE_LIMITS } from "@/server/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,23 +40,11 @@ const IDLE_AI: AiMeta = {
 const REMOVE_INTENT = /外し|外す|削除|やめ(た|る)|持ってな|使わなくな|捨て/;
 
 export async function POST(req: Request) {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { error: "リクエストの形式が正しくありません" },
-      { status: 400 },
-    );
-  }
+  const guarded = await guardJsonRequest(req, "chat", RATE_LIMITS.chat);
+  if (isFailure(guarded)) return guarded.response;
 
-  const parsed = ChatRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "入力内容を確認してください", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = ChatRequestSchema.safeParse(guarded.body);
+  if (!parsed.success) return invalidInput();
 
   const { message, profile: incomingProfile } = parsed.data;
 

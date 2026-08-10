@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { RecommendRequestSchema, RecommendationSchema } from "@/schemas/recommendation";
 import { buildRecommendation } from "@/domain/recommendation/engine";
 import { applyLlmExplanation } from "@/server/explanation";
+import { guardJsonRequest, invalidInput, isFailure } from "@/server/api-guard";
+import { RATE_LIMITS } from "@/server/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,23 +14,11 @@ export const dynamic = "force-dynamic";
  * 入力は Zod で検証し、出力も Zod で検証してから返す。
  */
 export async function POST(req: Request) {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { error: "リクエストの形式が正しくありません" },
-      { status: 400 },
-    );
-  }
+  const guarded = await guardJsonRequest(req, "recommend", RATE_LIMITS.recommend);
+  if (isFailure(guarded)) return guarded.response;
 
-  const parsed = RecommendRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "入力内容を確認してください", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = RecommendRequestSchema.safeParse(guarded.body);
+  if (!parsed.success) return invalidInput();
 
   const { profile, skipLlm } = parsed.data;
 
