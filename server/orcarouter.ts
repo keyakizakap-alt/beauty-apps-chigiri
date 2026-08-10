@@ -11,8 +11,8 @@ import { logLlmCall, type LlmTaskType } from "./logger";
  *   決定論的フォールバックへ切り替えられるようにするため）。
  */
 
-const BASE_URL = process.env.ORCAROUTER_BASE_URL ?? "https://api.orcarouter.com/v1";
-const TIMEOUT_MS = Number(process.env.ORCAROUTER_TIMEOUT_MS ?? 20000);
+const BASE_URL = process.env.ORCAROUTER_BASE_URL "https://api.orcarouter.com/v1";
+const TIMEOUT_MS = Number(process.env.ORCAROUTER_TIMEOUT_MS 20000);
 
 export type ModelTier = "cheap" | "quality";
 
