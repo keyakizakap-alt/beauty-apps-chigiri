@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { ProfileSchema, DEFAULT_PROFILE, type Profile } from "@/schemas/profile";
 import { RecommendationSchema } from "@/schemas/recommendation";
@@ -135,11 +135,26 @@ function prune(store: ConversationStore): ConversationStore {
   };
 }
 
-function persist(store: ConversationStore): void {
-  if (typeof window === "undefined") return;
+/**
+ * 保存の状態。
+ *
+ * 失敗を黙って握りつぶすと、画面上は保存されたように見えて
+ * リロードで消える。何が起きたのかを利用者へ伝えるために状態として返す。
+ */
+export type StorageState =
+  | "ok"
+  /** 端末が保存領域を提供していない（プライベートモード等） */
+  | "unavailable"
+  /** 保存領域が一杯で書き込めない */
+  | "full";
+
+function persist(store: ConversationStore): StorageState {
+  if (typeof window === "undefined") return "ok";
   const pruned = prune(store);
+
   try {
     window.localStorage.setItem(KEY, JSON.stringify(pruned));
+    return "ok";
   } catch {
     // 保存領域が足りない場合、ルーティン本体を古い相談から落として再挑戦する。
     // 会話そのものを消すより、添付を捨てるほうが失うものが小さい。
@@ -153,8 +168,17 @@ function persist(store: ConversationStore): void {
         ),
       };
       window.localStorage.setItem(KEY, JSON.stringify(lightened));
+      return "ok";
     } catch {
-      // それでも保存できない場合は諦める（画面上の操作は続行できる）
+      // 書き込みが根本的にできないのか、容量の問題かを切り分ける
+      try {
+        const probe = `${KEY}.probe`;
+        window.localStorage.setItem(probe, "1");
+        window.localStorage.removeItem(probe);
+        return "full";
+      } catch {
+        return "unavailable";
+      }
     }
   }
 }
@@ -163,6 +187,8 @@ function persist(store: ConversationStore): void {
 
 export type UseConversations = {
   hydrated: boolean;
+  /** 端末への保存が効いているか */
+  storage: StorageState;
   conversations: Conversation[];
   active: Conversation | null;
   activeId: string | null;
@@ -177,19 +203,32 @@ export type UseConversations = {
 export function useConversations(): UseConversations {
   const [store, setStore] = useState<ConversationStore>(EMPTY_STORE);
   const [hydrated, setHydrated] = useState(false);
+  const [storage, setStorage] = useState<StorageState>("ok");
+  /** 読み込み直後の1回は書き戻さない（同じ内容を書くだけなので） */
+  const skipPersist = useRef(true);
 
   useEffect(() => {
     setStore(load());
     setHydrated(true);
   }, []);
 
+  /*
+   * 保存は状態の更新が確定してから行う。
+   * setStore の更新関数の中で保存すると、React が更新関数を
+   * 2回呼ぶ場合に二重に書き込まれるため。
+   */
+  useEffect(() => {
+    if (!hydrated) return;
+    if (skipPersist.current) {
+      skipPersist.current = false;
+      return;
+    }
+    setStorage(persist(store));
+  }, [store, hydrated]);
+
   const update = useCallback(
     (fn: (prev: ConversationStore) => ConversationStore) => {
-      setStore((prev) => {
-        const next = fn(prev);
-        persist(next);
-        return next;
-      });
+      setStore((prev) => fn(prev));
     },
     [],
   );
@@ -276,6 +315,7 @@ export function useConversations(): UseConversations {
 
   return {
     hydrated,
+    storage,
     conversations,
     active,
     activeId: store.activeId,

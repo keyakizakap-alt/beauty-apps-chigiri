@@ -5,6 +5,7 @@ import { ChigiriMark } from "./AppSplash";
 import {
   deriveSnippet,
   type Conversation,
+  type StorageState,
 } from "@/lib/conversations";
 
 /**
@@ -20,6 +21,7 @@ export default function ConversationSidebar({
   onSelect,
   onNew,
   onDelete,
+  storage,
   onClose,
 }: {
   conversations: Conversation[];
@@ -27,6 +29,8 @@ export default function ConversationSidebar({
   onSelect: (id: string) => void;
   onNew: () => void;
   onDelete: (id: string) => void;
+  /** 端末への保存が効いているか */
+  storage: StorageState;
   /** モバイルの引き出し表示から閉じる（デスクトップでは渡さない） */
   onClose?: () => void;
 }) {
@@ -45,7 +49,6 @@ export default function ConversationSidebar({
           <button
             type="button"
             onClick={onClose}
-            aria-label="メニューを閉じる"
             className="rounded-lg border border-beige bg-white px-2 py-1 text-xs text-sumi/60 lg:hidden"
           >
             閉じる
@@ -87,6 +90,20 @@ export default function ConversationSidebar({
             <span aria-hidden>+</span>
           </button>
         </div>
+
+        {/* 保存できていない場合は黙って進めない。消えることを先に伝える。 */}
+        {storage !== "ok" && (
+          <div className="mx-4 mt-2 rounded-lg border border-sakura/45 bg-sakuraSoft/60 px-3 py-2.5">
+            <p className="text-[11px] font-medium text-sakura">
+              ⚠ この端末に保存できていません
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-sumi/70">
+              {storage === "unavailable"
+                ? "ブラウザが保存領域を使わせない設定になっています（プライベートモードなど）。この画面を閉じると相談内容は消えます。"
+                : "保存領域が一杯です。古い相談を削除すると保存できるようになります。"}
+            </p>
+          </div>
+        )}
 
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto px-4 pb-4">
           {conversations.length === 0 ? (
@@ -160,6 +177,11 @@ export default function ConversationSidebar({
           </Link>
         </div>
         <p className="mt-2.5 text-[10px] leading-relaxed text-sumi/45">
+          {storage === "ok"
+            ? `この端末に${conversations.length}件を保存しています。サーバーへは送っていません。`
+            : "保存できていないため、閉じると消えます。"}
+        </p>
+        <p className="mt-1 text-[10px] leading-relaxed text-sumi/45">
           本サービスは医療上の診断・治療を提供するものではありません。
           異常がある場合は使用を中止し、専門家へご相談ください。
         </p>

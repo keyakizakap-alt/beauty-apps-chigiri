@@ -95,6 +95,89 @@ console.log("\n--- 結果カードの要約 ---\n" + summary.slice(0, 300));
 await page.screenshot({ path: `${OUT}/mobile-result.png`, fullPage: true });
 console.log(`\nスクリーンショット: ${OUT}/mobile-result.png`);
 
+/* ------------------------------------------------------------------ *
+ * 相談ログの回帰確認
+ *
+ * 過去に次の2点を落としたことがあるため、毎回確認する。
+ *   - 1024px 未満でサイドバーが畳まれ、履歴への入口が分からなくなった
+ *   - 端末に保存できない状況で、黙って消えていた（画面上は保存済みに見える）
+ * ------------------------------------------------------------------ */
+const check = (label, condition, detail = "") => {
+  allOk = condition && allOk;
+  console.log(`${condition ? "OK " : "NG "} ${label.padEnd(24)} ${detail}`);
+};
+
+console.log("\n--- 相談ログ ---");
+
+// 履歴への入口がモバイル幅でも見えること
+const historyButton = page.getByRole("button", { name: /相談ログ/ });
+check(
+  "履歴への入口が見える",
+  await historyButton.isVisible().catch(() => false),
+  await historyButton.innerText().then((t) => t.replace(/\n/g, " ")).catch(() => ""),
+);
+
+// 引き出しを開くと履歴が並ぶこと
+await historyButton.click();
+const drawer = page.locator("div.fixed.inset-0.z-40");
+await drawer.waitFor({ timeout: 5000 });
+const drawerItems = await drawer.locator("li").count();
+check("引き出しに履歴が並ぶ", drawerItems > 0, `${drawerItems}件`);
+await drawer.getByRole("button", { name: "閉じる", exact: true }).click();
+
+// リロードしても残ること
+const before = await page.evaluate(() => {
+  const raw = localStorage.getItem("chigiri.conversations.v1");
+  return raw ? JSON.parse(raw).conversations.length : 0;
+});
+await page.reload({ waitUntil: "networkidle" });
+await page.waitForTimeout(1500);
+const after = await page.evaluate(() => {
+  const raw = localStorage.getItem("chigiri.conversations.v1");
+  return raw ? JSON.parse(raw).conversations.length : 0;
+});
+check("リロードしても残る", before > 0 && after === before, `${before} → ${after}件`);
+
+// 保存できない環境では警告を出すこと（黙って消さない）
+const blocked = await browser.newContext({
+  viewport: { width: 375, height: 812 },
+  isMobile: true,
+  hasTouch: true,
+});
+const blockedPage = await blocked.newPage();
+await blockedPage.addInitScript(() => {
+  const original = Storage.prototype.setItem;
+  Storage.prototype.setItem = function (key, value) {
+    if (String(key).startsWith("chigiri.conversations")) {
+      throw new DOMException("QuotaExceededError");
+    }
+    return original.call(this, key, value);
+  };
+});
+await blockedPage.goto(`${BASE}/chat`, { waitUntil: "networkidle" });
+await blockedPage.waitForTimeout(1500);
+await blockedPage
+  .getByPlaceholder("肌の悩み、予算、持っている化粧品など")
+  .fill("保存できない環境の確認");
+await blockedPage.getByRole("button", { name: "送る" }).click();
+await blockedPage.waitForTimeout(3000);
+/*
+ * 対話画面の上部に出る警告を見る。
+ * サイドバーは 1024px 未満では畳まれている（DOM には残るが非表示）ため、
+ * 文言で探すと非表示側に当たる。header に絞って「見えているか」を確かめる。
+ */
+const warned = await blockedPage
+  .locator("header")
+  .getByText("保存できていない", { exact: false })
+  .first()
+  .isVisible()
+  .catch(() => false);
+check("保存失敗を利用者に伝える", warned);
+if (!warned) {
+  await blockedPage.screenshot({ path: `${OUT}/storage-warning-missing.png` });
+}
+await blocked.close();
+
 await browser.close();
 console.log(allOk ? "\nALL PASS" : "\nFAILURES PRESENT");
 process.exit(allOk ? 0 : 1);

@@ -102,6 +102,7 @@ export default function ChatPanel() {
   } = usePrivacy();
   const {
     hydrated: convHydrated,
+    storage,
     conversations,
     activeId,
     startNew,
@@ -342,6 +343,7 @@ export default function ChatPanel() {
             onSelect={handleSelect}
             onNew={handleNew}
             onDelete={remove}
+            storage={storage}
           />
         </div>
       </aside>
@@ -351,7 +353,7 @@ export default function ChatPanel() {
         <div className="fixed inset-0 z-40 lg:hidden">
           <button
             type="button"
-            aria-label="メニューを閉じる"
+            aria-label="相談ログを閉じる"
             onClick={() => setSidebarOpen(false)}
             className="absolute inset-0 bg-sumi/25"
           />
@@ -362,6 +364,7 @@ export default function ChatPanel() {
               onSelect={handleSelect}
               onNew={handleNew}
               onDelete={remove}
+              storage={storage}
               onClose={() => setSidebarOpen(false)}
             />
           </div>
@@ -372,13 +375,22 @@ export default function ChatPanel() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 border-b border-beige/60 bg-blush/85 backdrop-blur">
           <div className="flex items-center gap-2 px-4 py-3 sm:px-6">
+            {/*
+              1024px 未満ではサイドバーを畳むため、履歴への入口はこのボタンだけになる。
+              記号だけだと何が入っているか分からないので、名前と件数を出す。
+            */}
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              aria-label="相談ログを開く"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-beige bg-white text-sumi/70 lg:hidden"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-beige bg-white px-2.5 py-1.5 text-xs text-sumi/75 lg:hidden"
             >
               <span aria-hidden>☰</span>
+              <span>相談ログ</span>
+              {conversations.length > 0 && (
+                <span className="rounded-full bg-ai px-1.5 text-[10px] leading-[1.4] text-white">
+                  {conversations.length}
+                </span>
+              )}
             </button>
 
             {/* 状態表示 */}
@@ -436,6 +448,19 @@ export default function ChatPanel() {
               </p>
             </div>
           </div>
+
+          {/*
+            保存できていないことは、サイドバーを開かないと気づけない。
+            消えてから知るのでは遅いので、対話画面の上部にも出す。
+          */}
+          {storage !== "ok" && (
+            <p className="border-t border-sakura/30 bg-sakuraSoft/60 px-4 py-2 text-[11px] leading-relaxed text-sumi/75 sm:px-6">
+              ⚠ この端末に保存できていないため、画面を閉じると相談内容は消えます。
+              {storage === "unavailable"
+                ? "ブラウザのプライベートモードや、保存をブロックする設定を確認してください。"
+                : "保存領域が一杯です。相談ログから古いものを削除してください。"}
+            </p>
+          )}
 
           {panel !== "none" && (
             <div className="border-t border-beige/70 bg-white/95">
