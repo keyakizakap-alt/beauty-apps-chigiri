@@ -7,7 +7,7 @@ import {
 } from "@/schemas/recommendation";
 import { isKnownProductId } from "@/domain/recommendation/catalog";
 import { areExpressionsSafe } from "@/domain/recommendation/safety-rules";
-import { callOrcaRouter, isConfigured, parseJsonLoose } from "./orcarouter";
+import { callWithTierFallback, isConfigured, parseJsonLoose } from "./orcarouter";
 import { decideExternalAi } from "./ai-policy";
 import {
   buildExplanationPrompt,
@@ -78,9 +78,12 @@ export async function applyLlmExplanation(
     };
   }
 
-  const result = await callOrcaRouter({
+  // 説明文は品質優先で頼み、一時的に落ちている場合はコスト優先ティアへ降格する。
+  // 説明が付かないよりは、簡素でも付いたほうが利用者の役に立つため。
+  const result = await callWithTierFallback({
     task: "routine_explanation",
     tier: "quality",
+    fallbackTier: "cheap",
     grant: decision.grant,
     system: EXPLANATION_SYSTEM,
     user: buildExplanationPrompt(profile, base, allowedProductIds),

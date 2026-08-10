@@ -44,11 +44,16 @@ export type ExternalAiDecision =
 
 /**
  * 運用側のキルスイッチ。
- * 明示的に "on" と書かれていない限り、外部送信そのものを禁止する。
- * 未設定のまま本番へ出しても外部へ出ない側に倒すため、既定は無効。
+ *
+ * 既定は有効。OrcaRouter を推論基盤として組み込む前提のため、
+ * 運用者が何もしなくても経路自体は使える状態にしておく。
+ *
+ * ただしこれは「送信してよい」という意味ではない。
+ * 実際に送るには利用者本人の選択が必要で、それは別の条件として見る。
+ * 送信を完全に止めたい環境では "off" を設定する。
  */
 export function externalAiEnabledByOperator(): boolean {
-  return (process.env.CHIGIRI_EXTERNAL_AI ?? "off").toLowerCase() === "on";
+  return (process.env.CHIGIRI_EXTERNAL_AI ?? "on").toLowerCase() !== "off";
 }
 
 export function decideExternalAi(input: {

@@ -20,10 +20,20 @@ const KEY = "chigiri.privacy.v1";
 export const PrivacySettingsSchema = z.object({
   /** 外部AIサービスの利用を許可したか */
   allowExternalAi: z.boolean().default(false),
+  /**
+   * 利用者が自分で選んだか。
+   * false の間は「まだ聞いていない」状態であり、既定値のまま
+   * 送信することも、勝手に送らないと決めつけることもしない。
+   * 未選択のうちは送信しない（安全側）が、画面では選択を促す。
+   */
+  decided: z.boolean().default(false),
 });
 export type PrivacySettings = z.infer<typeof PrivacySettingsSchema>;
 
-export const DEFAULT_PRIVACY: PrivacySettings = { allowExternalAi: false };
+export const DEFAULT_PRIVACY: PrivacySettings = {
+  allowExternalAi: false,
+  decided: false,
+};
 
 export function loadPrivacy(): PrivacySettings {
   if (typeof window === "undefined") return DEFAULT_PRIVACY;
@@ -47,7 +57,7 @@ export function usePrivacy() {
   }, []);
 
   const setAllowExternalAi = useCallback((allowExternalAi: boolean) => {
-    const next = { allowExternalAi };
+    const next = { allowExternalAi, decided: true };
     setSettings(next);
     try {
       window.localStorage.setItem(KEY, JSON.stringify(next));

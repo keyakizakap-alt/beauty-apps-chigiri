@@ -15,6 +15,7 @@ import ProfileForm from "./ProfileForm";
 import ProductSelector from "./ProductSelector";
 import RecommendationCard from "./RecommendationCard";
 import ConversationSidebar from "./ConversationSidebar";
+import AiConsentCard from "./AiConsentCard";
 import { ChigiriMark } from "./AppSplash";
 
 /**
@@ -506,6 +507,13 @@ export default function ChatPanel() {
         </header>
 
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6">
+          {/* 外部AIを使うかの選択。まだ選んでいない間だけ出す。 */}
+          {!privacy.decided && (
+            <div className="mb-5">
+              <AiConsentCard onChoose={setAllowExternalAi} />
+            </div>
+          )}
+
           {/* 導入。初回の相談でだけ出す。 */}
           {isFresh && (
             <div className="mb-7">

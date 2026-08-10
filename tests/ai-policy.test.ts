@@ -31,8 +31,20 @@ describe("外部送信ポリシーの判定", () => {
     vi.restoreAllMocks();
   });
 
-  it("環境変数が未設定なら、運用側で無効になっている", () => {
+  it("環境変数が未設定なら、運用側では利用可能（OrcaRouter を組み込む前提）", () => {
     delete process.env.CHIGIRI_EXTERNAL_AI;
+    expect(externalAiEnabledByOperator()).toBe(true);
+  });
+
+  it("運用側が有効でも、利用者が選ぶまでは送信しない", () => {
+    delete process.env.CHIGIRI_EXTERNAL_AI;
+    const d = decideExternalAi({ userAllows: false, configured: true });
+    expect(d.allowed).toBe(false);
+    if (!d.allowed) expect(d.reason).toBe("user_local_only");
+  });
+
+  it("off を明示すると完全に止まる", () => {
+    process.env.CHIGIRI_EXTERNAL_AI = "off";
     expect(externalAiEnabledByOperator()).toBe(false);
   });
 
@@ -84,7 +96,7 @@ describe("既定設定では外部へ通信しない", () => {
     vi.restoreAllMocks();
   });
 
-  it("条件抽出は fetch せず、規則ベースの結果を返す", async () => {
+  it("利用者が選んでいなければ fetch せず、規則ベースの結果を返す", async () => {
     process.env.CHIGIRI_EXTERNAL_AI = "on";
     process.env.ORCAROUTER_API_KEY = "test-key";
 

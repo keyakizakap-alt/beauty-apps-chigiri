@@ -71,9 +71,14 @@ CHIGIRI は「商品検索」ではなく「**意思決定とルーティン編�
 
 | 条件 | 初期値 | 誰が決めるか |
 |---|---|---|
-| `CHIGIRI_EXTERNAL_AI=on` | **off** | 運用者（環境変数） |
-| 画面での明示的な許可 | **オフ** | 利用者 |
+| `CHIGIRI_EXTERNAL_AI` が `off` でない | on（OrcaRouter を使う前提） | 運用者（環境変数） |
+| **画面での明示的な選択** | **未選択＝送らない** | 利用者 |
 | `ORCAROUTER_API_KEY` の設定 | 未設定 | 運用者 |
+
+利用者には最初に一度だけ「AIに文章を任せる／端末内だけで使う」を選んでもらいます。
+**選ぶまでは送信しません。** 既定値のまま黙って送ることも、
+黙って送らないと決めつけることもしない、という形にしています。
+どちらを選んでも結論は変わらず、変わるのは説明文の書き方だけです。
 
 ### 型で縛る
 
@@ -130,7 +135,7 @@ export type ExternalAiGrant = { readonly [grantBrand]: "external-ai"; ... };
 `tests/ai-policy.test.ts` は文言ではなく**実際に `fetch` が呼ばれないこと**を確認しています。
 
 ```
-既定設定（許可なし）           → fetch 呼び出し 0 回・条件抽出は規則ベースで成立
+利用者が未選択                 → fetch 呼び出し 0 回・条件抽出は規則ベースで成立
 運用側 off ＋ 利用者が許可      → fetch 呼び出し 0 回
 APIキー無し ＋ 利用者が許可     → fetch 呼び出し 0 回
 説明用プロンプト                → 「アルコール」「香料」等の具体名を含まない
@@ -304,7 +309,7 @@ npm run dev                  # http://localhost:3000
 ```
 
 ```bash
-npm test        # Vitest（231ケース）
+npm test        # Vitest（251ケース）
 npm run build   # 本番ビルド
 npm run typecheck
 npm run e2e     # モバイル幅の E2E（別途 npm start が必要）
@@ -355,7 +360,7 @@ npm run icons   # app/icon.svg から PWA/iOS 用 PNG を再生成
 
 | 変数 | 必須 | 説明 |
 |---|---|---|
-| `CHIGIRI_EXTERNAL_AI` | 任意 | **既定 `off`**。`on` にしない限り外部AIへ一切送信しない |
+| `CHIGIRI_EXTERNAL_AI` | 任意 | 既定は有効。`off` で外部送信を完全に停止（利用者が選ぶまでは既定でも送信しない） |
 | `CHIGIRI_LLM_DAILY_BUDGET_JPY` | 任意 | 1日のAI利用費の上限（既定 300円）。超えたら決定論的応答へ切り替え |
 | `CHIGIRI_LLM_INPUT_JPY_PER_1K` | 任意 | 単価を実請求に合わせる場合に指定（未指定はモデル名からの推定） |
 | `CHIGIRI_LLM_OUTPUT_JPY_PER_1K` | 任意 | 同上 |
@@ -406,16 +411,72 @@ DB を使わないため、ほかに必要な設定はありません
 
 ## 9. OrcaRouter の使い方
 
-OpenAI 互換 API として Route Handler から呼び出します。
+OrcaRouter を**推論基盤**として組み込んでいます。OpenAI 互換 API として
+Route Handler から呼び出し、タスクごとにティアを分けます。
 
 | タスク | ティア | モデル | 出力 |
 |---|---|---|---|
 | 自然文 → 条件の構造化 | コスト優先 | `auto` | JSON |
 | 確定ルーティンの説明 | 品質優先 | `auto` | JSON |
+| 疎通確認 | コスト優先 | `auto` | JSON |
 
 `model="auto"` でルーターに選択を委ね、実際に選ばれたモデルを
-レスポンスヘッダー（`x-orcarouter-model` 等）またはボディの `model` から取得し、
+レスポンスヘッダー（`x-orcarouter-model` 等）またはボディの `model` から取得して
 **結果画面に表示**します。
+
+### ティア降格（可用性）
+
+品質優先ティアが一時的に落ちている場合、**コスト優先ティアへ降格して1度だけ再試行**します。
+説明が付かないよりは、簡素でも付いたほうが利用者の役に立つためです。
+
+| 失敗の種類 | 挙動 |
+|---|---|
+| 5xx / 429 / タイムアウト / ネットワーク | 下位ティアで再試行 |
+| 4xx（認証・リクエスト誤り） | 再試行しない（同じ結果を繰り返し課金しないため） |
+| 両方失敗 | 決定論的な説明へ切り替え。ルーティンの中身は変わらない |
+
+### 疎通確認
+
+`/ops` に確認画面があります。押すと固定の短文を1回だけ送り、
+接続・認証・モデル選択・構造化出力・費用計算が通ることを確かめます。
+利用者のデータは含めないため、この確認のためにプライバシー設定を変える必要がありません。
+
+```
+POST /api/ops/orcarouter
+→ { "reachable": true, "requestedModel": "auto",
+    "selectedModel": "gpt-4o-mini", "latencyMs": 22,
+    "estimatedTokens": 1500, "estimatedCostJpy": 0.12, "jsonValid": true }
+```
+
+### 疎通の検証
+
+`tests/orcarouter-integration.test.ts` は、OpenAI 互換の応答を返すサーバーを
+実際に立てて**本物のクライアントを HTTP で通します**（モックの差し替えではありません）。
+
+```
+送信形式が OpenAI 互換           messages/model/response_format を検証
+Authorization: Bearer <key>      ヘッダーを検証
+選択モデルの取得                 ヘッダー優先、無ければ本文の model
+使用量からの費用推定             prompt/completion トークンから算出
+キャッシュ                       2回目は通信せず、費用 0
+HTTP 5xx / 4xx / 空応答          例外にせず失敗として返す
+タイムアウト・接続不可           打ち切って失敗として返す
+ティア降格                       5xx・429 で下位ティアへ、4xx では再試行しない
+```
+
+### AI が担当する範囲
+
+実際にアプリ全体をモック OrcaRouter へ向けて確認した結果です。
+
+```
+許可あり : ai.used=true  model=mock/gpt-4o-mini  推定0.12円
+           要約と採用理由が AI の文章に変わる
+2回目   : cached=true  費用 0
+許可なし : ai.used=false  reason=user_local_only  決定論的な文章
+→ どちらの場合も、朝のルーティンの商品 ID は完全に一致した
+```
+
+**AI が変えるのは文章だけで、結論は変えない**ことを、実行結果で確認しています。
 
 ログに保存するもの／しないもの:
 
@@ -476,7 +537,9 @@ app/
 ├─ ledger/page.tsx           買わずに済んだ記録・継続フィードバック
 ├─ privacy/page.tsx          データの扱いの説明と設定
 ├─ demo/page.tsx             入力不要のデモ4種
+├─ ops/page.tsx              運用状況（OrcaRouter疎通・費用・KPI）
 ├─ api/ops/route.ts          運用指標（費用・キャッシュ・KPI）
+├─ api/ops/orcarouter/       OrcaRouter への疎通確認
 ├─ api/b2b/duplicate-check/  重複購入防止API（EC向け・LLM不使用）
 ├─ icon.svg                  アプリアイコン（原本）
 ├─ manifest.ts               PWA マニフェスト
@@ -535,7 +598,7 @@ public/icons/                書き出し済みアプリアイコン（npm run i
 scripts/build-icons.mjs      SVG → PNG の書き出し
 data/                        products.json / allowed-claims.json / merchants.json
 schemas/                     Zod スキーマ（全境界で使用）
-tests/                       Vitest 231ケース
+tests/                       Vitest 251ケース
 ```
 
 ---
@@ -625,7 +688,7 @@ score =
 | 全API入力・AI出力をZodで検証 | ✅ | 入力・出力・LLM応答すべて |
 | APIキーがクライアントバンドルに含まれない | ✅ | `server-only` ＋ ビルド成果物の走査で確認 |
 | スマホ幅で横スクロールが発生しない | ✅ | `overflow-x: hidden` ＋ モバイルファースト設計 |
-| 20件以上のテストシナリオ | ✅ | 231ケース |
+| 20件以上のテストシナリオ | ✅ | 251ケース |
 | 手持ちだけで足りる場合に購入を提案しない | ✅ | `NO_PURCHASE_NEEDED` を成功終端として実装 |
 | 最大買い足し数・予算を超えない | ✅ | 候補生成時と承認直前の二重チェック（`over_budget`） |
 | 採用・不採用の両方の理由を表示 | ✅ | 全候補に `notChosenReason` を必須化（テストで検証） |

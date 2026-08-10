@@ -30,6 +30,8 @@ export const RATE_LIMITS = {
   redirect: { limit: 30, windowMs: 60_000 },
   /** B2B API（決定論的で費用がかからないため緩め） */
   b2b: { limit: 120, windowMs: 60_000 },
+  /** 疎通確認は実際に課金が発生するため厳しめ */
+  probe: { limit: 6, windowMs: 60_000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitResult = {
