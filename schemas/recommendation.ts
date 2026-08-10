@@ -7,6 +7,11 @@ export const RecommendRequestSchema = z.object({
   profile: ProfileSchema,
   /** true の場合 LLM を呼ばず決定論的説明のみを返す（テスト・デモ用） */
   skipLlm: z.boolean().default(false),
+  /**
+   * 外部AIサービスの利用を利用者が明示的に許可したか。
+   * 既定は false。省略された場合も「端末内のみ」として扱い、外部へ送らない。
+   */
+  allowExternalAi: z.boolean().default(false),
 });
 export type RecommendRequest = z.infer<typeof RecommendRequestSchema>;
 
@@ -35,6 +40,25 @@ export const RoutineSchema = z.object({
   estimatedMinutes: z.number(),
 });
 export type Routine = z.infer<typeof RoutineSchema>;
+
+/**
+ * ルーティンの案。
+ * 同じ決定論的ロジックで、使える時間の前提だけを変えて組み立てたもの。
+ */
+export const RoutinePlanKindSchema = z.enum(["standard", "quick", "full"]);
+export type RoutinePlanKind = z.infer<typeof RoutinePlanKindSchema>;
+
+export const RoutinePlanSchema = z.object({
+  kind: RoutinePlanKindSchema,
+  label: z.string(),
+  description: z.string(),
+  routines: z.object({ morning: RoutineSchema, night: RoutineSchema }),
+  totalSteps: z.number(),
+  totalMinutes: z.number(),
+  /** この案で活用している手持ち商品の点数 */
+  ownedUsedCount: z.number(),
+});
+export type RoutinePlan = z.infer<typeof RoutinePlanSchema>;
 
 export const DuplicationSchema = z.object({
   category: CategorySchema,
@@ -120,6 +144,13 @@ export const AiMetaSchema = z.object({
   requestId: z.string().nullable(),
   jsonValid: z.boolean().nullable(),
   estimatedTokens: z.number().nullable(),
+  /**
+   * 推定費用(円)。既定値を持たせてあるため、この項目が無い過去の保存データも読める。
+   * OrcaRouter は model="auto" で実モデルを選ぶため、単価表からの推定値。
+   */
+  costJpy: z.number().nullable().default(null),
+  /** 同じ問い合わせをキャッシュから返したか（課金なし） */
+  cached: z.boolean().default(false),
 });
 export type AiMeta = z.infer<typeof AiMetaSchema>;
 
@@ -151,6 +182,13 @@ export const RecommendationSchema = z.object({
   disclaimer: z.string(),
   /** 使用した商品の完全な情報（UI 描画用） */
   products: z.array(ProductSchema),
+  /**
+   * ルーティンの案（標準・時短・じっくり）。
+   * 既定値を持たせてあるため、この項目が無い過去の保存データも読める。
+   */
+  plans: z.array(RoutinePlanSchema).default([]),
+  /** 手持ちから成立する組み立て方の総数（提示するのはこのうち数案） */
+  arrangementCount: z.number().default(0),
 });
 export type Recommendation = z.infer<typeof RecommendationSchema>;
 

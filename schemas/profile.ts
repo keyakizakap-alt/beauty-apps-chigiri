@@ -112,5 +112,10 @@ export const ChatRequestSchema = z.object({
   message: z.string().min(1).max(2000),
   history: z.array(ChatMessageSchema).max(20).default([]),
   profile: ProfileSchema,
+  /**
+   * 外部AIサービスの利用を利用者が明示的に許可したか。
+   * 既定は false。省略された場合も「端末内のみ」として扱い、外部へ送らない。
+   */
+  allowExternalAi: z.boolean().default(false),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;

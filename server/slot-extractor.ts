@@ -7,6 +7,7 @@ import {
 import type { AiMeta } from "@/schemas/recommendation";
 import { extractSlotsFromText } from "@/domain/recommendation/text-slots";
 import { callOrcaRouter, isConfigured, parseJsonLoose } from "./orcarouter";
+import { decideExternalAi } from "./ai-policy";
 import {
   buildSlotExtractionPrompt,
   SLOT_EXTRACTION_SYSTEM,
@@ -30,21 +31,35 @@ const NO_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 export async function extractSlots(
   message: string,
   current: Profile,
+  options: { userAllowsExternalAi: boolean } = { userAllowsExternalAi: false },
 ): Promise<SlotResult> {
+  // 決定論的なキーワード抽出は、外部送信の可否に関わらず必ず行う。
+  // 「端末内のみ」設定でも条件の読み取りが動くようにするため。
   const deterministic = extractSlotsFromText(message);
 
-  if (!isConfigured()) {
-    return { patch: deterministic, ai: NO_AI };
+  const decision = decideExternalAi({
+    userAllows: options.userAllowsExternalAi,
+    configured: isConfigured(),
+  });
+
+  if (!decision.allowed) {
+    return {
+      patch: deterministic,
+      ai: { ...NO_AI, fallbackReason: decision.reason },
+    };
   }
 
   const result = await callOrcaRouter({
     task: "slot_extraction",
     tier: "cheap",
+    grant: decision.grant,
     system: SLOT_EXTRACTION_SYSTEM,
     user: buildSlotExtractionPrompt(message, current),
     json: true,
@@ -58,6 +73,8 @@ export async function extractSlots(
     latencyMs: result.meta.latencyMs,
     requestId: result.meta.requestId,
     estimatedTokens: result.meta.estimatedTokens,
+    costJpy: result.meta.costJpy,
+    cached: result.meta.cached,
   };
 
   const fallback = (reason: string, jsonValid: boolean | null): SlotResult => {

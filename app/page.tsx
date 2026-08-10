@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { PRODUCTS } from "@/domain/recommendation/catalog";
+import { ChigiriMark } from "@/components/AppSplash";
 
 export default function HomePage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-5 py-12">
-      <p className="chigiri-label">CHIGIRI Beauty</p>
-      <h1 className="mt-2 text-3xl font-semibold leading-tight sm:text-4xl">
+      <div className="flex items-center gap-3">
+        <ChigiriMark size={44} />
+        <p className="chigiri-label">CHIGIRI Beauty</p>
+      </div>
+      <h1 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">
         買う前に、
         <br />
         今あるものをつなぐ。
@@ -42,6 +46,12 @@ export default function HomePage() {
           className="rounded-xl border border-beige bg-white px-5 py-3.5 text-center text-sm"
         >
           フォームから入力する
+        </Link>
+        <Link
+          href="/demo"
+          className="rounded-xl border border-ai/40 bg-white px-5 py-3.5 text-center text-sm text-ai"
+        >
+          例で試す（入力不要）
         </Link>
       </div>
 

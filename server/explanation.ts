@@ -7,7 +7,8 @@ import {
 } from "@/schemas/recommendation";
 import { isKnownProductId } from "@/domain/recommendation/catalog";
 import { areExpressionsSafe } from "@/domain/recommendation/safety-rules";
-import { callOrcaRouter, isConfigured, parseJsonLoose } from "./orcarouter";
+import { callWithTierFallback, isConfigured, parseJsonLoose } from "./orcarouter";
+import { decideExternalAi } from "./ai-policy";
 import {
   buildExplanationPrompt,
   EXPLANATION_SYSTEM,
@@ -41,13 +42,15 @@ const NO_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 export async function applyLlmExplanation(
   profile: Profile,
   base: Omit<Recommendation, "ai">,
   allowedProductIds: string[],
-  options?: { skip?: boolean },
+  options?: { skip?: boolean; userAllowsExternalAi?: boolean },
 ): Promise<ApplyResult> {
   if (options?.skip) {
     return {
@@ -55,8 +58,17 @@ export async function applyLlmExplanation(
       ai: { ...NO_AI, fallbackReason: "skipped_by_request" },
     };
   }
-  if (!isConfigured()) {
-    return { recommendation: base, ai: NO_AI };
+
+  const decision = decideExternalAi({
+    userAllows: options?.userAllowsExternalAi ?? false,
+    configured: isConfigured(),
+  });
+
+  if (!decision.allowed) {
+    return {
+      recommendation: base,
+      ai: { ...NO_AI, fallbackReason: decision.reason },
+    };
   }
   // 説明する対象がなければ呼ばない（不要な LLM 呼び出しをしない方針）
   if (base.routines.morning.steps.length + base.routines.night.steps.length === 0) {
@@ -66,9 +78,13 @@ export async function applyLlmExplanation(
     };
   }
 
-  const result = await callOrcaRouter({
+  // 説明文は品質優先で頼み、一時的に落ちている場合はコスト優先ティアへ降格する。
+  // 説明が付かないよりは、簡素でも付いたほうが利用者の役に立つため。
+  const result = await callWithTierFallback({
     task: "routine_explanation",
     tier: "quality",
+    fallbackTier: "cheap",
+    grant: decision.grant,
     system: EXPLANATION_SYSTEM,
     user: buildExplanationPrompt(profile, base, allowedProductIds),
     json: true,
@@ -82,6 +98,8 @@ export async function applyLlmExplanation(
     latencyMs: result.meta.latencyMs,
     requestId: result.meta.requestId,
     estimatedTokens: result.meta.estimatedTokens,
+    costJpy: result.meta.costJpy,
+    cached: result.meta.cached,
   };
 
   const fail = (reason: string, jsonValid: boolean | null): ApplyResult => {
@@ -160,7 +178,26 @@ export async function applyLlmExplanation(
       morning: merge(base.routines.morning),
       night: merge(base.routines.night),
     },
+    // 別案にも同じ説明文を反映する。
+    // 案を切り替えたときだけ文体が変わると、別の基準で選んだように見えるため。
+    plans: base.plans.map((plan) => ({
+      ...plan,
+      routines: {
+        morning: merge(plan.routines.morning),
+        night: merge(plan.routines.night),
+      },
+    })),
     unused: base.unused.map((u) => {
+      // 除外条件（アレルギー・避けたい成分）に当たった商品の理由は、
+      // 決定論的に作った具体的な文面をそのまま使う。
+      // 該当成分名を外部AIへ送っていないため、LLM 側は具体名を書けず、
+      // 上書きさせると理由がかえって曖昧になる。
+      if (
+        u.reasonCode === "hard_filter_ingredient" ||
+        u.reasonCode === "hard_filter_texture"
+      ) {
+        return u;
+      }
       const r = unusedText.get(u.productId);
       return r ? { ...u, reason: r } : u;
     }),

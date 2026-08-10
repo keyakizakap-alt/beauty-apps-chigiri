@@ -18,6 +18,8 @@ import {
   askForInventory,
   fallbackChatReply,
 } from "@/server/fallback-explanation";
+import { guardJsonRequest, invalidInput, isFailure } from "@/server/api-guard";
+import { RATE_LIMITS } from "@/server/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,31 +34,21 @@ const IDLE_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 /** 手持ち商品を外す意図か */
 const REMOVE_INTENT = /外し|外す|削除|やめ(た|る)|持ってな|使わなくな|捨て/;
 
 export async function POST(req: Request) {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { error: "リクエストの形式が正しくありません" },
-      { status: 400 },
-    );
-  }
+  const guarded = await guardJsonRequest(req, "chat", RATE_LIMITS.chat);
+  if (isFailure(guarded)) return guarded.response;
 
-  const parsed = ChatRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "入力内容を確認してください", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = ChatRequestSchema.safeParse(guarded.body);
+  if (!parsed.success) return invalidInput();
 
-  const { message, profile: incomingProfile } = parsed.data;
+  const { message, profile: incomingProfile, allowExternalAi } = parsed.data;
 
   // 1. 安全ゲート。ここで止まった場合、商品の提案は一切行わない。
   const gate = evaluateSafety(message);
@@ -90,7 +82,9 @@ export async function POST(req: Request) {
     }
 
     // 3. 自然文からの条件抽出（LLM: コスト優先ティア / 失敗時は規則ベース）
-    const { patch, ai: slotAi } = await extractSlots(message, incomingProfile);
+    const { patch, ai: slotAi } = await extractSlots(message, incomingProfile, {
+      userAllowsExternalAi: allowExternalAi,
+    });
 
     // この発言で新たに指定された項目を記録する。
     // 記録しておかないと、初期値のままの項目まで
@@ -134,6 +128,7 @@ export async function POST(req: Request) {
       profile,
       base,
       allowedProductIds,
+      { userAllowsExternalAi: allowExternalAi },
     );
 
     // 要約は結果カードの見出しになるため、チャット本文では繰り返さない

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CHIGIRI Beauty">
+  <!--
+    CHIGIRI Beauty のアプリアイコン。
+    「買う前に、今あるものをつなぐ」を、重なり合う2つの輪で表す。
+    重なった部分（レンズ形）に桜色を置き、
+    「すでに持っているもの同士がつながる地点」を中心に据えている。
+    16px でも輪の重なりが潰れないよう、線幅を太く・要素を2つだけに絞っている。
+  -->
+  <defs>
+    <clipPath id="chigiri-lens">
+      <circle cx="198" cy="258" r="106" />
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" rx="114" fill="#26415E" />
+
+  <!-- 重なり部分（桜色）: 右の輪を左の輪で切り抜いて出す -->
+  <g clip-path="url(#chigiri-lens)">
+    <circle cx="314" cy="258" r="106" fill="#C98B92" />
+  </g>
+
+  <!-- 2つの輪 -->
+  <g fill="none" stroke="#F5F1E9" stroke-width="38" stroke-linecap="round">
+    <circle cx="198" cy="258" r="106" />
+    <circle cx="314" cy="258" r="106" />
+  </g>
+</svg>

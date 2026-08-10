@@ -8,6 +8,23 @@ import type { AiMeta, Evidence } from "@/schemas/recommendation";
  * sourceCheckedAt が null の商品は「公式ページとの突合が未完了」であり、
  * 根拠が確認済みであるかのように表示しない（受け入れ条件）。
  */
+/**
+ * 外部送信を行わなかった理由。
+ * これらは障害ではなく設定どおりの動作なので、失敗表示と区別する。
+ */
+const PRIVACY_REASON_TEXT: Record<string, string> = {
+  user_local_only:
+    "「端末内のみ」設定のため、外部AIへは何も送っていません。説明文はサーバー内で組み立てています。",
+  disabled_by_operator:
+    "このサービスでは外部AIへの送信を無効にしています。説明文はサーバー内で組み立てています。",
+  not_configured:
+    "外部AIの接続情報が設定されていないため、説明文はサーバー内で組み立てています。",
+};
+
+function isPrivacyReason(reason: string | null): reason is string {
+  return reason !== null && reason in PRIVACY_REASON_TEXT;
+}
+
 export default function EvidencePanel({
   evidence,
   ai,
@@ -31,14 +48,49 @@ export default function EvidencePanel({
               {ai.estimatedTokens != null && ` ／ 約${ai.estimatedTokens}トークン`}
             </span>
           </p>
-        ) : (
+        ) : null}
+
+        {ai.used && (
+          <p className="mt-1 text-xs text-sumi/60">
+            {ai.cached ? (
+              <>
+                <span className="rounded-full bg-matchaSoft px-2 py-0.5 text-[10px] text-matcha">
+                  キャッシュ命中
+                </span>{" "}
+                同じ条件の応答を再利用したため、この回の追加費用はありません。
+              </>
+            ) : (
+              <>
+                この回の推定費用 約
+                <span className="font-medium tabular-nums text-sumi/80">
+                  {ai.costJpy === null ? "—" : `${ai.costJpy.toFixed(3)}円`}
+                </span>
+                <span className="ml-1 text-[11px] text-sumi/45">
+                  （実モデルの単価表からの推定値）
+                </span>
+              </>
+            )}
+          </p>
+        )}
+
+        {!ai.used && isPrivacyReason(ai.fallbackReason) ? (
+          // 外部へ送らなかった場合は「失敗」ではないので、そのように見せる
+          <p className="mt-1 text-sm">
+            <span className="font-medium text-matcha">
+              🔒 外部AIへは送信していません
+            </span>
+            <span className="mt-0.5 block text-xs leading-relaxed text-sumi/60">
+              {PRIVACY_REASON_TEXT[ai.fallbackReason]}
+            </span>
+          </p>
+        ) : !ai.used ? (
           <p className="mt-1 text-sm">
             <span className="font-medium text-sakura">AIによる説明生成は未使用</span>
             <span className="ml-2 text-xs text-sumi/55">
               理由: {ai.fallbackReason ?? "不明"}
             </span>
           </p>
-        )}
+        ) : null}
         <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/50">
           商品の選定・使用順・採用可否はすべてサーバー側の決定論的ロジックで確定しています。
           AIは確定済みの内容を日本語で説明する役割のみを担当し、AIが失敗した場合もルーティンの中身は変わりません。

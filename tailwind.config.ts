@@ -18,6 +18,14 @@ const config: Config = {
         aiDeep: "#1B2E43",
         sakura: "#C98B92",
         sakuraSoft: "#F3E1E2",
+        // 「買わない」を成功として見せるための落ち着いた緑
+        matcha: "#5A7355",
+        matchaSoft: "#E9EFE6",
+        // 対話画面の地色（ほんのり血色のあるオフホワイト）と、その上の深緑
+        blush: "#F7F0EC",
+        blushSoft: "#FBF7F5",
+        mori: "#26433A",
+        moriSoft: "#4C6B5F",
       },
       fontFamily: {
         sans: [
