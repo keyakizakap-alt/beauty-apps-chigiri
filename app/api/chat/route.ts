@@ -34,6 +34,8 @@ const IDLE_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 /** 手持ち商品を外す意図か */

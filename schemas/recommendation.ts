@@ -144,6 +144,13 @@ export const AiMetaSchema = z.object({
   requestId: z.string().nullable(),
   jsonValid: z.boolean().nullable(),
   estimatedTokens: z.number().nullable(),
+  /**
+   * 推定費用(円)。既定値を持たせてあるため、この項目が無い過去の保存データも読める。
+   * OrcaRouter は model="auto" で実モデルを選ぶため、単価表からの推定値。
+   */
+  costJpy: z.number().nullable().default(null),
+  /** 同じ問い合わせをキャッシュから返したか（課金なし） */
+  cached: z.boolean().default(false),
 });
 export type AiMeta = z.infer<typeof AiMetaSchema>;
 

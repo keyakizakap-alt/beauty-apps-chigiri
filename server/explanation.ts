@@ -42,6 +42,8 @@ const NO_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 export async function applyLlmExplanation(
@@ -93,6 +95,8 @@ export async function applyLlmExplanation(
     latencyMs: result.meta.latencyMs,
     requestId: result.meta.requestId,
     estimatedTokens: result.meta.estimatedTokens,
+    costJpy: result.meta.costJpy,
+    cached: result.meta.cached,
   };
 
   const fail = (reason: string, jsonValid: boolean | null): ApplyResult => {

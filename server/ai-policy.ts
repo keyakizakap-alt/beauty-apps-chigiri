@@ -1,4 +1,5 @@
 import "server-only";
+import { isOverBudget } from "./llm-cost";
 
 /**
  * 外部AIサービスへデータを送ってよいかを決める唯一の場所。
@@ -34,7 +35,8 @@ export type ExternalAiGrant = {
 export type ExternalAiDenialReason =
   | "disabled_by_operator"
   | "user_local_only"
-  | "not_configured";
+  | "not_configured"
+  | "budget_exceeded";
 
 export type ExternalAiDecision =
   | { allowed: true; grant: ExternalAiGrant }
@@ -64,6 +66,11 @@ export function decideExternalAi(input: {
   if (!input.configured) {
     return { allowed: false, reason: "not_configured" };
   }
+  // 1日の費用上限。超えたら決定論的な応答へ切り替える。
+  // 品質は落ちるが、想定外の呼び出しが続いても請求が伸び続けない。
+  if (isOverBudget()) {
+    return { allowed: false, reason: "budget_exceeded" };
+  }
   return {
     allowed: true,
     grant: { issuedAt: Date.now() } as ExternalAiGrant,
@@ -78,4 +85,6 @@ export const DENIAL_MESSAGE: Record<ExternalAiDenialReason, string> = {
     "「端末内のみ」設定のため、外部AIへは何も送信していません。すべて内部の決定論的な処理で応答しています。",
   not_configured:
     "外部AIの接続情報が設定されていないため、内部の決定論的な処理で応答しています。",
+  budget_exceeded:
+    "本日のAI利用費が上限に達したため、内部の決定論的な処理で応答しています。結果の中身は変わりません。",
 };

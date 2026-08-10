@@ -47,6 +47,12 @@ export default function HomePage() {
         >
           フォームから入力する
         </Link>
+        <Link
+          href="/demo"
+          className="rounded-xl border border-ai/40 bg-white px-5 py-3.5 text-center text-sm text-ai"
+        >
+          例で試す（入力不要）
+        </Link>
       </div>
 
       <p className="mt-8 text-xs leading-relaxed text-sumi/50">

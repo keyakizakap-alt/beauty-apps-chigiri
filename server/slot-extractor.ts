@@ -31,6 +31,8 @@ const NO_AI: AiMeta = {
   requestId: null,
   jsonValid: null,
   estimatedTokens: null,
+  costJpy: null,
+  cached: false,
 };
 
 export async function extractSlots(
@@ -71,6 +73,8 @@ export async function extractSlots(
     latencyMs: result.meta.latencyMs,
     requestId: result.meta.requestId,
     estimatedTokens: result.meta.estimatedTokens,
+    costJpy: result.meta.costJpy,
+    cached: result.meta.cached,
   };
 
   const fallback = (reason: string, jsonValid: boolean | null): SlotResult => {

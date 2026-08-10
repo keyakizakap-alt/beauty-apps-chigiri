@@ -2,6 +2,14 @@ import "server-only";
 import { z } from "zod";
 import { logLlmCall, type LlmTaskType } from "./logger";
 import { externalAiEnabledByOperator, type ExternalAiGrant } from "./ai-policy";
+import {
+  cacheKey,
+  estimateCost,
+  readCache,
+  recordSpend,
+  writeCache,
+  type CostEstimate,
+} from "./llm-cost";
 
 /**
  * OrcaRouter クライアント（OpenAI 互換 API）。
@@ -56,6 +64,10 @@ export type LlmMeta = {
   selectedModel: string | null;
   latencyMs: number;
   estimatedTokens: number | null;
+  /** 推定費用(円)。キャッシュ命中時は 0。 */
+  costJpy: number | null;
+  /** 同じ問い合わせをキャッシュから返したか */
+  cached: boolean;
 };
 
 export type LlmResult =
@@ -92,6 +104,8 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       selectedModel: null,
       latencyMs: 0,
       estimatedTokens: null,
+      costJpy: null,
+      cached: false,
     };
     logLlmCall({
       requestId: null,
@@ -116,6 +130,8 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       selectedModel: null,
       latencyMs: 0,
       estimatedTokens: null,
+      costJpy: null,
+      cached: false,
     };
     logLlmCall({
       requestId: null,
@@ -130,6 +146,40 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       estimatedTokens: null,
     });
     return { ok: false, error: "ORCAROUTER_API_KEY が設定されていません", meta };
+  }
+
+  // 同じ問い合わせを二度課金しない。
+  // 商品選定が決定論的なため、同じ条件からは同じプロンプトが生成され、
+  // デモや再計算の繰り返しではほぼ確実に命中する。
+  const key = cacheKey({ tier: opts.tier, system: opts.system, user: opts.user });
+  const cached = readCache(key);
+  if (cached) {
+    recordSpend(0, { cached: true });
+    logLlmCall({
+      requestId: null,
+      task: opts.task,
+      requestedModel,
+      selectedModel: cached.model,
+      latencyMs: 0,
+      ok: true,
+      jsonValid: null,
+      fallback: false,
+      fallbackReason: null,
+      estimatedTokens: null,
+    });
+    return {
+      ok: true,
+      content: cached.content,
+      meta: {
+        requestId: null,
+        requestedModel,
+        selectedModel: cached.model,
+        latencyMs: 0,
+        estimatedTokens: null,
+        costJpy: 0,
+        cached: true,
+      },
+    };
   }
 
   const controller = new AbortController();
@@ -174,6 +224,8 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
         selectedModel: headerModel,
         latencyMs,
         estimatedTokens: null,
+        costJpy: null,
+        cached: false,
       };
       logLlmCall({
         requestId,
@@ -199,6 +251,8 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
         selectedModel: headerModel,
         latencyMs,
         estimatedTokens: null,
+        costJpy: null,
+        cached: false,
       };
       logLlmCall({
         requestId,
@@ -219,12 +273,22 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
     const selectedModel = headerModel ?? parsed.data.model ?? null;
     const estimatedTokens = parsed.data.usage?.total_tokens ?? null;
 
+    const cost: CostEstimate = estimateCost({
+      model: selectedModel,
+      tier: opts.tier,
+      promptTokens: parsed.data.usage?.prompt_tokens ?? null,
+      completionTokens: parsed.data.usage?.completion_tokens ?? null,
+      totalTokens: estimatedTokens,
+    });
+
     const meta: LlmMeta = {
       requestId: requestId ?? parsed.data.id ?? null,
       requestedModel,
       selectedModel,
       latencyMs,
       estimatedTokens,
+      costJpy: cost.jpy,
+      cached: false,
     };
 
     if (content.trim().length === 0) {
@@ -242,6 +306,9 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       });
       return { ok: false, error: "AI の応答が空でした", meta };
     }
+
+    recordSpend(cost.jpy, { cached: false });
+    writeCache(key, { content, model: selectedModel, jpy: cost.jpy });
 
     logLlmCall({
       requestId: meta.requestId,
@@ -267,6 +334,8 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       selectedModel: null,
       latencyMs,
       estimatedTokens: null,
+      costJpy: null,
+      cached: false,
     };
     logLlmCall({
       requestId: null,

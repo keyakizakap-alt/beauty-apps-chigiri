@@ -28,6 +28,8 @@ export const RATE_LIMITS = {
   /** 承認は連打される性質のものではない */
   handoff: { limit: 15, windowMs: 60_000 },
   redirect: { limit: 30, windowMs: 60_000 },
+  /** B2B API（決定論的で費用がかからないため緩め） */
+  b2b: { limit: 120, windowMs: 60_000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitResult = {
