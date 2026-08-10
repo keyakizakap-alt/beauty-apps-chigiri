@@ -94,7 +94,18 @@ export type LlmFailureKind =
 
 export type LlmResult =
   | { ok: true; content: string; meta: LlmMeta }
-  | { ok: false; error: string; kind: LlmFailureKind; meta: LlmMeta };
+  | {
+      ok: false;
+      error: string;
+      kind: LlmFailureKind;
+      /**
+       * 提供元が返した本文の冒頭（診断用、最大200字）。
+       * 401 なのか、モデル名が不正なのか、残高不足なのかを切り分けるために持つ。
+       * 利用者向けの画面には出さず、運用者向けの疎通確認だけで使う。
+       */
+      detail?: string;
+      meta: LlmMeta;
+    };
 
 /** 一時的な障害か（再試行・ティア降格の対象か） */
 export function isRetryable(kind: LlmFailureKind): boolean {
@@ -245,6 +256,12 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
       null;
 
     if (!res.ok) {
+      // 診断のために本文を読む。失敗しても握りつぶす。
+      const detail = await res
+        .text()
+        .then((t) => t.slice(0, 200))
+        .catch(() => undefined);
+
       const meta: LlmMeta = {
         requestId,
         requestedModel,
@@ -275,6 +292,7 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
             : res.status >= 500
               ? "http_server"
               : "http_client",
+        detail,
         meta,
       };
     }
@@ -456,4 +474,75 @@ export async function callWithTierFallback(
     servedTier: second.ok ? opts.fallbackTier : opts.tier,
     attempts: 2,
   };
+}
+
+/**
+ * 利用可能なモデルの一覧を取得する（OpenAI 互換の /models）。
+ *
+ * 生成を伴わないため、認証と接続だけを費用ゼロで確かめられる。
+ * 疎通確認で「キーが通っているのか、モデル指定が悪いのか」を切り分けるために使う。
+ */
+export type ModelsResult =
+  | { ok: true; models: string[]; latencyMs: number }
+  | { ok: false; error: string; status: number | null; detail?: string; latencyMs: number };
+
+export async function listModels(_grant: ExternalAiGrant): Promise<ModelsResult> {
+  const started = Date.now();
+
+  if (!externalAiEnabledByOperator()) {
+    return {
+      ok: false,
+      error: "外部AIへの送信は無効化されています",
+      status: null,
+      latencyMs: 0,
+    };
+  }
+
+  const apiKey = process.env.ORCAROUTER_API_KEY;
+  if (!apiKey) {
+    return {
+      ok: false,
+      error: "ORCAROUTER_API_KEY が設定されていません",
+      status: null,
+      latencyMs: 0,
+    };
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs());
+
+  try {
+    const res = await fetch(`${baseUrl()}/models`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: controller.signal,
+    });
+    const latencyMs = Date.now() - started;
+
+    if (!res.ok) {
+      const detail = await res.text().then((t) => t.slice(0, 200)).catch(() => undefined);
+      return {
+        ok: false,
+        error: `HTTP ${res.status}`,
+        status: res.status,
+        detail,
+        latencyMs,
+      };
+    }
+
+    const raw: unknown = await res.json();
+    const parsed = z
+      .object({ data: z.array(z.object({ id: z.string() })) })
+      .safeParse(raw);
+
+    return parsed.success
+      ? { ok: true, models: parsed.data.data.map((m) => m.id), latencyMs }
+      : { ok: true, models: [], latencyMs };
+  } catch (e) {
+    const latencyMs = Date.now() - started;
+    const reason =
+      e instanceof Error && e.name === "AbortError" ? "timeout" : "network_error";
+    return { ok: false, error: reason, status: null, latencyMs };
+  } finally {
+    clearTimeout(timer);
+  }
 }

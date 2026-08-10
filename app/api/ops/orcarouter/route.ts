@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   callOrcaRouter,
   isConfigured,
+  listModels,
   parseJsonLoose,
 } from "@/server/orcarouter";
 import {
@@ -56,6 +57,10 @@ export async function POST(req: Request) {
     });
   }
 
+  // 1段目: 認証と接続だけを確かめる（生成しないので費用ゼロ）。
+  // ここで落ちれば「キーの問題」、通れば「モデル指定や生成の問題」と切り分けられる。
+  const auth = await listModels(decision.grant);
+
   const started = Date.now();
   const result = await callOrcaRouter({
     task: "short_description",
@@ -73,8 +78,13 @@ export async function POST(req: Request) {
       reachable: false,
       operatorEnabled,
       configured,
+      /** 認証だけは通ったか（キーの問題かモデルの問題かの切り分け） */
+      authOk: auth.ok,
+      availableModels: auth.ok ? auth.models.slice(0, 20) : [],
       reason: result.kind,
       message: result.error,
+      /** 提供元が返した本文の冒頭。原因の特定に使う。 */
+      detail: result.detail ?? (auth.ok ? undefined : auth.detail),
       latencyMs: Date.now() - started,
       budget: budgetStatus(),
     });
@@ -84,6 +94,8 @@ export async function POST(req: Request) {
     reachable: true,
     operatorEnabled,
     configured,
+    authOk: auth.ok,
+    availableModels: auth.ok ? auth.models.slice(0, 20) : [],
     requestedModel: result.meta.requestedModel,
     selectedModel: result.meta.selectedModel,
     latencyMs: result.meta.latencyMs,

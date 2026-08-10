@@ -314,6 +314,7 @@ npm run build   # 本番ビルド
 npm run typecheck
 npm run e2e     # モバイル幅の E2E（別途 npm start が必要）
 npm run icons   # app/icon.svg から PWA/iOS 用 PNG を再生成
+npm run orca:check  # OrcaRouter への疎通確認（要 API キー）
 ```
 
 ### アプリアイコンとオープニング
@@ -437,9 +438,37 @@ Route Handler から呼び出し、タスクごとにティアを分けます。
 
 ### 疎通確認
 
+**コマンドで確認する**（アプリを起動せずに単体で実行できます）
+
+```bash
+ORCAROUTER_API_KEY=sk-... npm run orca:check
+# .env.local に書いてあれば環境変数の指定は不要
+```
+
+段階ごとに切り分けて表示します。どこで落ちたかがすぐ分かります。
+
+```
+1. 認証と接続（GET /models）      … キーが通るか。生成しないので費用ゼロ
+2. 生成と構造化出力（POST）        … 応答が返るか、JSON モードが効くか
+```
+
+失敗時は原因の候補まで出します（成功なら終了コード 0、失敗なら 1）。
+
+```
+✗ HTTP 401
+  キーが正しくないか、権限がありません。再発行を確認してください。
+  応答: {"error":{"message":"Invalid API key provided", ...}}
+```
+
+**画面で確認する**
+
 `/ops` に確認画面があります。押すと固定の短文を1回だけ送り、
 接続・認証・モデル選択・構造化出力・費用計算が通ることを確かめます。
 利用者のデータは含めないため、この確認のためにプライバシー設定を変える必要がありません。
+
+認証（`/models`）と生成（`/chat/completions`）を分けて実行するため、
+**「キーの問題」か「モデル指定や生成の問題」かを切り分けられます。**
+提供元が返したエラー本文の冒頭も表示します（運用者向け画面のみ）。
 
 ```
 POST /api/ops/orcarouter
@@ -596,6 +625,7 @@ lib/demo-scenarios.ts        デモ用の入力（結果は通常経路から出
 lib/ledger.ts                買わなかった記録（端末内・同意ベース）
 public/icons/                書き出し済みアプリアイコン（npm run icons で再生成）
 scripts/build-icons.mjs      SVG → PNG の書き出し
+scripts/check-orcarouter.mjs OrcaRouter への疎通確認（単体実行）
 data/                        products.json / allowed-claims.json / merchants.json
 schemas/                     Zod スキーマ（全境界で使用）
 tests/                       Vitest 251ケース

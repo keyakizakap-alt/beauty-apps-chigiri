@@ -46,6 +46,9 @@ type Probe = {
   jsonValid?: boolean;
   reason?: string;
   message?: string;
+  authOk?: boolean;
+  availableModels?: string[];
+  detail?: string;
 };
 
 export default function OpsPage() {
@@ -147,11 +150,26 @@ export default function OpsPage() {
                 <Row label="構造化出力">
                   {probe.jsonValid ? "JSON を取得" : "JSON として解釈できず"}
                 </Row>
+                {probe.availableModels && probe.availableModels.length > 0 && (
+                  <Row label="利用可能なモデル">
+                    {probe.availableModels.length}件
+                  </Row>
+                )}
               </dl>
             ) : (
-              <p className="mt-1 text-xs leading-relaxed text-sumi/70">
-                {probe.message}
-              </p>
+              <div className="mt-1 space-y-1.5 text-xs leading-relaxed text-sumi/70">
+                <p>{probe.message}</p>
+                <p className="text-[11px] text-sumi/60">
+                  {probe.authOk
+                    ? "認証は通っています。モデル指定か生成側の問題の可能性があります。"
+                    : "認証の段階で失敗しています。APIキーと接続先を確認してください。"}
+                </p>
+                {probe.detail && (
+                  <p className="break-all rounded bg-white/70 px-2 py-1 font-mono text-[10px] text-sumi/60">
+                    {probe.detail}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         )}
