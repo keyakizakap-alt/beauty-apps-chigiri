@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ProductSelector from "@/components/ProductSelector";
+import { markStated } from "@/schemas/profile";
 import { useProfile } from "@/lib/storage";
 
 export default function InventoryPage() {
@@ -34,12 +35,17 @@ export default function InventoryPage() {
           <ProductSelector
             selectedIds={profile.ownedProductIds}
             onToggle={(id) =>
-              setProfile({
-                ...profile,
-                ownedProductIds: profile.ownedProductIds.includes(id)
-                  ? profile.ownedProductIds.filter((x) => x !== id)
-                  : [...profile.ownedProductIds, id],
-              })
+              setProfile(
+                markStated(
+                  {
+                    ...profile,
+                    ownedProductIds: profile.ownedProductIds.includes(id)
+                      ? profile.ownedProductIds.filter((x) => x !== id)
+                      : [...profile.ownedProductIds, id],
+                  },
+                  "ownedProductIds",
+                ),
+              )
             }
           />
         ) : (

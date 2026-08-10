@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { ChatRequestSchema, ProfileSchema, type Profile } from "@/schemas/profile";
+import {
+  ChatRequestSchema,
+  ProfileSchema,
+  type Profile,
+  type ProfileField,
+} from "@/schemas/profile";
 import { ChatResponseSchema, type AiMeta } from "@/schemas/recommendation";
 import { buildRecommendation } from "@/domain/recommendation/engine";
 import { evaluateSafety } from "@/domain/recommendation/safety-rules";
@@ -10,9 +15,8 @@ import {
 import { applyLlmExplanation } from "@/server/explanation";
 import { extractSlots } from "@/server/slot-extractor";
 import {
-  describeProfile,
+  askForInventory,
   fallbackChatReply,
-  missingPrompt,
 } from "@/server/fallback-explanation";
 
 export const runtime = "nodejs";
@@ -88,25 +92,31 @@ export async function POST(req: Request) {
     // 3. 自然文からの条件抽出（LLM: コスト優先ティア / 失敗時は規則ベース）
     const { patch, ai: slotAi } = await extractSlots(message, incomingProfile);
 
+    // この発言で新たに指定された項目を記録する。
+    // 記録しておかないと、初期値のままの項目まで
+    // 「あなたはこう言いました」と読み上げてしまう。
+    const statedFields = new Set<ProfileField>(incomingProfile.statedFields);
+    for (const key of Object.keys(patch)) {
+      statedFields.add(key as ProfileField);
+    }
+    if (matched.length > 0) statedFields.add("ownedProductIds");
+
     const merged = ProfileSchema.safeParse({
       ...incomingProfile,
       ...patch,
       ownedProductIds,
+      statedFields: [...statedFields],
     });
     const profile: Profile = merged.success ? merged.data : incomingProfile;
 
-    // 4. 手持ちがまだない場合は推薦を行わず、確認だけ返す
+    // 4. 手持ちがまだない場合は推薦を行わず、商品選択をお願いする
     if (profile.ownedProductIds.length === 0) {
-      const hint =
-        ambiguous.length > 0
-          ? `「${ambiguous
-              .slice(0, 4)
-              .map((p) => `${p.brand} ${p.name}`)
-              .join("」「")}」などが候補にあります。どれをお持ちですか？`
-          : "下のリストから選ぶか、商品名をそのまま書いていただければ登録します。";
+      const brandHint = ambiguous
+        .slice(0, 3)
+        .map((p) => `「${p.brand} ${p.name}」`);
 
       return respond({
-        reply: `${describeProfile(profile)}\n\nまず、いまお使いの化粧品を教えてください。${hint}\n\n${missingPrompt(["ownedProductIds"])}`,
+        reply: askForInventory(profile, brandHint),
         profile,
         missing: ["ownedProductIds"],
         recommendation: null,

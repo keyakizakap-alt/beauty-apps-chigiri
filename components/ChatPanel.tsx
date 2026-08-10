@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatResponseSchema, type Recommendation } from "@/schemas/recommendation";
-import type { Profile } from "@/schemas/profile";
+import { markStated, type Profile, type ProfileField } from "@/schemas/profile";
 import { useProfile } from "@/lib/storage";
 import ProfileForm from "./ProfileForm";
 import ProductSelector from "./ProductSelector";
@@ -19,6 +19,8 @@ type Bubble = {
   role: "user" | "assistant";
   text: string;
   rec?: Recommendation | null;
+  /** サーバーが「まだ聞けていない」と判断した項目 */
+  missing?: string[];
 };
 
 const THINKING_STEPS = [
@@ -119,6 +121,7 @@ export default function ChatPanel() {
             role: "assistant",
             text: parsed.data.reply,
             rec: parsed.data.recommendation,
+            missing: parsed.data.missing,
           },
         ]);
       } catch (e) {
@@ -139,6 +142,23 @@ export default function ChatPanel() {
       }
     },
     [loading, profile, setProfile],
+  );
+
+  const toggleOwned = useCallback(
+    (id: string) => {
+      setProfile((prev) =>
+        markStated(
+          {
+            ...prev,
+            ownedProductIds: prev.ownedProductIds.includes(id)
+              ? prev.ownedProductIds.filter((x) => x !== id)
+              : [...prev.ownedProductIds, id],
+          },
+          "ownedProductIds",
+        ),
+      );
+    },
+    [setProfile],
   );
 
   /** 設定パネルから直接再計算する（予算変更のデモ用） */
@@ -197,14 +217,7 @@ export default function ChatPanel() {
               ) : (
                 <ProductSelector
                   selectedIds={profile.ownedProductIds}
-                  onToggle={(id) =>
-                    setProfile({
-                      ...profile,
-                      ownedProductIds: profile.ownedProductIds.includes(id)
-                        ? profile.ownedProductIds.filter((x) => x !== id)
-                        : [...profile.ownedProductIds, id],
-                    })
-                  }
+                  onToggle={toggleOwned}
                 />
               )}
               <div className="mt-4 flex gap-2">
@@ -247,6 +260,31 @@ export default function ChatPanel() {
                     </p>
                   </div>
                   {m.rec && <RecommendationCard rec={m.rec} />}
+
+                  {/* 「選んでください」と書いた直後に、実際に選べるものを出す */}
+                  {m.missing?.includes("ownedProductIds") &&
+                    m.id === messages[messages.length - 1]?.id && (
+                      <section className="chigiri-card p-4">
+                        <h3 className="mb-3 text-sm font-semibold">
+                          お使いの化粧品を選んでください
+                        </h3>
+                        <ProductSelector
+                          selectedIds={profile.ownedProductIds}
+                          onToggle={toggleOwned}
+                          compact
+                        />
+                        <button
+                          type="button"
+                          onClick={() => recalc(profile)}
+                          disabled={loading || profile.ownedProductIds.length === 0}
+                          className="mt-3 w-full rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
+                        >
+                          {profile.ownedProductIds.length === 0
+                            ? "1点以上選んでください"
+                            : `この${profile.ownedProductIds.length}点で組み立てる`}
+                        </button>
+                      </section>
+                    )}
                 </div>
               )}
             </li>

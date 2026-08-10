@@ -1,4 +1,4 @@
-import type { Profile } from "@/schemas/profile";
+import { isStated, type Profile } from "@/schemas/profile";
 import type { Recommendation } from "@/schemas/recommendation";
 import { CATEGORY_LABEL, getProduct } from "@/domain/recommendation/catalog";
 import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-builder";
@@ -10,69 +10,193 @@ import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-build
  * engine.ts が既に採用理由・注意事項・不採用理由を持っているため、
  * ここでは会話用の本文を組み立てるだけでよい。
  * AI が落ちても、ユーザーが受け取る情報量は落ちない。
+ *
+ * 文章の方針:
+ * - 設定値の読み上げにしない。「何をしたか」から書く。
+ * - ユーザーが言っていない初期値を、言ったことのように書かない。
+ *   仮に置いた項目は仮だと明示し、訂正を促す。
+ * - 画面の構造に依存する表現（「下のリスト」など）を本文に書かない。
  */
+
+/* ------------------------------------------------------------------ *
+ * 条件の言い換え
+ * ------------------------------------------------------------------ */
+
+/**
+ * ユーザーが自分で指定した条件だけを、会話らしく言い換える。
+ * 何も指定されていなければ空文字を返す（言うことがないなら黙る）。
+ */
+export function describeStatedConditions(profile: Profile): string {
+  const bits: string[] = [];
+
+  if (isStated(profile, "concerns") && profile.concerns.length > 0) {
+    const list = profile.concerns.map((c) => CONCERN_LABEL[c]).join("と");
+    bits.push(`${list}が気になるとのことなので、そこを軸にしました`);
+  }
+
+  if (isStated(profile, "skinType")) {
+    bits.push(
+      `${SKIN_LABEL[profile.skinType]}に合う表示のあるものを優先しています`,
+    );
+  }
+
+  if (
+    isStated(profile, "avoidIngredients") &&
+    profile.avoidIngredients.length > 0
+  ) {
+    bits.push("避けたいと言われた成分を含むものは、はじめから候補に入れていません");
+  }
+
+  if (isStated(profile, "morningMinutes") || isStated(profile, "nightMinutes")) {
+    bits.push(
+      `朝${profile.morningMinutes}分・夜${profile.nightMinutes}分に収まる工程数にしています`,
+    );
+  }
+
+  if (bits.length === 0) return "";
+  return `${bits.join("。")}。`;
+}
+
+/**
+ * こちらが仮に置いた項目を伝え、訂正を促す一文。
+ * 仮置きが無ければ空文字。
+ */
+export function describeAssumptions(profile: Profile): string {
+  const assumed: string[] = [];
+
+  if (!isStated(profile, "skinType")) {
+    assumed.push(`肌の傾向は${SKIN_LABEL[profile.skinType]}`);
+  }
+  if (!isStated(profile, "budgetYen")) {
+    assumed.push(`買い足しの予算は${profile.budgetYen.toLocaleString()}円`);
+  }
+  if (
+    !isStated(profile, "morningMinutes") &&
+    !isStated(profile, "nightMinutes")
+  ) {
+    assumed.push(
+      `使える時間は朝${profile.morningMinutes}分・夜${profile.nightMinutes}分`,
+    );
+  }
+
+  if (assumed.length === 0) return "";
+
+  return (
+    `${assumed.join("、")}。このあたりはまだうかがえていないので、いったんこの前提で組んでいます。` +
+    `違っていたら教えてください。すぐ組み直します。`
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * ルーティン提示時の本文
+ * ------------------------------------------------------------------ */
 
 export function fallbackChatReply(
   profile: Profile,
   rec: Omit<Recommendation, "ai">,
   fallbackReason: string | null,
 ): string {
-  // 要約は結果カードの見出しとして表示されるため、ここでは繰り返さず
-  // 「どう組んだか」を補足する。
-  const lines: string[] = [describeProfile(profile), ""];
+  const paragraphs: string[] = [];
 
+  // 1. 何を見て組んだか（設定値の読み上げにしない）
+  const stated = describeStatedConditions(profile);
+  if (stated) paragraphs.push(stated);
+
+  // 2. 組んだ結果
   const m = rec.routines.morning;
   const n = rec.routines.night;
-  lines.push(
-    `朝は${m.steps.length}工程（約${m.estimatedMinutes}分）、夜は${n.steps.length}工程（約${n.estimatedMinutes}分）で組みました。`,
+  paragraphs.push(
+    `朝は${m.steps.length}工程で約${m.estimatedMinutes}分、夜は${n.steps.length}工程で約${n.estimatedMinutes}分になりました。`,
   );
 
+  // 3. 重複の扱い
   if (rec.duplications.length > 0) {
     const d = rec.duplications[0];
-    lines.push(
-      `${CATEGORY_LABEL[d.category]}の役割が重なっていたので、1点にまとめています。`,
+    const kept = getProduct(d.keptProductId);
+    const count = d.duplicateProductIds.length + 1;
+    paragraphs.push(
+      `${CATEGORY_LABEL[d.category]}が${count}点ありましたが、同じ工程に重ねて使う必要はないので、` +
+        `今回は${kept ? `「${kept.brand} ${kept.name}」` : "1点"}を軸にしています。` +
+        `残りは使い切ってから考えれば十分です。`,
     );
   }
 
+  // 4. 買い足し
   if (rec.purchaseSuggestion) {
     const p = getProduct(rec.purchaseSuggestion.productId);
     if (p) {
-      lines.push(
-        `不足していたのは${CATEGORY_LABEL[rec.purchaseSuggestion.category]}だけです。予算内で「${p.brand} ${p.name}」（${p.price.toLocaleString()}円）を候補にしました。`,
+      paragraphs.push(
+        `足りていなかったのは${CATEGORY_LABEL[rec.purchaseSuggestion.category]}だけでした。` +
+          `「${p.brand} ${p.name}」（${p.price.toLocaleString()}円）を候補にしています。`,
       );
     }
-  } else if (rec.noPurchaseNeededReason) {
-    lines.push(rec.noPurchaseNeededReason);
-  }
-
-  if (fallbackReason) {
-    lines.push("");
-    lines.push(
-      `（AI による文章生成が利用できなかったため、システムが計算した内容をそのまま表示しています。ルーティンの中身と根拠は通常時と同じです。理由: ${fallbackReason}）`,
+  } else if (rec.savings.ownedTotalCount > 0 && rec.gaps.length === 0) {
+    paragraphs.push(
+      "いまの手持ちで必要な役割はそろっているので、買い足しはなくて大丈夫です。",
     );
   }
 
-  return lines.join("\n");
+  // 5. 仮に置いた前提の断り
+  const assumptions = describeAssumptions(profile);
+  if (assumptions) paragraphs.push(assumptions);
+
+  // 6. AI が使えなかった場合の断り（隠さない）
+  if (fallbackReason) {
+    paragraphs.push(
+      `なお、いまは AI による文章生成が使えなかったため、システムが計算した内容をそのままお伝えしています。` +
+        `ルーティンの中身と根拠は通常時と変わりません。（理由: ${fallbackReason}）`,
+    );
+  }
+
+  return paragraphs.join("\n\n");
 }
 
-/** プロファイル確認用の読み上げ文 */
-export function describeProfile(profile: Profile): string {
-  const bits: string[] = [`肌傾向は${SKIN_LABEL[profile.skinType]}`];
-  if (profile.concerns.length > 0) {
-    bits.push(
-      `気になっているのは${profile.concerns.map((c) => CONCERN_LABEL[c]).join("・")}`,
+/* ------------------------------------------------------------------ *
+ * 手持ちが未登録のときの本文
+ * ------------------------------------------------------------------ */
+
+/**
+ * 手持ち商品をたずねる文。
+ * 商品リストを画面に出すかどうかは UI 側の判断なので、
+ * ここでは「下のリスト」のような画面依存の表現を使わない。
+ */
+export function askForInventory(
+  profile: Profile,
+  brandHint: string[],
+): string {
+  const paragraphs: string[] = [];
+
+  const stated = describeStatedConditions(profile);
+  if (stated) {
+    paragraphs.push(stated.replace(/しました。$/, "していきますね。"));
+  }
+
+  if (brandHint.length > 0) {
+    paragraphs.push(
+      `${brandHint.slice(0, 3).join("、")}——このあたりでしょうか。` +
+        `どれをお使いか選んでいただければ、そこから組み立てます。`,
+    );
+  } else {
+    paragraphs.push(
+      "まず、いまお使いの化粧品を教えてください。商品名をそのまま書いていただいても、選んでいただいても大丈夫です。",
     );
   }
-  bits.push(`買い足し予算は${profile.budgetYen.toLocaleString()}円`);
-  bits.push(`朝${profile.morningMinutes}分・夜${profile.nightMinutes}分`);
-  return `${bits.join("、")}として計算しました。`;
+
+  paragraphs.push(
+    "使い切っていないものをすべて選んでください。あまり使えていないものも含めて構いません。役割が重なっているものは、こちらで見つけます。",
+  );
+
+  const assumptions = describeAssumptions(profile);
+  if (assumptions) paragraphs.push(assumptions);
+
+  return paragraphs.join("\n\n");
 }
 
 /** 不足している入力を日本語で列挙する */
 export const MISSING_LABEL: Record<string, string> = {
   ownedProductIds: "手持ちの化粧品",
-  skinType: "肌傾向",
-  concerns: "気になっていること",
+  skinType: "肌の傾向",
+  concerns: "気になっているところ",
   budgetYen: "買い足しに使える予算",
 };
 

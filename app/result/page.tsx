@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import RecommendationCard from "@/components/RecommendationCard";
 import { RecommendationSchema, type Recommendation } from "@/schemas/recommendation";
-import type { Profile } from "@/schemas/profile";
+import { markStated, type Profile } from "@/schemas/profile";
 import { useProfile } from "@/lib/storage";
 
 /**
@@ -92,7 +92,12 @@ export default function ResultPage() {
                   step={500}
                   value={profile.budgetYen}
                   onChange={(e) =>
-                    setProfile({ ...profile, budgetYen: Number(e.target.value) })
+                    setProfile(
+                      markStated(
+                        { ...profile, budgetYen: Number(e.target.value) },
+                        "budgetYen",
+                      ),
+                    )
                   }
                   className="w-full accent-ai"
                 />

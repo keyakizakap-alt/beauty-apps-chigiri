@@ -1,6 +1,6 @@
 "use client";
 
-import type { Profile } from "@/schemas/profile";
+import { markStated, type Profile, type ProfileField } from "@/schemas/profile";
 import type { ConcernTag, IngredientTag, SkinTag, TextureTag } from "@/schemas/product";
 import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL, TEXTURE_LABEL } from "@/domain/recommendation/filters";
@@ -77,8 +77,10 @@ export default function ProfileForm({
   profile: Profile;
   onChange: (next: Profile) => void;
 }) {
+  // 変更された項目は「ユーザーが自分で指定したもの」として記録する。
+  // これをしないと、初期値のままの項目まで説明文で断定されてしまう。
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
-    onChange({ ...profile, [key]: value });
+    onChange(markStated({ ...profile, [key]: value }, key as ProfileField));
 
   return (
     <div className="space-y-6">

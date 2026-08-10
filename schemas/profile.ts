@@ -7,6 +7,24 @@ import {
 } from "./product";
 
 /**
+ * ユーザーが実際に指定した項目。
+ * 初期値のままの項目を「あなたはこう言いました」と扱わないために持つ。
+ */
+export const ProfileFieldSchema = z.enum([
+  "skinType",
+  "concerns",
+  "avoidTextures",
+  "avoidIngredients",
+  "budgetYen",
+  "morningMinutes",
+  "nightMinutes",
+  "ownedProductIds",
+  "allowPurchase",
+  "maxNewItems",
+]);
+export type ProfileField = z.infer<typeof ProfileFieldSchema>;
+
+/**
  * ユーザープロファイル。
  * すべての API 入力はこのスキーマを通す。
  */
@@ -31,11 +49,24 @@ export const ProfileSchema = z.object({
   allowPurchase: z.boolean().default(true),
   /** 最大買い足し商品数 */
   maxNewItems: z.number().int().min(0).max(3).default(1),
+  /**
+   * ユーザーが実際に指定した項目。
+   * ここに無い項目の値は「こちらが仮に置いた初期値」であり、
+   * 説明文で断定してはいけない。
+   */
+  statedFields: z.array(ProfileFieldSchema).default([]),
 });
 export type Profile = z.infer<typeof ProfileSchema>;
 
-/** チャット中の部分更新用（LLM のスロット抽出結果もこれで検証する） */
-export const ProfilePatchSchema = ProfileSchema.partial();
+/**
+ * チャット中の部分更新用（LLM のスロット抽出結果もこれで検証する）。
+ * statedFields は LLM に決めさせない。
+ * ownedProductIds も、商品の同定は決定論的マッチャーの担当なので受け付けない。
+ */
+export const ProfilePatchSchema = ProfileSchema.omit({
+  statedFields: true,
+  ownedProductIds: true,
+}).partial();
 export type ProfilePatch = z.infer<typeof ProfilePatchSchema>;
 
 export const DEFAULT_PROFILE: Profile = {
@@ -49,7 +80,22 @@ export const DEFAULT_PROFILE: Profile = {
   ownedProductIds: [],
   allowPurchase: true,
   maxNewItems: 1,
+  statedFields: [],
 };
+
+/** ユーザーが明示的に指定した項目として記録する */
+export function markStated(
+  profile: Profile,
+  ...fields: ProfileField[]
+): Profile {
+  const set = new Set<ProfileField>([...profile.statedFields, ...fields]);
+  return { ...profile, statedFields: [...set] };
+}
+
+/** その項目をユーザー自身が指定したか（初期値のままではないか） */
+export function isStated(profile: Profile, field: ProfileField): boolean {
+  return profile.statedFields.includes(field);
+}
 
 /** プロファイルが推薦を実行できる状態か */
 export function isProfileReady(p: Profile): boolean {
