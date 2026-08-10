@@ -21,6 +21,7 @@ import { applyHardFilters } from "./filters";
 import { detectDuplications } from "./duplication-detector";
 import { buildRoutine, CONCERN_LABEL } from "./routine-builder";
 import { scoreAll, scoreProduct, sortScored, type ScoredProduct } from "./scorer";
+import { buildPlans, countArrangements } from "./variants";
 import { DISCLAIMER, INGREDIENT_UNCERTAINTY_NOTE } from "./safety-rules";
 
 /**
@@ -66,9 +67,11 @@ export function buildRecommendation(profile: Profile): EngineResult {
   // 4. 役割重複の検出（絞り込みはせず、カテゴリー別のスコア順候補を作る）
   const { duplications, groups } = detectDuplications(scoredOwned);
 
-  // 5. 朝・夜ルーティン
+  // 5. 朝・夜ルーティン（標準案）と、時間の前提を変えた別案
   const morning = buildRoutine("morning", groups, profile);
   const night = buildRoutine("night", groups, profile);
+  const plans = buildPlans(groups, profile);
+  const arrangementCount = countArrangements(groups);
 
   const usedIds = new Set<string>([
     ...morning.routine.steps.map((s) => s.productId),
@@ -176,6 +179,8 @@ export function buildRecommendation(profile: Profile): EngineResult {
       ...ownedProducts,
       ...suggestions.map((s) => s.product),
     ]),
+    plans,
+    arrangementCount,
   };
 
   return {

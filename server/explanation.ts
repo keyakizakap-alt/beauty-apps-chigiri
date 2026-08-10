@@ -171,6 +171,15 @@ export async function applyLlmExplanation(
       morning: merge(base.routines.morning),
       night: merge(base.routines.night),
     },
+    // 別案にも同じ説明文を反映する。
+    // 案を切り替えたときだけ文体が変わると、別の基準で選んだように見えるため。
+    plans: base.plans.map((plan) => ({
+      ...plan,
+      routines: {
+        morning: merge(plan.routines.morning),
+        night: merge(plan.routines.night),
+      },
+    })),
     unused: base.unused.map((u) => {
       // 除外条件（アレルギー・避けたい成分）に当たった商品の理由は、
       // 決定論的に作った具体的な文面をそのまま使う。

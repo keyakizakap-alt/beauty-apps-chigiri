@@ -41,6 +41,25 @@ export const RoutineSchema = z.object({
 });
 export type Routine = z.infer<typeof RoutineSchema>;
 
+/**
+ * ルーティンの案。
+ * 同じ決定論的ロジックで、使える時間の前提だけを変えて組み立てたもの。
+ */
+export const RoutinePlanKindSchema = z.enum(["standard", "quick", "full"]);
+export type RoutinePlanKind = z.infer<typeof RoutinePlanKindSchema>;
+
+export const RoutinePlanSchema = z.object({
+  kind: RoutinePlanKindSchema,
+  label: z.string(),
+  description: z.string(),
+  routines: z.object({ morning: RoutineSchema, night: RoutineSchema }),
+  totalSteps: z.number(),
+  totalMinutes: z.number(),
+  /** この案で活用している手持ち商品の点数 */
+  ownedUsedCount: z.number(),
+});
+export type RoutinePlan = z.infer<typeof RoutinePlanSchema>;
+
 export const DuplicationSchema = z.object({
   category: CategorySchema,
   keptProductId: z.string(),
@@ -156,6 +175,13 @@ export const RecommendationSchema = z.object({
   disclaimer: z.string(),
   /** 使用した商品の完全な情報（UI 描画用） */
   products: z.array(ProductSchema),
+  /**
+   * ルーティンの案（標準・時短・じっくり）。
+   * 既定値を持たせてあるため、この項目が無い過去の保存データも読める。
+   */
+  plans: z.array(RoutinePlanSchema).default([]),
+  /** 手持ちから成立する組み立て方の総数（提示するのはこのうち数案） */
+  arrangementCount: z.number().default(0),
 });
 export type Recommendation = z.infer<typeof RecommendationSchema>;
 

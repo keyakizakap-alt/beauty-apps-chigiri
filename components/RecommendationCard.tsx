@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
 import type { Product } from "@/schemas/product";
 import type { Recommendation } from "@/schemas/recommendation";
-import RoutineTimeline from "./RoutineTimeline";
+import RoutinePlans from "./RoutinePlans";
 import SavingSummary from "./SavingSummary";
 import EvidencePanel from "./EvidencePanel";
 
@@ -30,15 +30,12 @@ export default function RecommendationCard({
     <div className="space-y-4">
       <SavingSummary summary={rec.summary} savings={rec.savings} />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <RoutineTimeline routine={rec.routines.morning} products={products} />
-        <RoutineTimeline routine={rec.routines.night} products={products} />
-      </div>
-
-      <p className="text-xs text-sumi/50">
-        合計 {rec.totalSteps} 工程（朝 {rec.routines.morning.steps.length} ／ 夜{" "}
-        {rec.routines.night.steps.length}）
-      </p>
+      <RoutinePlans
+        plans={rec.plans}
+        fallback={rec.routines}
+        products={products}
+        arrangementCount={rec.arrangementCount}
+      />
 
       {/* 買い足し提案 */}
       <section className="chigiri-card p-4">
