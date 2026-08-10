@@ -127,6 +127,12 @@ export type CallOptions = {
    * ポリシー判定を通らずにこの関数を呼ぶことはできない。
    */
   grant: ExternalAiGrant;
+  /**
+   * 画像（data URL）。指定すると user メッセージを content 配列にして
+   * 画像を添える（OpenAI 互換の image_url 形式）。
+   * 画像は保存せず、この1回の呼び出しでのみ使う。
+   */
+  imageDataUrl?: string;
 };
 
 export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
@@ -189,7 +195,11 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
   // 同じ問い合わせを二度課金しない。
   // 商品選定が決定論的なため、同じ条件からは同じプロンプトが生成され、
   // デモや再計算の繰り返しではほぼ確実に命中する。
-  const key = cacheKey({ tier: opts.tier, system: opts.system, user: opts.user });
+  const key = cacheKey({
+    tier: opts.tier,
+    system: opts.system,
+    user: opts.user + (opts.imageDataUrl ?? ""),
+  });
   const cached = readCache(key);
   if (cached) {
     recordSpend(0, { cached: true });
@@ -234,7 +244,18 @@ export async function callOrcaRouter(opts: CallOptions): Promise<LlmResult> {
         model: requestedModel,
         messages: [
           { role: "system", content: opts.system },
-          { role: "user", content: opts.user },
+          opts.imageDataUrl
+            ? {
+                role: "user",
+                content: [
+                  { type: "text", text: opts.user },
+                  {
+                    type: "image_url",
+                    image_url: { url: opts.imageDataUrl },
+                  },
+                ],
+              }
+            : { role: "user", content: opts.user },
         ],
         temperature: opts.temperature ?? 0.2,
         max_tokens: opts.maxTokens ?? 1200,

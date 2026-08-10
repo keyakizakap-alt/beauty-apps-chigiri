@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChatResponseSchema, type Recommendation } from "@/schemas/recommendation";
+import {
+  ChatResponseSchema,
+  type QuickReply,
+  type Recommendation,
+} from "@/schemas/recommendation";
 import { markStated, type Profile } from "@/schemas/profile";
+import {
+  OPENING_QUICK_REPLIES,
+  OPENING_STATE,
+  openingMessage,
+  type CounselState,
+} from "@/domain/conversation/counsel";
 import { PRODUCTS } from "@/domain/recommendation/catalog";
 import { useProfile } from "@/lib/storage";
 import { usePrivacy } from "@/lib/privacy";
@@ -16,6 +26,7 @@ import ProductSelector from "./ProductSelector";
 import RecommendationCard from "./RecommendationCard";
 import ConversationSidebar from "./ConversationSidebar";
 import AiConsentCard from "./AiConsentCard";
+import PhotoCapture, { type Identified } from "./PhotoCapture";
 import { ChigiriMark } from "./AppSplash";
 
 /**
@@ -35,43 +46,29 @@ type Bubble = {
   /** サーバーが「まだ聞けていない」と判断した項目 */
   missing?: string[];
   at: string;
+  /** 受け止めの一言だけの吹き出しか（間を置いて本文が続く） */
+  soft?: boolean;
 };
 
 const OPENING_ID = "opening";
 
-const THINKING_STEPS = [
-  "入力された条件を整理しています",
-  "手持ち商品から使えないものを外しています",
-  "商品の役割を分類しています",
-  "朝と夜に必要な工程を確認しています",
-  "役割が重なっている商品を探しています",
-  "不足している役割だけを取り出しています",
-  "説明文を組み立てています",
-];
-
-const SUGGESTIONS = [
-  "混合肌で、毛穴と乾燥が気になります。予算は3000円くらいです",
-  "朝は3分しか時間がありません",
-  "予算を1000円に変えて計算し直して",
-  "アルコールが入っているものは避けたいです",
-];
+/**
+ * 待っている間の表示。
+ * 内部で何をしているかの実況ではなく、人が考えているときの様子にする。
+ * 処理の内訳を知りたい場合は、結果カードの「この提案の作り方」で見られる。
+ */
+const THINKING_STEPS = ["考えています", "整理しています", "もう少しです"];
 
 let bubbleSeq = 0;
 const nextId = () => `b${Date.now().toString(36)}-${++bubbleSeq}`;
 
-/** 時間帯に合わせた挨拶。描画後（クライアント）でのみ組み立てる。 */
+/** 最初のひとこと。時刻を使うため、描画後（クライアント）で組み立てる。 */
 function openingBubble(): Bubble {
-  const h = new Date().getHours();
-  const greeting =
-    h < 5 ? "こんばんは" : h < 11 ? "おはようございます" : h < 18 ? "こんにちは" : "こんばんは";
-
   return {
     id: OPENING_ID,
     role: "assistant",
     at: new Date().toISOString(),
-    text:
-      `${greeting}。今日は、コスメ選びでどんなことに迷っていますか？\n\n` +
-      "うまく言葉にできなくても大丈夫です。今いちばん気になることから、ゆっくり聞かせてください。",
+    text: openingMessage(),
   };
 }
 
@@ -140,6 +137,10 @@ export default function ChatPanel() {
   const [error, setError] = useState<string | null>(null);
   const [panel, setPanel] = useState<"none" | "profile" | "inventory">("none");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [counsel, setCounsel] = useState<CounselState>(OPENING_STATE);
+  const [quickReplies, setQuickReplies] =
+    useState<QuickReply[]>(OPENING_QUICK_REPLIES);
+  const [showPhoto, setShowPhoto] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   /** 保存時に読む最新のプロファイル（発言の変化だけで保存を起こすため） */
@@ -148,6 +149,9 @@ export default function ChatPanel() {
   /** 送信時に読む最新のプライバシー設定 */
   const privacyRef = useRef(privacy);
   privacyRef.current = privacy;
+  /** 送信時に読む最新の相談状態 */
+  const counselRef = useRef(counsel);
+  counselRef.current = counsel;
 
   const ready = profileHydrated && convHydrated && privacyHydrated;
 
@@ -172,6 +176,12 @@ export default function ChatPanel() {
     });
     setPanel("none");
     setError(null);
+    setShowPhoto(false);
+
+    // 新しい相談は最初の問いかけから、続きの相談は選択肢なしで再開する
+    const fresh = !conversation || conversation.messages.length === 0;
+    setCounsel(fresh ? OPENING_STATE : { stage: "aftercare", asked: [], turn: 0 });
+    setQuickReplies(fresh ? OPENING_QUICK_REPLIES : []);
 
     // 過去の相談を開いたときは、そのときの条件まで戻す。
     // 「何を前提に出した結論か」が分からないと振り返りにならないため。
@@ -233,6 +243,7 @@ export default function ChatPanel() {
             profile: activeProfile,
             // 既定は false。利用者が明示的に許可したときだけ外部AIを使う。
             allowExternalAi: privacyRef.current.allowExternalAi,
+            counsel: counselRef.current,
           }),
         });
 
@@ -247,6 +258,29 @@ export default function ChatPanel() {
         }
 
         setProfile(parsed.data.profile);
+        setCounsel(parsed.data.counsel as CounselState);
+        setQuickReplies(parsed.data.quickReplies);
+        setShowPhoto(parsed.data.offerPhoto);
+
+        /*
+         * 受け止めの一言と本文を、少し間を空けて別々に出す。
+         * まとめて一度に出ると、返事というより通知に見えるため。
+         */
+        const ack = parsed.data.acknowledgement;
+        if (ack) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: nextId(),
+              role: "assistant",
+              text: ack,
+              at: new Date().toISOString(),
+              soft: true,
+            },
+          ]);
+          await new Promise((r) => setTimeout(r, 650));
+        }
+
         setMessages((prev) => [
           ...prev,
           {
@@ -571,7 +605,13 @@ export default function ChatPanel() {
                       <span className="mt-0.5 shrink-0">
                         <ChigiriMark size={28} />
                       </span>
-                      <p className="min-w-0 flex-1 whitespace-pre-wrap rounded-2xl rounded-tl-sm border border-beige/60 bg-white px-4 py-3 text-sm leading-relaxed">
+                      <p
+                        className={`min-w-0 flex-1 whitespace-pre-wrap rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed ${
+                          m.soft
+                            ? "bg-white/70 text-sumi/75"
+                            : "border border-beige/60 bg-white"
+                        }`}
+                      >
                         {m.text}
                       </p>
                     </div>
@@ -582,9 +622,18 @@ export default function ChatPanel() {
                     {m.missing?.includes("ownedProductIds") &&
                       m.id === messages[messages.length - 1]?.id && (
                         <section className="chigiri-card p-4">
-                          <h3 className="mb-3 text-sm font-semibold">
-                            お使いの化粧品を選んでください
-                          </h3>
+                          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                            <h3 className="text-sm font-semibold">
+                              一覧から選ぶ
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => setShowPhoto((v) => !v)}
+                              className="rounded-lg border border-ai/40 px-3 py-1.5 text-xs text-ai"
+                            >
+                              {showPhoto ? "写真を閉じる" : "写真で登録する"}
+                            </button>
+                          </div>
                           <ProductSelector
                             selectedIds={profile.ownedProductIds}
                             onToggle={toggleOwned}
@@ -616,14 +665,11 @@ export default function ChatPanel() {
                     <ChigiriMark size={28} />
                   </span>
                   <div className="rounded-2xl rounded-tl-sm border border-beige/60 bg-white px-4 py-3">
-                    <p className="flex items-center gap-2 text-sm text-sumi/70">
-                      <span aria-hidden className="chigiri-thinking-dot text-ai">
+                    <p className="flex items-center gap-1.5 text-sm text-sumi/60">
+                      <span aria-hidden className="chigiri-thinking-dot">
                         ●
                       </span>
                       {THINKING_STEPS[thinkingStep]}
-                    </p>
-                    <p className="mt-1 text-[11px] text-sumi/45">
-                      商品の選定はサーバー側の決定論的ロジックが担当しています
                     </p>
                   </div>
                 </div>
@@ -631,24 +677,49 @@ export default function ChatPanel() {
             )}
           </ul>
 
-          {isFresh && (
-            <div className="mt-6">
-              <p className="chigiri-label mb-2">こんなふうに話しかけてください</p>
-              <div className="flex flex-wrap gap-1.5">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => void send(s)}
-                    className="rounded-full border border-beige bg-white px-3 py-1.5 text-left text-xs text-sumi/75 transition-colors hover:border-ai/40"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-3 text-xs leading-relaxed text-sumi/50">
-                手持ちの化粧品は、上の「手持ち」から選ぶこともできます。
-              </p>
+          {/* 写真から登録する */}
+          {showPhoto && !loading && (
+            <div className="mt-4">
+              <PhotoCapture
+                allowExternalAi={privacy.allowExternalAi}
+                onCancel={() => setShowPhoto(false)}
+                onIdentified={(found: Identified[]) => {
+                  setProfile((prev) =>
+                    markStated(
+                      {
+                        ...prev,
+                        ownedProductIds: [
+                          ...new Set([
+                            ...prev.ownedProductIds,
+                            ...found.map((f) => f.productId),
+                          ]),
+                        ],
+                      },
+                      "ownedProductIds",
+                    ),
+                  );
+                  setShowPhoto(false);
+                  void send(
+                    `写真から${found.length}点を登録しました。この内容で組み立ててください。`,
+                  );
+                }}
+              />
+            </div>
+          )}
+
+          {/* その場で答えられる選択肢 */}
+          {quickReplies.length > 0 && !loading && (
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {quickReplies.map((q) => (
+                <button
+                  key={q.label}
+                  type="button"
+                  onClick={() => void send(q.send)}
+                  className="rounded-full border border-ai/25 bg-white px-3.5 py-2 text-xs text-sumi/80 transition-colors hover:border-ai hover:text-ai"
+                >
+                  {q.label}
+                </button>
+              ))}
             </div>
           )}
 
@@ -695,7 +766,7 @@ export default function ChatPanel() {
               </button>
             </form>
             <p className="mt-2 text-center text-[10px] leading-relaxed text-sumi/45">
-              個人情報や詳しい症状は入力しないでください。商品情報は公式公開情報のみを表示します。
+              お名前や詳しい症状は書かないでください。
             </p>
           </div>
         </footer>

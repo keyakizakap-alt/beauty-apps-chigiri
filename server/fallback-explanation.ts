@@ -205,3 +205,58 @@ export function missingPrompt(missing: string[]): string {
   const labels = missing.map((m) => MISSING_LABEL[m] ?? m);
   return `${labels.join("と")}を教えていただけると、より正確に組み立てられます。`;
 }
+
+/* ------------------------------------------------------------------ *
+ * 提案時の本文
+ * ------------------------------------------------------------------ */
+
+/**
+ * 組み上がった内容を伝える文。
+ *
+ * 確認の段階で条件はすでに読み合わせているので、ここでは繰り返さない。
+ * AI を使ったかどうかも本文には書かない（読む人には関係がなく、
+ * 知りたい場合は結果カードの「この提案の作り方」で確認できる）。
+ */
+export function summariseResult(
+  profile: Profile,
+  rec: Omit<Recommendation, "ai">,
+): string {
+  const paragraphs: string[] = [];
+  const m = rec.routines.morning;
+  const n = rec.routines.night;
+
+  paragraphs.push(
+    `お持ちの${rec.savings.ownedTotalCount}点のうち${rec.savings.ownedUsedCount}点で組めました。` +
+      `朝は${m.steps.length}工程で約${m.estimatedMinutes}分、夜は${n.steps.length}工程で約${n.estimatedMinutes}分です。`,
+  );
+
+  if (rec.duplications.length > 0) {
+    const d = rec.duplications[0];
+    const kept = getProduct(d.keptProductId);
+    paragraphs.push(
+      `${CATEGORY_LABEL[d.category]}が重なっていたので、` +
+        `${kept ? `「${kept.brand} ${kept.name}」` : "1点"}を軸にしました。` +
+        `残りは使い切ってからで大丈夫です。`,
+    );
+  }
+
+  if (rec.purchaseSuggestion) {
+    const p = getProduct(rec.purchaseSuggestion.productId);
+    if (p) {
+      paragraphs.push(
+        `足りなかったのは${CATEGORY_LABEL[rec.purchaseSuggestion.category]}だけでした。` +
+          `よければ「${p.brand} ${p.name}」（${p.price.toLocaleString()}円）はいかがでしょう。` +
+          `ほかの候補と見比べてから決められます。`,
+      );
+    }
+  } else if (rec.savings.ownedTotalCount > 0 && rec.gaps.length === 0) {
+    paragraphs.push(
+      "必要なものはそろっていました。今回は買い足さなくて大丈夫です。",
+    );
+  }
+
+  const assumptions = describeAssumptions(profile);
+  if (assumptions) paragraphs.push(assumptions);
+
+  return paragraphs.join("\n\n");
+}

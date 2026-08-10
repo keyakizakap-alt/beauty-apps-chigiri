@@ -110,6 +110,13 @@ export const ProductSchema = z.object({
   usageTiming: z.array(UsageTimingSchema).min(1),
   officialUrl: z.string().url(),
   /**
+   * 商品ページそのものの URL。
+   * ブランドサイトのトップではなく、その商品の紹介ページを指す。
+   * 確認できていない場合は null にし、UI では検索導線に切り替える。
+   * 推測で URL を組み立てない（404 や別商品への誘導を避けるため）。
+   */
+  productPageUrl: z.string().url().nullable().default(null),
+  /**
    * 公式ページと突合した日付。null は「未検証」を意味し、
    * UI 上で根拠ありとして扱わない。推測で埋めないこと。
    */

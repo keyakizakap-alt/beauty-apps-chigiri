@@ -12,8 +12,13 @@ import {
  * 相談ログのサイドバー。
  *
  * 過去の相談を開き直せることを主目的にしている。
- * 会話の見出しだけでは何の話だったか思い出せないため、
- * 直近の返答の抜粋も一緒に出す。
+ * 見出しだけでは何の話だったか思い出せないため、直近の返答の抜粋も出す。
+ *
+ * レイアウトの要点:
+ * - 高さは3段（上：固定、中：伸びてスクロール、下：固定）に分ける。
+ *   中段だけが伸縮するようにしないと、件数が増えたときに
+ *   一覧の末尾が下段の裏へ隠れて切れる。
+ * - 下段は導線のみに絞る。長い注意書きを置くと一覧の場所を奪う。
  */
 export default function ConversationSidebar({
   conversations,
@@ -35,84 +40,69 @@ export default function ConversationSidebar({
   onClose?: () => void;
 }) {
   return (
-    <div className="flex h-full flex-col bg-blushSoft">
-      {/* ブランド */}
-      <div className="flex items-center gap-3 px-5 py-5">
-        <Link href="/" className="shrink-0" aria-label="CHIGIRI Beauty のトップへ">
-          <ChigiriMark size={42} />
-        </Link>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold tracking-[0.14em]">CHIGIRI</p>
-          <p className="text-[11px] text-sumi/50">AI beauty companion</p>
-        </div>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-beige bg-white px-2 py-1 text-xs text-sumi/60 lg:hidden"
-          >
-            閉じる
-          </button>
-        )}
-      </div>
-
-      {/* 約束 */}
-      <div className="mx-4 rounded-2xl border border-beige/70 bg-white px-4 py-4">
-        <p className="text-[10px] font-medium tracking-[0.18em] text-moriSoft">
-          OUR PROMISE
-        </p>
-        <p className="mt-1.5 text-[15px] font-medium leading-snug">
-          買う前に、
-          <br />
-          今あるものをつなぐ。
-        </p>
-        <p className="mt-2 text-[11px] leading-relaxed text-sumi/60">
-          人気順ではなく、あなたの手持ち・予算・続けやすさから一緒に考えます。
-        </p>
-      </div>
-
-      {/* 相談ログ */}
-      <div className="mt-6 flex min-h-0 flex-1 flex-col">
-        <div className="flex items-center gap-2 px-5">
+    <div className="flex h-full min-h-0 flex-col bg-blushSoft">
+      {/* 上段：ブランドと新規作成 */}
+      <div className="shrink-0 px-4 pb-3 pt-4">
+        <div className="flex items-center gap-2.5">
+          <Link href="/" className="shrink-0" aria-label="CHIGIRI Beauty のトップへ">
+            <ChigiriMark size={36} />
+          </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-medium tracking-[0.18em] text-moriSoft">
-              YOUR CONVERSATIONS
+            <p className="text-[13px] font-semibold tracking-[0.12em]">CHIGIRI</p>
+            <p className="truncate text-[10px] text-sumi/45">
+              買う前に、今あるものをつなぐ。
             </p>
-            <p className="text-sm font-medium">相談ログ</p>
           </div>
-          <button
-            type="button"
-            onClick={onNew}
-            aria-label="新しい相談を始める"
-            title="新しい相談を始める"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-beige bg-white text-lg leading-none text-sumi/70 transition-colors hover:border-ai/50 hover:text-ai"
-          >
-            <span aria-hidden>+</span>
-          </button>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded-lg border border-beige bg-white px-2.5 py-1 text-xs text-sumi/60 lg:hidden"
+            >
+              閉じる
+            </button>
+          )}
         </div>
 
-        {/* 保存できていない場合は黙って進めない。消えることを先に伝える。 */}
+        <button
+          type="button"
+          onClick={onNew}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-ai/30 bg-white px-3 py-2.5 text-[13px] font-medium text-ai transition-colors hover:bg-ai/5"
+        >
+          <span aria-hidden className="text-base leading-none">
+            +
+          </span>
+          新しく相談する
+        </button>
+      </div>
+
+      {/* 中段：一覧。ここだけが伸びてスクロールする。 */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <p className="shrink-0 px-4 pb-1.5 text-[11px] font-medium text-sumi/45">
+          これまでの相談
+          {conversations.length > 0 && `（${conversations.length}）`}
+        </p>
+
         {storage !== "ok" && (
-          <div className="mx-4 mt-2 rounded-lg border border-sakura/45 bg-sakuraSoft/60 px-3 py-2.5">
+          <div className="mx-3 mb-2 shrink-0 rounded-lg border border-sakura/45 bg-sakuraSoft/60 px-3 py-2">
             <p className="text-[11px] font-medium text-sakura">
-              ⚠ この端末に保存できていません
+              保存できていません
             </p>
-            <p className="mt-1 text-[11px] leading-relaxed text-sumi/70">
+            <p className="mt-0.5 text-[10px] leading-relaxed text-sumi/65">
               {storage === "unavailable"
-                ? "ブラウザが保存領域を使わせない設定になっています（プライベートモードなど）。この画面を閉じると相談内容は消えます。"
-                : "保存領域が一杯です。古い相談を削除すると保存できるようになります。"}
+                ? "ブラウザの設定で保存が止められています。閉じると消えます。"
+                : "保存領域が一杯です。古い相談を削除してください。"}
             </p>
           </div>
         )}
 
-        <div className="mt-3 min-h-0 flex-1 overflow-y-auto px-4 pb-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
           {conversations.length === 0 ? (
-            <p className="px-1 text-[11px] leading-relaxed text-sumi/45">
-              まだ相談がありません。話しかけると、ここに記録されます。
-              保存先はこの端末の中だけです。
+            <p className="px-1 py-2 text-[11px] leading-relaxed text-sumi/45">
+              まだ相談がありません。話しかけると、ここに残ります。
             </p>
           ) : (
-            <ul className="space-y-1.5">
+            <ul className="space-y-1">
               {conversations.map((c) => {
                 const isActive = c.id === activeId;
                 return (
@@ -121,24 +111,33 @@ export default function ConversationSidebar({
                       type="button"
                       onClick={() => onSelect(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`w-full rounded-xl border px-3 py-2.5 pr-9 text-left transition-colors ${
+                      className={`w-full rounded-xl px-3 py-2.5 pr-8 text-left transition-colors ${
                         isActive
-                          ? "border-ai/40 bg-white"
-                          : "border-transparent bg-white/55 hover:border-beige hover:bg-white"
+                          ? "bg-white shadow-[0_1px_2px_rgba(46,42,38,0.06)]"
+                          : "hover:bg-white/70"
                       }`}
                     >
-                      <p className="truncate text-[13px] font-medium leading-snug">
-                        {c.title}
-                      </p>
-                      <p className="mt-0.5 truncate text-[11px] text-sumi/50">
+                      <div className="flex items-baseline gap-2">
+                        <p
+                          className={`min-w-0 flex-1 truncate text-[13px] leading-snug ${
+                            isActive ? "font-medium" : "text-sumi/85"
+                          }`}
+                        >
+                          {c.title}
+                        </p>
+                        <span className="shrink-0 text-[10px] text-sumi/35">
+                          {formatWhen(c.updatedAt)}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 truncate text-[11px] leading-relaxed text-sumi/45">
                         {deriveSnippet(c)}
-                      </p>
-                      <p className="mt-1 text-[10px] text-sumi/35">
-                        {formatWhen(c.updatedAt)}
-                        {c.messages.some((m) => m.rec) && "・ルーティンあり"}
                       </p>
                     </button>
 
+                    {/*
+                      削除。ホバーでしか出さないと触る端末で押せないため、
+                      常に置いたうえで、普段は目立たない濃さにする。
+                    */}
                     <button
                       type="button"
                       onClick={() => {
@@ -151,7 +150,7 @@ export default function ConversationSidebar({
                         }
                       }}
                       aria-label={`${c.title} を削除`}
-                      className="absolute right-2 top-2.5 rounded-md px-1.5 py-0.5 text-xs text-sumi/30 opacity-0 transition-opacity hover:bg-sakuraSoft hover:text-sakura focus:opacity-100 group-hover:opacity-100"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md px-1.5 py-1 text-xs text-sumi/25 transition-colors hover:bg-sakuraSoft hover:text-sakura focus-visible:text-sakura"
                     >
                       ×
                     </button>
@@ -163,27 +162,26 @@ export default function ConversationSidebar({
         </div>
       </div>
 
-      {/* 導線と注意書き */}
-      <div className="border-t border-beige/60 px-5 py-4">
+      {/* 下段：導線のみ。注意書きは置かない。 */}
+      <div className="shrink-0 border-t border-beige/60 px-4 py-3">
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
-          <Link href="/inventory" className="text-ai underline underline-offset-2">
+          <Link href="/inventory" className="text-sumi/60 hover:text-ai">
             手持ちを選ぶ
           </Link>
-          <Link href="/result" className="text-ai underline underline-offset-2">
+          <Link href="/result" className="text-sumi/60 hover:text-ai">
             ルーティン
           </Link>
-          <Link href="/ledger" className="text-ai underline underline-offset-2">
-            買わずに済んだ記録
+          <Link href="/ledger" className="text-sumi/60 hover:text-ai">
+            見送った記録
+          </Link>
+          <Link href="/privacy" className="text-sumi/60 hover:text-ai">
+            データの扱い
           </Link>
         </div>
-        <p className="mt-2.5 text-[10px] leading-relaxed text-sumi/45">
+        <p className="mt-2 text-[10px] text-sumi/35">
           {storage === "ok"
-            ? `この端末に${conversations.length}件を保存しています。サーバーへは送っていません。`
-            : "保存できていないため、閉じると消えます。"}
-        </p>
-        <p className="mt-1 text-[10px] leading-relaxed text-sumi/45">
-          本サービスは医療上の診断・治療を提供するものではありません。
-          異常がある場合は使用を中止し、専門家へご相談ください。
+            ? "この端末にだけ保存しています"
+            : "保存できていません"}
         </p>
       </div>
     </div>

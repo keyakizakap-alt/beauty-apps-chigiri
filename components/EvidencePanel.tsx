@@ -1,146 +1,130 @@
 "use client";
 
+import { useState } from "react";
 import type { AiMeta, Evidence } from "@/schemas/recommendation";
+import type { Product } from "@/schemas/product";
+import { purchaseLinksFor } from "@/domain/commerce/purchase-links";
 
 /**
- * 根拠パネル。
+ * 今回のルーティンで使った商品の一覧と、買える場所への導線。
+ *
+ * 以前はここに「どのモデルを使ったか」「外部へ送ったか」といった
+ * 内部の動作を並べていたが、使う人にとっては読む必要のない情報だった。
+ * 前面には商品と行き先だけを置き、内部の話は畳んでおく。
  *
  * sourceCheckedAt が null の商品は「公式ページとの突合が未完了」であり、
- * 根拠が確認済みであるかのように表示しない（受け入れ条件）。
+ * 根拠が確認済みであるかのようには表示しない。
  */
-/**
- * 外部送信を行わなかった理由。
- * これらは障害ではなく設定どおりの動作なので、失敗表示と区別する。
- */
-const PRIVACY_REASON_TEXT: Record<string, string> = {
-  user_local_only:
-    "「端末内のみ」設定のため、外部AIへは何も送っていません。説明文はサーバー内で組み立てています。",
-  disabled_by_operator:
-    "このサービスでは外部AIへの送信を無効にしています。説明文はサーバー内で組み立てています。",
-  not_configured:
-    "外部AIの接続情報が設定されていないため、説明文はサーバー内で組み立てています。",
-};
-
-function isPrivacyReason(reason: string | null): reason is string {
-  return reason !== null && reason in PRIVACY_REASON_TEXT;
-}
 
 export default function EvidencePanel({
   evidence,
   ai,
+  products,
 }: {
   evidence: Evidence[];
   ai: AiMeta;
+  /** 購入導線を組み立てるための商品情報 */
+  products?: Map<string, Product>;
 }) {
-  const verifiedCount = evidence.filter((e) => e.sourceCheckedAt !== null).length;
+  const [openDetails, setOpenDetails] = useState(false);
+
+  if (evidence.length === 0) return null;
 
   return (
-    <section className="chigiri-card p-4">
-      <h3 className="text-base font-semibold">根拠とAIの動作</h3>
+    <section className="chigiri-card p-4 sm:p-5">
+      <h3 className="text-base font-semibold">今回ご紹介したものはこちら</h3>
+      <p className="mt-1 text-xs leading-relaxed text-sumi/55">
+        それぞれ、公式に案内されている内容と、購入できる場所をまとめました。
+      </p>
 
-      <div className="mt-3 rounded-lg border border-beige/70 bg-kinari/60 px-3 py-2.5">
-        <p className="chigiri-label">OrcaRouter が選択したモデル</p>
-        {ai.used ? (
-          <p className="mt-1 text-sm">
-            <span className="font-medium text-ai">{ai.model ?? "（モデル名が応答に含まれていません）"}</span>
-            <span className="ml-2 text-xs text-sumi/55">
-              要求 {ai.requestedModel ?? "-"} ／ 応答 {ai.latencyMs ?? "-"}ms
-              {ai.estimatedTokens != null && ` ／ 約${ai.estimatedTokens}トークン`}
-            </span>
-          </p>
-        ) : null}
+      <ul className="mt-3 space-y-2.5">
+        {evidence.map((e) => {
+          const product = products?.get(e.productId);
+          const links = product ? purchaseLinksFor(product) : [];
 
-        {ai.used && (
-          <p className="mt-1 text-xs text-sumi/60">
-            {ai.cached ? (
-              <>
-                <span className="rounded-full bg-matchaSoft px-2 py-0.5 text-[10px] text-matcha">
-                  キャッシュ命中
-                </span>{" "}
-                同じ条件の応答を再利用したため、この回の追加費用はありません。
-              </>
-            ) : (
-              <>
-                この回の推定費用 約
-                <span className="font-medium tabular-nums text-sumi/80">
-                  {ai.costJpy === null ? "—" : `${ai.costJpy.toFixed(3)}円`}
-                </span>
-                <span className="ml-1 text-[11px] text-sumi/45">
-                  （実モデルの単価表からの推定値）
-                </span>
-              </>
-            )}
-          </p>
-        )}
-
-        {!ai.used && isPrivacyReason(ai.fallbackReason) ? (
-          // 外部へ送らなかった場合は「失敗」ではないので、そのように見せる
-          <p className="mt-1 text-sm">
-            <span className="font-medium text-matcha">
-              🔒 外部AIへは送信していません
-            </span>
-            <span className="mt-0.5 block text-xs leading-relaxed text-sumi/60">
-              {PRIVACY_REASON_TEXT[ai.fallbackReason]}
-            </span>
-          </p>
-        ) : !ai.used ? (
-          <p className="mt-1 text-sm">
-            <span className="font-medium text-sakura">AIによる説明生成は未使用</span>
-            <span className="ml-2 text-xs text-sumi/55">
-              理由: {ai.fallbackReason ?? "不明"}
-            </span>
-          </p>
-        ) : null}
-        <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/50">
-          商品の選定・使用順・採用可否はすべてサーバー側の決定論的ロジックで確定しています。
-          AIは確定済みの内容を日本語で説明する役割のみを担当し、AIが失敗した場合もルーティンの中身は変わりません。
-        </p>
-        {ai.jsonValid === false && (
-          <p className="mt-1.5 text-[11px] text-sakura">
-            AI出力のスキーマ検証に失敗したため、システムが計算した説明文へ切り替えました。
-          </p>
-        )}
-      </div>
-
-      <div className="mt-3">
-        <p className="chigiri-label mb-2">
-          商品情報の出典（{verifiedCount}/{evidence.length} 件が公式ページ突合済み）
-        </p>
-        <ul className="space-y-2">
-          {evidence.map((e) => (
+          return (
             <li
               key={e.productId}
-              className="rounded-lg border border-beige/70 px-3 py-2"
+              className="rounded-xl border border-beige/70 bg-white p-3.5"
             >
-              <p className="text-sm leading-snug">
-                {e.brand} {e.name}
-              </p>
-              <p className="mt-0.5 text-xs leading-relaxed text-sumi/60">
-                公式に確認できる表現：{e.claims.join("／") || "未確認"}
-              </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              <p className="text-xs text-sumi/55">{e.brand}</p>
+              <p className="text-[15px] font-medium leading-snug">{e.name}</p>
+
+              {e.claims.length > 0 && (
+                <p className="mt-1.5 text-xs leading-relaxed text-sumi/65">
+                  {e.claims.join("／")}
+                </p>
+              )}
+
+              {links.length > 0 ? (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {links.map((link) => (
+                    <a
+                      key={link.url}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`rounded-lg px-3 py-1.5 text-xs transition-colors ${
+                        link.kind === "product_page"
+                          ? "bg-ai text-white"
+                          : link.shop === "official"
+                            ? "border border-ai/40 text-ai hover:bg-ai/5"
+                            : "border border-beige bg-kinari/50 text-sumi/75 hover:border-ai/40"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              ) : (
                 <a
                   href={e.officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-ai underline underline-offset-2"
+                  className="mt-2 inline-block text-xs text-ai underline underline-offset-2"
                 >
-                  公式サイトを開く
+                  公式サイトを見る
                 </a>
-                {e.sourceCheckedAt ? (
-                  <span className="rounded-full bg-ai/10 px-2 py-0.5 text-[10px] text-ai">
-                    突合済み {e.sourceCheckedAt}
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-sakuraSoft px-2 py-0.5 text-[10px] text-sakura">
-                    公式突合 未完了（参考データ）
-                  </span>
-                )}
-              </div>
+              )}
+
+              {e.sourceCheckedAt === null && (
+                <p className="mt-2 text-[11px] leading-relaxed text-sumi/45">
+                  価格は編集時点の参考です。最新の内容は移動先のページでご確認ください。
+                </p>
+              )}
             </li>
-          ))}
-        </ul>
-      </div>
+          );
+        })}
+      </ul>
+
+      {/* 内部の動作。読みたい人だけが開けばよい。 */}
+      <details
+        className="mt-4"
+        open={openDetails}
+        onToggle={(e) => setOpenDetails((e.target as HTMLDetailsElement).open)}
+      >
+        <summary className="cursor-pointer text-xs text-sumi/45 hover:text-sumi/70">
+          この提案の作り方
+        </summary>
+        <div className="mt-2 space-y-1.5 rounded-lg bg-kinari/60 px-3 py-2.5 text-[11px] leading-relaxed text-sumi/60">
+          <p>
+            使う商品と順番は、お伝えいただいた条件から計算して決めています。
+            同じ条件なら、いつでも同じ結果になります。
+          </p>
+          <p>
+            {ai.used
+              ? `文章の言い回しには ${ai.model ?? "外部のAI"} を使いました（${ai.latencyMs ?? "-"}ms${
+                  ai.cached ? "・前回の結果を再利用" : ""
+                }）。文章だけで、選ぶ商品は変わりません。`
+              : "文章もこの中で組み立てています。外部へは何も送っていません。"}
+          </p>
+          <p>
+            出典は各ブランドの公開情報です。
+            {evidence.filter((e) => e.sourceCheckedAt !== null).length}/
+            {evidence.length} 件が公式ページと突合済みです。
+          </p>
+        </div>
+      </details>
     </section>
   );
 }

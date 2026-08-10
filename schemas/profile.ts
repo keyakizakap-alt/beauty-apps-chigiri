@@ -108,6 +108,40 @@ export const ChatMessageSchema = z.object({
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+/** 相談の進み具合。サーバーは状態を保持せず、やり取りのたびに受け渡す。 */
+export const CounselStateSchema = z.object({
+  stage: z
+    .enum([
+      "greeting",
+      "concerns",
+      "skin",
+      "time",
+      "budget",
+      "inventory",
+      "confirm",
+      "proposed",
+      "aftercare",
+    ])
+    .default("greeting"),
+  asked: z
+    .array(
+      z.enum([
+        "greeting",
+        "concerns",
+        "skin",
+        "time",
+        "budget",
+        "inventory",
+        "confirm",
+        "proposed",
+        "aftercare",
+      ]),
+    )
+    .max(20)
+    .default([]),
+  turn: z.number().int().min(0).max(500).default(0),
+});
+
 export const ChatRequestSchema = z.object({
   message: z.string().min(1).max(2000),
   history: z.array(ChatMessageSchema).max(20).default([]),
@@ -117,5 +151,7 @@ export const ChatRequestSchema = z.object({
    * 既定は false。省略された場合も「端末内のみ」として扱い、外部へ送らない。
    */
   allowExternalAi: z.boolean().default(false),
+  /** 相談の進み具合 */
+  counsel: CounselStateSchema.default({ stage: "greeting", asked: [], turn: 0 }),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;

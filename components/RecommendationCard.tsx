@@ -83,12 +83,14 @@ export default function RecommendationCard({
                 候補を比べて決める
               </Link>
               <a
-                href={suggested.officialUrl}
+                href={
+                  suggested.productPageUrl ?? suggested.officialUrl
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg border border-ai px-4 py-2.5 text-center text-xs text-ai"
               >
-                公式サイトで確認する
+                {suggested.productPageUrl ? "商品ページを見る" : "ブランド公式を見る"}
               </a>
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-sumi/50">
@@ -212,7 +214,7 @@ export default function RecommendationCard({
         </section>
       )}
 
-      <EvidencePanel evidence={rec.evidence} ai={rec.ai} />
+      <EvidencePanel evidence={rec.evidence} ai={rec.ai} products={products} />
 
       {rec.safety.map((s) => (
         <p

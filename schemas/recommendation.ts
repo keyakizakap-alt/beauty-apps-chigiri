@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CategorySchema, ProductSchema, UsageTimingSchema } from "./product";
-import { ProfileSchema } from "./profile";
+import { CounselStateSchema, ProfileSchema } from "./profile";
 
 /** 推薦 API のリクエスト */
 export const RecommendRequestSchema = z.object({
@@ -219,10 +219,26 @@ export const LlmExplanationSchema = z.object({
 });
 export type LlmExplanation = z.infer<typeof LlmExplanationSchema>;
 
+/** 選択肢（押すと定型文を送る） */
+export const QuickReplySchema = z.object({
+  label: z.string(),
+  send: z.string(),
+});
+export type QuickReply = z.infer<typeof QuickReplySchema>;
+
 /** チャット API のレスポンス */
 export const ChatResponseSchema = z.object({
   reply: z.string(),
+  /** 受け止めの一言。本文とは別の吹き出しで出す。 */
+  acknowledgement: z.string().nullable().default(null),
   profile: ProfileSchema,
+  /** 相談の進み具合（次のリクエストへそのまま返す） */
+  counsel: CounselStateSchema,
+  quickReplies: z.array(QuickReplySchema).default([]),
+  /** 手持ちの選択 UI を出すか */
+  showInventoryPicker: z.boolean().default(false),
+  /** 写真で登録する導線を出すか */
+  offerPhoto: z.boolean().default(false),
   /** 追加で聞くべき項目 */
   missing: z.array(z.string()),
   recommendation: RecommendationSchema.nullable(),

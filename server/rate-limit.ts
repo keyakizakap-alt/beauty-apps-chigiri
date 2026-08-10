@@ -32,6 +32,8 @@ export const RATE_LIMITS = {
   b2b: { limit: 120, windowMs: 60_000 },
   /** 疎通確認は実際に課金が発生するため厳しめ */
   probe: { limit: 6, windowMs: 60_000 },
+  /** 写真の読み取りは画像を送るため費用が大きい */
+  vision: { limit: 12, windowMs: 60_000 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitResult = {

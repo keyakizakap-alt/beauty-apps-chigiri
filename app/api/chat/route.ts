@@ -12,12 +12,14 @@ import {
   ambiguousBrandMatches,
   confidentMatches,
 } from "@/domain/recommendation/product-matcher";
+import {
+  planTurn,
+  wantsProposal,
+  type CounselState,
+} from "@/domain/conversation/counsel";
 import { applyLlmExplanation } from "@/server/explanation";
 import { extractSlots } from "@/server/slot-extractor";
-import {
-  askForInventory,
-  fallbackChatReply,
-} from "@/server/fallback-explanation";
+import { summariseResult } from "@/server/fallback-explanation";
 import { guardJsonRequest, invalidInput, isFailure } from "@/server/api-guard";
 import { RATE_LIMITS } from "@/server/rate-limit";
 
@@ -41,6 +43,12 @@ const IDLE_AI: AiMeta = {
 /** 手持ち商品を外す意図か */
 const REMOVE_INTENT = /外し|外す|削除|やめ(た|る)|持ってな|使わなくな|捨て/;
 
+/**
+ * 相談の1往復。
+ *
+ * 進め方（何を尋ねるか）は domain/conversation/counsel が決める。
+ * ここは、聞き取り・安全確認・ルーティン生成をつなぐ役に徹する。
+ */
 export async function POST(req: Request) {
   const guarded = await guardJsonRequest(req, "chat", RATE_LIMITS.chat);
   if (isFailure(guarded)) return guarded.response;
@@ -48,14 +56,24 @@ export async function POST(req: Request) {
   const parsed = ChatRequestSchema.safeParse(guarded.body);
   if (!parsed.success) return invalidInput();
 
-  const { message, profile: incomingProfile, allowExternalAi } = parsed.data;
+  const {
+    message,
+    profile: incomingProfile,
+    allowExternalAi,
+    counsel,
+  } = parsed.data;
 
   // 1. 安全ゲート。ここで止まった場合、商品の提案は一切行わない。
   const gate = evaluateSafety(message);
   if (gate.kind === "stop") {
     return respond({
       reply: gate.notices.map((n) => n.message).join("\n\n"),
+      acknowledgement: null,
       profile: incomingProfile,
+      counsel,
+      quickReplies: [],
+      showInventoryPicker: false,
+      offerPhoto: false,
       missing: [],
       recommendation: null,
       ai: IDLE_AI,
@@ -81,19 +99,22 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. 自然文からの条件抽出（LLM: コスト優先ティア / 失敗時は規則ベース）
+    // 3. 自然文からの条件抽出
     const { patch, ai: slotAi } = await extractSlots(message, incomingProfile, {
       userAllowsExternalAi: allowExternalAi,
     });
 
-    // この発言で新たに指定された項目を記録する。
-    // 記録しておかないと、初期値のままの項目まで
-    // 「あなたはこう言いました」と読み上げてしまう。
+    const learned: ProfileField[] = [];
     const statedFields = new Set<ProfileField>(incomingProfile.statedFields);
     for (const key of Object.keys(patch)) {
-      statedFields.add(key as ProfileField);
+      const field = key as ProfileField;
+      if (!statedFields.has(field)) learned.push(field);
+      statedFields.add(field);
     }
-    if (matched.length > 0) statedFields.add("ownedProductIds");
+    if (matched.length > 0 && !removing) {
+      if (!statedFields.has("ownedProductIds")) learned.push("ownedProductIds");
+      statedFields.add("ownedProductIds");
+    }
 
     const merged = ProfileSchema.safeParse({
       ...incomingProfile,
@@ -103,27 +124,44 @@ export async function POST(req: Request) {
     });
     const profile: Profile = merged.success ? merged.data : incomingProfile;
 
-    // 4. 手持ちがまだない場合は推薦を行わず、商品選択をお願いする
-    if (profile.ownedProductIds.length === 0) {
-      const brandHint = ambiguous
-        .slice(0, 3)
-        .map((p) => `「${p.brand} ${p.name}」`);
+    // 4. 次に何を尋ねるかを決める
+    const plan = planTurn({
+      profile,
+      state: counsel as CounselState,
+      learned,
+      wantsProposal: wantsProposal(message),
+    });
+
+    // 5. まだ提案の段階でなければ、質問を返して終わり
+    if (!plan.propose) {
+      const brandHint =
+        plan.state.stage === "inventory" && ambiguous.length > 0
+          ? `\n\nもしかして「${ambiguous
+              .slice(0, 2)
+              .map((p) => `${p.brand} ${p.name}`)
+              .join("」「")}」でしょうか。`
+          : "";
 
       return respond({
-        reply: askForInventory(profile, brandHint),
+        reply: plan.message + brandHint,
+        acknowledgement: plan.acknowledgement,
         profile,
-        missing: ["ownedProductIds"],
+        counsel: plan.state,
+        quickReplies: plan.quickReplies,
+        showInventoryPicker: plan.showInventoryPicker,
+        offerPhoto: plan.offerPhoto,
+        missing: plan.showInventoryPicker ? ["ownedProductIds"] : [],
         recommendation: null,
         ai: slotAi,
         safety: [],
       });
     }
 
-    // 5. 決定論的にルーティンを確定させる
+    // 6. 決定論的にルーティンを確定させる
     const { recommendation: base, allowedProductIds } =
       buildRecommendation(profile);
 
-    // 6. 確定内容の説明だけを LLM に任せる（品質優先ティア）
+    // 7. 確定内容の説明だけを AI に任せる（利用者が許可した場合のみ）
     const { recommendation, ai } = await applyLlmExplanation(
       profile,
       base,
@@ -131,12 +169,14 @@ export async function POST(req: Request) {
       { userAllowsExternalAi: allowExternalAi },
     );
 
-    // 要約は結果カードの見出しになるため、チャット本文では繰り返さない
-    const reply = fallbackChatReply(profile, recommendation, ai.fallbackReason);
-
     return respond({
-      reply,
+      reply: summariseResult(profile, recommendation),
+      acknowledgement: plan.acknowledgement,
       profile,
+      counsel: plan.state,
+      quickReplies: plan.quickReplies,
+      showInventoryPicker: false,
+      offerPhoto: false,
       missing: [],
       recommendation: { ...recommendation, ai },
       ai,

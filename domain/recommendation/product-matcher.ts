@@ -125,3 +125,21 @@ export function ambiguousBrandMatches(text: string): Product[] {
   if (all.some((m) => m.strength !== "brand")) return [];
   return all.filter((m) => m.strength === "brand").map((m) => m.product);
 }
+
+/**
+ * 1行のテキストから、確定してよい商品を1点だけ返す。
+ *
+ * 写真から読み取った文字列（「キュレル 潤浸保湿 泡洗顔料」など）を
+ * カタログへ突き合わせる用途。ブランド名だけの一致では確定しない
+ * （別の商品を勝手に手持ちへ入れないため）。
+ *
+ * 複数に当たった場合は、より強く一致したものを選ぶ。
+ */
+export function matchByText(text: string): Product | null {
+  const results = matchProducts(text).filter((m) => m.strength !== "brand");
+  if (results.length === 0) return null;
+
+  const rank = { full: 0, name: 1, brand: 2 } as const;
+  return [...results].sort((a, b) => rank[a.strength] - rank[b.strength])[0]
+    .product;
+}

@@ -1,13 +1,15 @@
 {
   "registryVersion": "0.1.0",
   "compiledAt": "2026-08-10",
-  "policy": "外部遷移を許可するホストの許可リスト。ここに無いホストへは、たとえカタログに書かれていてもサーバーが遷移を拒否する。送料・返品条件・在庫は公式に確認できたものだけを記載し、確認できていない項目は null のままにする（推測して埋めない）。",
+  "policy": "外部遷移を許可するホストの許可リスト。ここに無いホストへは、たとえカタログに書かれていてもサーバーが遷移を拒否する。送料・返品条件・在庫は公式に確認できたものだけを記載し、確認できていない項目は null のままにする（推測して埋めない）。 検索結果ページへの遷移のみを想定し、個別商品ページの URL は確認できたものだけを商品側に持たせる。",
   "merchants": [
     {
       "id": "kao-official",
       "name": "花王 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.kao.co.jp"],
+      "hosts": [
+        "www.kao.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -16,7 +18,9 @@
       "id": "shiseido-official",
       "name": "資生堂 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.shiseido.co.jp"],
+      "hosts": [
+        "www.shiseido.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -25,7 +29,9 @@
       "id": "rohto-official",
       "name": "ロート製薬 公式サイト",
       "kind": "brand_official",
-      "hosts": ["jp.rohto.com"],
+      "hosts": [
+        "jp.rohto.com"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -34,7 +40,9 @@
       "id": "nivea-kao-official",
       "name": "ニベア花王 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.nivea.co.jp"],
+      "hosts": [
+        "www.nivea.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -43,7 +51,9 @@
       "id": "kanebo-allie-official",
       "name": "アリィー 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.allie-uv.com"],
+      "hosts": [
+        "www.allie-uv.com"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -52,7 +62,9 @@
       "id": "chifure-official",
       "name": "ちふれ 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.chifure.co.jp"],
+      "hosts": [
+        "www.chifure.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -61,7 +73,9 @@
       "id": "cow-soap-official",
       "name": "牛乳石鹸共進社 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.cow-soap.co.jp"],
+      "hosts": [
+        "www.cow-soap.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -70,7 +84,9 @@
       "id": "imju-official",
       "name": "イミュ 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.imju.jp"],
+      "hosts": [
+        "www.imju.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -79,7 +95,9 @@
       "id": "muji-official",
       "name": "無印良品 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.muji.com"],
+      "hosts": [
+        "www.muji.com"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -88,7 +106,9 @@
       "id": "obagi-official",
       "name": "オバジ 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.obagi.co.jp"],
+      "hosts": [
+        "www.obagi.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -97,7 +117,9 @@
       "id": "rosette-official",
       "name": "ロゼット 公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.rosette.jp"],
+      "hosts": [
+        "www.rosette.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -106,7 +128,9 @@
       "id": "innisfree-jp-official",
       "name": "innisfree 日本公式サイト",
       "kind": "brand_official",
-      "hosts": ["www.innisfree.jp"],
+      "hosts": [
+        "www.innisfree.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -115,7 +139,9 @@
       "id": "anua-jp-official",
       "name": "Anua 日本公式サイト",
       "kind": "brand_official",
-      "hosts": ["anua.jp"],
+      "hosts": [
+        "anua.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -124,7 +150,9 @@
       "id": "torriden-jp-official",
       "name": "Torriden 日本公式サイト",
       "kind": "brand_official",
-      "hosts": ["torriden.jp"],
+      "hosts": [
+        "torriden.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -133,7 +161,9 @@
       "id": "vt-jp-official",
       "name": "VT COSMETICS 日本公式サイト",
       "kind": "brand_official",
-      "hosts": ["vtcosmetics.jp"],
+      "hosts": [
+        "vtcosmetics.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
@@ -142,7 +172,46 @@
       "id": "manyo-jp-official",
       "name": "魔女工場 日本公式サイト",
       "kind": "brand_official",
-      "hosts": ["manyofactory.jp"],
+      "hosts": [
+        "manyofactory.jp"
+      ],
+      "shippingFeeYen": null,
+      "returnPolicyUrl": null,
+      "affiliate": false
+    },
+    {
+      "id": "rakuten",
+      "name": "楽天市場",
+      "kind": "authorized_retailer",
+      "hosts": [
+        "search.rakuten.co.jp",
+        "item.rakuten.co.jp",
+        "www.rakuten.co.jp"
+      ],
+      "shippingFeeYen": null,
+      "returnPolicyUrl": null,
+      "affiliate": false
+    },
+    {
+      "id": "amazon-jp",
+      "name": "Amazon.co.jp",
+      "kind": "authorized_retailer",
+      "hosts": [
+        "www.amazon.co.jp",
+        "amazon.co.jp"
+      ],
+      "shippingFeeYen": null,
+      "returnPolicyUrl": null,
+      "affiliate": false
+    },
+    {
+      "id": "yahoo-shopping",
+      "name": "Yahoo!ショッピング",
+      "kind": "authorized_retailer",
+      "hosts": [
+        "shopping.yahoo.co.jp",
+        "store.shopping.yahoo.co.jp"
+      ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
       "affiliate": false
