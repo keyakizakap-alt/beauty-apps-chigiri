@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "e2e": "node scripts/e2e-mobile.mjs"
+    "e2e": "node scripts/e2e-mobile.mjs",
+    "icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "next": "^16.3.0",

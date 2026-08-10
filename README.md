@@ -151,7 +151,29 @@ npm run dev                  # http://localhost:3000
 npm test        # Vitest（177ケース）
 npm run build   # 本番ビルド
 npm run typecheck
+npm run e2e     # モバイル幅の E2E（別途 npm start が必要）
+npm run icons   # app/icon.svg から PWA/iOS 用 PNG を再生成
 ```
+
+### アプリアイコンとオープニング
+
+アイコンは **重なり合う2つの輪** で「買う前に、今あるものをつなぐ」を表しています。
+重なった部分（レンズ形）に桜色を置き、すでに持っているもの同士がつながる地点を中心に据えました。
+
+- `app/icon.svg` — 原本。ブラウザのタブ用（SVG なのでどの解像度でも滲まない）
+- `public/icons/*.png` — `npm run icons` で SVG から書き出したもの。
+  ホーム画面追加時の iOS / Android 用。リクエストごとの画像生成を避けるためコミットしています
+- `maskable-512.png` は Android のアダプティブアイコン用に角丸を付けず、
+  中央80%のセーフゾーンに収まるよう縮めています（OS 側が任意の形に切り抜くため）
+- `app/manifest.ts` — ホーム画面から開くとブランド色のスタンドアロン表示になります
+
+アプリを開くと、アイコンとタグラインのオープニングが一度だけ表示されます（`components/AppSplash.tsx`）。
+
+- フェードアウトは **CSS アニメーションだけで完結**します。
+  JS が動かない環境でもオーバーレイが居座って操作を塞ぐことがありません
+- `sessionStorage` で「同じタブでは1回だけ」。画面遷移やリロードでは再表示しません
+- `prefers-reduced-motion` では拡大・移動をやめ、短く消えるだけにします
+- 装飾のため `aria-hidden`。読み上げは本文から始まります
 
 ### 環境変数
 
@@ -272,6 +294,8 @@ app/
 ├─ result/page.tsx           結果＋予算スライダー再計算
 ├─ approve/                  候補比較 → 承認 → 引き継ぎ
 ├─ ledger/page.tsx           買わずに済んだ記録・継続フィードバック
+├─ icon.svg                  アプリアイコン（原本）
+├─ manifest.ts               PWA マニフェスト
 └─ api/
    ├─ chat/route.ts          会話 → 安全ゲート → 条件抽出 → 推薦
    ├─ recommend/route.ts     プロファイル → 推薦
@@ -313,7 +337,10 @@ server/                      ← server-only
 └─ logger.ts                 LLM呼び出しの観測ログ
 
 components/                  UI（推薦ロジックを持たない）
+├─ AppSplash.tsx             オープニング＋ブランドマーク
 lib/ledger.ts                買わなかった記録（端末内・同意ベース）
+public/icons/                書き出し済みアプリアイコン（npm run icons で再生成）
+scripts/build-icons.mjs      SVG → PNG の書き出し
 data/                        products.json / allowed-claims.json / merchants.json
 schemas/                     Zod スキーマ（全境界で使用）
 tests/                       Vitest 177ケース
