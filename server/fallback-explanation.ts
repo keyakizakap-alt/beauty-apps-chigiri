@@ -1,6 +1,7 @@
 import { isStated, type Profile } from "@/schemas/profile";
 import type { Recommendation } from "@/schemas/recommendation";
 import { CATEGORY_LABEL, getProduct } from "@/domain/recommendation/catalog";
+import { domainConfig } from "@/domain/recommendation/domains";
 import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-builder";
 
 /**
@@ -34,7 +35,7 @@ export function describeStatedConditions(profile: Profile): string {
     bits.push(`${list}が気になるとのことなので、そこを軸にしました`);
   }
 
-  if (isStated(profile, "skinType")) {
+  if (isStated(profile, "skinType") && domainConfig(profile.domain).usesSkinType) {
     bits.push(
       `${SKIN_LABEL[profile.skinType]}に合う表示のあるものを優先しています`,
     );
@@ -64,7 +65,9 @@ export function describeStatedConditions(profile: Profile): string {
 export function describeAssumptions(profile: Profile): string {
   const assumed: string[] = [];
 
-  if (!isStated(profile, "skinType")) {
+  // 肌の傾向は、肌に直接触れる分野でだけ意味を持つ。
+  // 髪や爪の相談で「肌の傾向は普通肌」と断るのは的外れになる。
+  if (!isStated(profile, "skinType") && domainConfig(profile.domain).usesSkinType) {
     assumed.push(`肌の傾向は${SKIN_LABEL[profile.skinType]}`);
   }
   if (!isStated(profile, "budgetYen")) {
@@ -165,6 +168,7 @@ export function askForInventory(
   brandHint: string[],
 ): string {
   const paragraphs: string[] = [];
+  const noun = domainConfig(profile.domain).itemNoun;
 
   const stated = describeStatedConditions(profile);
   if (stated) {
@@ -178,7 +182,7 @@ export function askForInventory(
     );
   } else {
     paragraphs.push(
-      "まず、いまお使いの化粧品を教えてください。商品名をそのまま書いていただいても、選んでいただいても大丈夫です。",
+      `まず、いまお使いの${noun}を教えてください。商品名をそのまま書いていただいても、選んでいただいても大丈夫です。`,
     );
   }
 

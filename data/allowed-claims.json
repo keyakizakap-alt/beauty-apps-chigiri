@@ -1,38 +1,253 @@
 {
   "note": "化粧品の効能効果の範囲（薬機法／厚生労働省通知の56項目）のうち、本サービスが扱うスキンケア領域の表現を抜粋したホワイトリスト。説明文はこの範囲を超えないこと。type=quasi_drug の表現は、医薬部外品として承認された商品にのみ使用できる。",
   "claims": [
-    { "id": "cleanse", "text": "皮膚を清浄にする", "type": "cosmetic" },
-    { "id": "remove_dirt", "text": "皮膚の汚れを落とす", "type": "cosmetic" },
-    { "id": "condition_skin", "text": "肌を整える", "type": "cosmetic" },
-    { "id": "condition_texture", "text": "肌のキメを整える", "type": "cosmetic" },
-    { "id": "keep_healthy", "text": "皮膚をすこやかに保つ", "type": "cosmetic" },
-    { "id": "prevent_rough", "text": "肌荒れを防ぐ", "type": "cosmetic" },
-    { "id": "tighten", "text": "肌をひきしめる", "type": "cosmetic" },
-    { "id": "moisture", "text": "皮膚にうるおいを与える", "type": "cosmetic" },
-    { "id": "water_oil_balance", "text": "皮膚の水分、油分を補い保つ", "type": "cosmetic" },
-    { "id": "flexibility", "text": "皮膚の柔軟性を保つ", "type": "cosmetic" },
-    { "id": "protect", "text": "皮膚を保護する", "type": "cosmetic" },
-    { "id": "prevent_dryness", "text": "皮膚の乾燥を防ぐ", "type": "cosmetic" },
-    { "id": "soften", "text": "肌を柔らげる", "type": "cosmetic" },
-    { "id": "firmness", "text": "肌にはりを与える", "type": "cosmetic" },
-    { "id": "gloss", "text": "肌にツヤを与える", "type": "cosmetic" },
-    { "id": "smooth", "text": "肌をなめらかにする", "type": "cosmetic" },
-    { "id": "prevent_sunburn", "text": "日やけを防ぐ", "type": "cosmetic" },
-    { "id": "prevent_sun_spots", "text": "日やけによるシミ・ソバカスを防ぐ", "type": "cosmetic" },
-    { "id": "keratin_care", "text": "皮膚の古い角質を取り除く", "type": "cosmetic" },
-    { "id": "qd_prevent_acne", "text": "ニキビ・吹き出物を防ぐ", "type": "quasi_drug" },
-    { "id": "qd_prevent_rough", "text": "肌あれ・あれ性を防ぐ", "type": "quasi_drug" },
-    { "id": "qd_whitening", "text": "メラニンの生成を抑え、シミ・ソバカスを防ぐ", "type": "quasi_drug" },
-    { "id": "qd_anti_inflammatory", "text": "皮膚をすこやかに保ち、あれ性を防ぐ", "type": "quasi_drug" }
+    {
+      "id": "cleanse",
+      "text": "皮膚を清浄にする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "remove_dirt",
+      "text": "皮膚の汚れを落とす",
+      "type": "cosmetic"
+    },
+    {
+      "id": "condition_skin",
+      "text": "肌を整える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "condition_texture",
+      "text": "肌のキメを整える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "keep_healthy",
+      "text": "皮膚をすこやかに保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "prevent_rough",
+      "text": "肌荒れを防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "tighten",
+      "text": "肌をひきしめる",
+      "type": "cosmetic"
+    },
+    {
+      "id": "moisture",
+      "text": "皮膚にうるおいを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "water_oil_balance",
+      "text": "皮膚の水分、油分を補い保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "flexibility",
+      "text": "皮膚の柔軟性を保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "protect",
+      "text": "皮膚を保護する",
+      "type": "cosmetic"
+    },
+    {
+      "id": "prevent_dryness",
+      "text": "皮膚の乾燥を防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "soften",
+      "text": "肌を柔らげる",
+      "type": "cosmetic"
+    },
+    {
+      "id": "firmness",
+      "text": "肌にはりを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "gloss",
+      "text": "肌にツヤを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "smooth",
+      "text": "肌をなめらかにする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "prevent_sunburn",
+      "text": "日やけを防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "prevent_sun_spots",
+      "text": "日やけによるシミ・ソバカスを防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "keratin_care",
+      "text": "皮膚の古い角質を取り除く",
+      "type": "cosmetic"
+    },
+    {
+      "id": "qd_prevent_acne",
+      "text": "ニキビ・吹き出物を防ぐ",
+      "type": "quasi_drug"
+    },
+    {
+      "id": "qd_prevent_rough",
+      "text": "肌あれ・あれ性を防ぐ",
+      "type": "quasi_drug"
+    },
+    {
+      "id": "qd_whitening",
+      "text": "メラニンの生成を抑え、シミ・ソバカスを防ぐ",
+      "type": "quasi_drug"
+    },
+    {
+      "id": "qd_anti_inflammatory",
+      "text": "皮膚をすこやかに保ち、あれ性を防ぐ",
+      "type": "quasi_drug"
+    },
+    {
+      "id": "hair_cleanse",
+      "text": "頭皮、毛髪を清浄にする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_healthy",
+      "text": "頭皮、毛髪をすこやかに保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_moisture",
+      "text": "頭皮、毛髪にうるおいを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_keep_moisture",
+      "text": "頭皮、毛髪のうるおいを保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_supple",
+      "text": "毛髪をしなやかにする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_comb",
+      "text": "クシどおりをよくする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_gloss",
+      "text": "毛髪につやを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_body",
+      "text": "毛髪にはり、こしを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_prevent_split",
+      "text": "裂毛、切毛、枝毛を防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "hair_water_oil",
+      "text": "毛髪の水分、油分を補い保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "qd_dandruff",
+      "text": "フケ、カユミを抑える",
+      "type": "quasi_drug"
+    },
+    {
+      "id": "nail_protect",
+      "text": "爪を保護する",
+      "type": "cosmetic"
+    },
+    {
+      "id": "nail_healthy",
+      "text": "爪をすこやかに保つ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "nail_moisture",
+      "text": "爪にうるおいを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "lip_prevent_rough",
+      "text": "口唇の荒れを防ぐ",
+      "type": "cosmetic"
+    },
+    {
+      "id": "lip_moisture",
+      "text": "口唇にうるおいを与える",
+      "type": "cosmetic"
+    },
+    {
+      "id": "lip_protect",
+      "text": "口唇を保護する",
+      "type": "cosmetic"
+    },
+    {
+      "id": "lip_smooth",
+      "text": "口唇を滑らかにする",
+      "type": "cosmetic"
+    },
+    {
+      "id": "prevent_body_odor",
+      "text": "皮膚の清浄により、汗のにおいを抑える",
+      "type": "cosmetic"
+    }
   ],
   "bannedPatterns": [
-    "治る", "治り", "治っ", "治す", "治せ", "治し", "治療", "完治",
-    "改善します", "改善する", "改善され", "効きます", "効果的です",
-    "シミが消える", "シワが消える", "ニキビが治る", "再生", "細胞を",
-    "医学的に", "医師が推奨", "処方する", "診断",
-    "絶対に安全", "副作用はありません", "副作用がない", "100%安全",
-    "必ず", "保証します", "確実に",
-    "アンチエイジング", "若返り", "美白効果があります", "痩せる",
-    "アトピー", "皮膚炎を", "湿疹を治"
+    "治る",
+    "治り",
+    "治っ",
+    "治す",
+    "治せ",
+    "治し",
+    "治療",
+    "完治",
+    "改善します",
+    "改善する",
+    "改善され",
+    "効きます",
+    "効果的です",
+    "シミが消える",
+    "シワが消える",
+    "ニキビが治る",
+    "再生",
+    "細胞を",
+    "医学的に",
+    "医師が推奨",
+    "処方する",
+    "診断",
+    "絶対に安全",
+    "副作用はありません",
+    "副作用がない",
+    "100%安全",
+    "必ず",
+    "保証します",
+    "確実に",
+    "アンチエイジング",
+    "若返り",
+    "美白効果があります",
+    "痩せる",
+    "アトピー",
+    "皮膚炎を",
+    "湿疹を治"
   ]
 }

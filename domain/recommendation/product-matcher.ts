@@ -1,5 +1,5 @@
 import { PRODUCTS } from "./catalog";
-import type { Product } from "@/schemas/product";
+import type { Domain, Product } from "@/schemas/product";
 
 /**
  * 自然文から手持ち商品を特定する決定論的マッチャー。
@@ -76,13 +76,18 @@ export type MatchResult = {
  * ブランド名だけの一致は候補が複数になりうるため strength で区別し、
  * 呼び出し側が「どれですか？」と確認できるようにする。
  */
-export function matchProducts(text: string): MatchResult[] {
+export function matchProducts(
+  text: string,
+  domain?: Domain,
+): MatchResult[] {
   const hay = normalize(text);
   if (hay.length === 0) return [];
 
   const results = new Map<string, MatchResult>();
 
-  for (const p of PRODUCTS) {
+  const pool = domain ? PRODUCTS.filter((p) => p.domain === domain) : PRODUCTS;
+
+  for (const p of pool) {
     const full = normalize(`${p.brand}${p.name}`);
     const name = normalize(p.name);
     const brandKeys = [p.brand, ...(ALIASES[p.brand] ?? [])].map(normalize);
@@ -113,15 +118,18 @@ export function matchProducts(text: string): MatchResult[] {
  * 手持ち商品として確定してよいものだけを返す。
  * ブランド名だけの一致は確定させない（別商品を勝手に登録しないため）。
  */
-export function confidentMatches(text: string): Product[] {
-  return matchProducts(text)
+export function confidentMatches(text: string, domain?: Domain): Product[] {
+  return matchProducts(text, domain)
     .filter((m) => m.strength !== "brand")
     .map((m) => m.product);
 }
 
 /** ブランド名だけ一致した場合の確認候補 */
-export function ambiguousBrandMatches(text: string): Product[] {
-  const all = matchProducts(text);
+export function ambiguousBrandMatches(
+  text: string,
+  domain?: Domain,
+): Product[] {
+  const all = matchProducts(text, domain);
   if (all.some((m) => m.strength !== "brand")) return [];
   return all.filter((m) => m.strength === "brand").map((m) => m.product);
 }

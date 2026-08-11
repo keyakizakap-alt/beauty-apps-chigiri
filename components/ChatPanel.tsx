@@ -17,7 +17,11 @@ import RecommendationCard from "./RecommendationCard";
 import ConversationSidebar from "./ConversationSidebar";
 import AiConsentCard from "./AiConsentCard";
 import { ChigiriMark } from "./AppSplash";
-import { DEFAULT_CONCIERGE, findConcierge, type Concierge } from "@/domain/concierges";
+import {
+  conciergeForDomain,
+  findConcierge,
+  type Concierge,
+} from "@/domain/concierges";
 
 /**
  * チャット本体。
@@ -135,10 +139,11 @@ export default function ChatPanel() {
   const [loading, setLoading] = useState(false);
   const [thinkingStep, setThinkingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [panel, setPanel] = useState<"none" | "profile" | "inventory">("none");
+  const [panel, setPanel] = useState<"none" | "profile" | "inventory" | "settings">("none");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [conciergeId, setConciergeId] = useState(DEFAULT_CONCIERGE.id);
-  const concierge = findConcierge(conciergeId);
+  // 相談先は分野そのもの。プロファイルの分野から引く。
+  const concierge = conciergeForDomain(profile.domain);
+  const conciergeId = concierge.id;
 
   const endRef = useRef<HTMLDivElement>(null);
   /** 保存時に読む最新のプロファイル（発言の変化だけで保存を起こすため） */
@@ -295,6 +300,35 @@ export default function ChatPanel() {
     [setProfile],
   );
 
+
+  /**
+   * 相談先の切り替え。
+   *
+   * 分野が変わると扱う商品も工程も変わるため、同じ相談の続きにはしない。
+   * その分野の新しい相談として開き直す。手持ちの登録は分野ごとに
+   * 意味が違うので引き継がない（ヘアの相談にスキンケアの手持ちを
+   * 持ち込むと、役割の重複判定が成立しなくなるため）。
+   */
+  const handleSelectConcierge = useCallback(
+    (id: string) => {
+      const next = findConcierge(id);
+      if (next.domain === profileRef.current.domain) return;
+
+      const nextProfile: Profile = {
+        ...profileRef.current,
+        domain: next.domain,
+        concerns: [],
+        ownedProductIds: [],
+        statedFields: [],
+      };
+      setProfile(nextProfile);
+      setSidebarOpen(false);
+      setPanel("none");
+      startNew(nextProfile);
+    },
+    [setProfile, startNew],
+  );
+
   /** 設定パネルから直接再計算する（予算変更のデモ用） */
   const recalc = useCallback(
     (next: Profile) => {
@@ -344,7 +378,7 @@ export default function ChatPanel() {
             onDelete={remove}
             storage={storage}
             conciergeId={conciergeId}
-            onSelectConcierge={setConciergeId}
+            onSelectConcierge={handleSelectConcierge}
           />
         </div>
       </aside>
@@ -368,7 +402,7 @@ export default function ChatPanel() {
               storage={storage}
               onClose={() => setSidebarOpen(false)}
               conciergeId={conciergeId}
-              onSelectConcierge={setConciergeId}
+              onSelectConcierge={handleSelectConcierge}
             />
           </div>
         </div>
@@ -428,12 +462,16 @@ export default function ChatPanel() {
               >
                 条件
               </button>
-              <Link
-                href="/privacy"
+              <button
+                type="button"
+                onClick={() => setPanel(panel === "settings" ? "none" : "settings")}
+                aria-expanded={panel === "settings"}
                 title={
-                  privacy.allowExternalAi
-                    ? "外部AIの利用を許可しています。送信内容を確認できます。"
-                    : "外部へは何も送信していません。詳細を確認できます。"
+                  privacy.decided
+                    ? privacy.allowExternalAi
+                      ? "外部AIの利用を許可しています。設定で変更できます。"
+                      : "外部へは何も送信していません。設定で変更できます。"
+                    : "説明文の作り方をまだ選んでいません。設定で選べます。"
                 }
                 className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs ${
                   privacy.allowExternalAi
@@ -441,11 +479,12 @@ export default function ChatPanel() {
                     : "border-matcha/30 bg-matchaSoft text-matcha"
                 }`}
               >
-                <span aria-hidden>{privacy.allowExternalAi ? "☁" : "🔒"}</span>
-                <span className="hidden sm:inline">
+                <span aria-hidden>⚙</span>
+                <span className="hidden sm:inline">設定</span>
+                <span className="sr-only">
                   {privacy.allowExternalAi ? "AI説明を利用中" : "端末内で処理"}
                 </span>
-              </Link>
+              </button>
               <p className="hidden rounded-full border border-beige bg-white px-3 py-1.5 text-xs text-sumi/60 lg:block">
                 日本・韓国コスメ {PRODUCTS.length}点
               </p>
@@ -468,10 +507,22 @@ export default function ChatPanel() {
           {panel !== "none" && (
             <div className="border-t border-beige/70 bg-white/95">
               <div className="mx-auto max-h-[65vh] max-w-3xl overflow-y-auto px-4 py-4">
-                {panel === "profile" ? (
-                  <>
-                    <ProfileForm profile={profile} onChange={setProfile} />
-
+                {panel === "profile" && (
+                  <ProfileForm profile={profile} onChange={setProfile} />
+                )}
+                {panel === "inventory" && (
+                  <ProductSelector
+                    selectedIds={profile.ownedProductIds}
+                    onToggle={toggleOwned}
+                    domain={profile.domain}
+                  />
+                )}
+                {panel === "settings" && (
+                  <div className="space-y-4">
+                    <AiConsentCard
+                      onChoose={setAllowExternalAi}
+                      current={privacy.decided ? privacy.allowExternalAi : null}
+                    />
                     {/* データの送信先に関する設定 */}
                     <div className="mt-5 rounded-xl border border-beige bg-kinari/50 p-4">
                       <p className="text-sm font-medium">データの扱い</p>
@@ -505,26 +556,25 @@ export default function ChatPanel() {
                         何が送られ、何が送られないかを詳しく見る
                       </Link>
                     </div>
-                  </>
-                ) : (
-                  <ProductSelector
-                    selectedIds={profile.ownedProductIds}
-                    onToggle={toggleOwned}
-                  />
+                  </div>
                 )}
                 <div className="mt-4 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => recalc(profile)}
-                    disabled={loading || profile.ownedProductIds.length === 0}
-                    className="flex-1 rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
-                  >
-                    この条件で組み立てる
-                  </button>
+                  {panel !== "settings" && (
+                    <button
+                      type="button"
+                      onClick={() => recalc(profile)}
+                      disabled={loading || profile.ownedProductIds.length === 0}
+                      className="flex-1 rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
+                    >
+                      この条件で組み立てる
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setPanel("none")}
-                    className="rounded-lg border border-beige px-4 py-2.5 text-sm"
+                    className={`rounded-lg border border-beige px-4 py-2.5 text-sm ${
+                      panel === "settings" ? "flex-1" : ""
+                    }`}
                   >
                     閉じる
                   </button>
@@ -535,13 +585,6 @@ export default function ChatPanel() {
         </header>
 
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6">
-          {/* 外部AIを使うかの選択。まだ選んでいない間だけ出す。 */}
-          {!privacy.decided && (
-            <div className="mb-5">
-              <AiConsentCard onChoose={setAllowExternalAi} />
-            </div>
-          )}
-
           {/* 導入。初回の相談でだけ出す。 */}
           {isFresh && (
             <div className="mb-7">
@@ -588,12 +631,13 @@ export default function ChatPanel() {
                       m.id === messages[messages.length - 1]?.id && (
                         <section className="chigiri-card p-4">
                           <h3 className="mb-3 text-sm font-semibold">
-                            お使いの化粧品を選んでください
+                            お使いのものを選んでください
                           </h3>
                           <ProductSelector
                             selectedIds={profile.ownedProductIds}
                             onToggle={toggleOwned}
                             compact
+                            domain={profile.domain}
                           />
                           <button
                             type="button"

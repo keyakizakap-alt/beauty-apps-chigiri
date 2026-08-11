@@ -6,7 +6,8 @@ import { ChigiriMark } from "@/components/AppSplash";
 import { CATEGORY_LABEL, PRODUCTS, claimText } from "@/domain/recommendation/catalog";
 import { CONCERN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL } from "@/domain/recommendation/filters";
-import type { Category, ConcernTag, Product } from "@/schemas/product";
+import type { Category, ConcernTag, Domain, Product } from "@/schemas/product";
+import { DOMAIN_CONFIG, domainConfig } from "@/domain/recommendation/domains";
 
 /**
  * 公式情報データベース。
@@ -15,13 +16,7 @@ import type { Category, ConcernTag, Product } from "@/schemas/product";
  * 公式ページとの突合が済んでいない項目は「未確認」と表示し、推測で埋めない。
  */
 
-const CATEGORIES: Category[] = [
-  "cleanser",
-  "lotion",
-  "serum",
-  "moisturizer",
-  "sunscreen",
-];
+const DOMAINS = Object.values(DOMAIN_CONFIG);
 
 const CONCERNS: ConcernTag[] = [
   "dryness",
@@ -60,6 +55,7 @@ const ORIGIN_LABEL: Record<string, string> = {
 export default function DatabasePage() {
   const [query, setQuery] = useState("");
   const [origin, setOrigin] = useState<"all" | "jp" | "kr">("all");
+  const [domain, setDomain] = useState<Domain | "all">("all");
   const [category, setCategory] = useState<Category | "all">("all");
   const [band, setBand] = useState<string>("all");
   const [concern, setConcern] = useState<ConcernTag | "all">("all");
@@ -86,6 +82,7 @@ export default function DatabasePage() {
       PRICE_BANDS.find((b) => b.key === band)?.test ?? (() => true);
     return PRODUCTS.filter((p) => {
       if (origin !== "all" && p.origin !== origin) return false;
+      if (domain !== "all" && p.domain !== domain) return false;
       if (category !== "all" && p.category !== category) return false;
       if (concern !== "all" && !p.concernTags.includes(concern)) return false;
       if (!bandTest(p)) return false;
@@ -93,7 +90,7 @@ export default function DatabasePage() {
         return false;
       return true;
     });
-  }, [query, origin, category, band, concern]);
+  }, [query, origin, domain, category, band, concern]);
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-8">
@@ -164,14 +161,31 @@ export default function DatabasePage() {
         />
 
         <Filter
-          label="カテゴリー"
+          label="分野"
+          value={domain}
+          options={[
+            { value: "all", label: "すべて" },
+            ...DOMAINS.map((d) => ({
+              value: d.domain,
+              label: `${d.label}（${PRODUCTS.filter((p) => p.domain === d.domain).length}）`,
+            })),
+          ]}
+          onChange={(v) => {
+            setDomain(v as typeof domain);
+            // 分野が変わると選べる役割も変わるため、役割の絞り込みは戻す
+            setCategory("all");
+          }}
+        />
+
+        <Filter
+          label="役割"
           value={category}
           options={[
             { value: "all", label: "すべて" },
-            ...CATEGORIES.map((c) => ({
-              value: c,
-              label: CATEGORY_LABEL[c],
-            })),
+            ...(domain === "all"
+              ? DOMAINS.flatMap((d) => [...d.order])
+              : [...domainConfig(domain).order]
+            ).map((c) => ({ value: c, label: CATEGORY_LABEL[c] })),
           ]}
           onChange={(v) => setCategory(v as typeof category)}
         />

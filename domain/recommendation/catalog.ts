@@ -4,6 +4,7 @@ import {
   AllowedClaimsFileSchema,
   CatalogSchema,
   type Category,
+  type Domain,
   type Product,
 } from "@/schemas/product";
 
@@ -74,13 +75,12 @@ export function claimSentence(p: Product): string {
   return texts.join("／");
 }
 
-export const CATEGORY_LABEL: Record<Category, string> = {
-  cleanser: "洗顔",
-  lotion: "化粧水",
-  serum: "美容液",
-  moisturizer: "乳液・クリーム",
-  sunscreen: "日焼け止め",
-};
+export { CATEGORY_LABEL } from "./domains";
+
+/** 分野で絞り込んだ商品 */
+export function productsInDomain(domain: Domain): Product[] {
+  return PRODUCTS.filter((p) => p.domain === domain);
+}
 
 /**
  * カテゴリー別の中央価格。
@@ -89,18 +89,13 @@ export const CATEGORY_LABEL: Record<Category, string> = {
  */
 export const CATEGORY_MEDIAN_PRICE: Record<Category, number> = (() => {
   const out = {} as Record<Category, number>;
-  const cats: Category[] = [
-    "cleanser",
-    "lotion",
-    "serum",
-    "moisturizer",
-    "sunscreen",
-  ];
+  const cats = [...new Set(PRODUCTS.map((p) => p.category))];
   for (const c of cats) {
     const prices = PRODUCTS.filter((p) => p.category === c)
       .map((p) => p.price)
       .sort((a, b) => a - b);
     const mid = Math.floor(prices.length / 2);
+    if (prices.length === 0) continue;
     out[c] =
       prices.length % 2 === 0
         ? Math.round((prices[mid - 1] + prices[mid]) / 2)

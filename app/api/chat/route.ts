@@ -65,8 +65,8 @@ export async function POST(req: Request) {
 
   try {
     // 2. 手持ち商品の同定（決定論的な文字列一致のみ）
-    const matched = confidentMatches(message);
-    const ambiguous = ambiguousBrandMatches(message);
+    const matched = confidentMatches(message, incomingProfile.domain);
+    const ambiguous = ambiguousBrandMatches(message, incomingProfile.domain);
     const removing = REMOVE_INTENT.test(message);
 
     let ownedProductIds = [...incomingProfile.ownedProductIds];

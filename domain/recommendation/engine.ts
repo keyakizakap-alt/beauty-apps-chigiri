@@ -1,4 +1,4 @@
-import type { Category, Product } from "@/schemas/product";
+import type { Category, Domain, Product } from "@/schemas/product";
 import type { Profile } from "@/schemas/profile";
 import type {
   Evidence,
@@ -11,7 +11,7 @@ import type {
 import {
   CATEGORY_LABEL,
   CATEGORY_MEDIAN_PRICE,
-  PRODUCTS,
+  productsInDomain,
   claimSentence,
   claimText,
   getProduct,
@@ -45,8 +45,12 @@ export type EngineResult = {
 };
 
 export function buildRecommendation(profile: Profile): EngineResult {
+  const domain = profile.domain;
+
   // 1. 手持ち商品の解決（カタログにない ID は静かに無視せず、除外理由に残す）
-  const ownedProducts = getProducts(profile.ownedProductIds);
+  const ownedProducts = getProducts(profile.ownedProductIds).filter(
+    (p) => p.domain === domain,
+  );
   const ownedIds = new Set(ownedProducts.map((p) => p.id));
 
   // 2. ハードフィルタ
@@ -68,10 +72,10 @@ export function buildRecommendation(profile: Profile): EngineResult {
   const { duplications, groups } = detectDuplications(scoredOwned);
 
   // 5. 朝・夜ルーティン（標準案）と、時間の前提を変えた別案
-  const morning = buildRoutine("morning", groups, profile);
-  const night = buildRoutine("night", groups, profile);
-  const plans = buildPlans(groups, profile);
-  const arrangementCount = countArrangements(groups);
+  const morning = buildRoutine("morning", groups, profile, domain);
+  const night = buildRoutine("night", groups, profile, domain);
+  const plans = buildPlans(groups, profile, domain);
+  const arrangementCount = countArrangements(groups, domain);
 
   const usedIds = new Set<string>([
     ...morning.routine.steps.map((s) => s.productId),
@@ -128,6 +132,7 @@ export function buildRecommendation(profile: Profile): EngineResult {
     profile,
     ownedIds,
     groups,
+    domain,
   );
 
   // 8. 節約効果
@@ -220,6 +225,7 @@ function decidePurchases(
   profile: Profile,
   ownedIds: ReadonlySet<string>,
   groups: ReadonlyMap<Category, readonly ScoredProduct[]>,
+  domain: Domain,
 ): { suggestions: DecidedPurchase[]; noPurchaseNeededReason: string | null } {
   const missingCategories = dedupeCategories(gaps);
 
@@ -251,7 +257,7 @@ function decidePurchases(
     const spent = suggestions.reduce((s, x) => s + x.product.price, 0);
     const remaining = profile.budgetYen - spent;
 
-    const pool = PRODUCTS.filter(
+    const pool = productsInDomain(domain).filter(
       (p) => p.category === category && !ownedIds.has(p.id),
     );
     const { passed } = applyHardFilters(pool, profile);

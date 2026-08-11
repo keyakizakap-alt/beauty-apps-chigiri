@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "0.1.0-seed",
+  "catalogVersion": "0.2.0-seed",
   "compiledAt": "2026-08-09",
   "dataPolicy": "公式ブランドサイトを主要な情報源とする。MVP段階では sourceCheckedAt=null（公式ページとの突合が未完了）であり、価格は編集時点の参考価格。未確認の項目は推測せず空配列または null とする。",
   "products": [
@@ -10,18 +10,41 @@
       "category": "cleanser",
       "price": 748,
       "volume": "200mL",
-      "skinTags": ["oily", "combination", "normal"],
-      "concernTags": ["oiliness", "pores"],
-      "textureTags": ["foam", "light", "non_sticky"],
-      "ingredientTags": ["amino_acid"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["cleanse", "remove_dirt", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "oily",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "oiliness",
+        "pores"
+      ],
+      "textureTags": [
+        "foam",
+        "light",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "amino_acid"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.kao.co.jp/biore/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-curel-foam",
@@ -30,18 +53,41 @@
       "category": "cleanser",
       "price": 1320,
       "volume": "150mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["dryness", "sensitivity", "acne_prone"],
-      "textureTags": ["foam", "fragrance_free", "light"],
-      "ingredientTags": ["ceramide", "amino_acid"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "acne_prone"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free",
+        "light"
+      ],
+      "ingredientTags": [
+        "ceramide",
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["cleanse", "remove_dirt", "qd_prevent_rough"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.kao.co.jp/curel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-senka-perfectwhip",
@@ -50,18 +96,41 @@
       "category": "cleanser",
       "price": 550,
       "volume": "120g",
-      "skinTags": ["normal", "combination", "dry"],
-      "concernTags": ["dryness", "texture"],
-      "textureTags": ["foam", "rich"],
-      "ingredientTags": ["amino_acid", "hyaluronic_acid"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["cleanse", "remove_dirt", "moisture"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "dry"
+      ],
+      "concernTags": [
+        "dryness",
+        "texture"
+      ],
+      "textureTags": [
+        "foam",
+        "rich"
+      ],
+      "ingredientTags": [
+        "amino_acid",
+        "hyaluronic_acid"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/senka/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-cow-mutenka",
@@ -70,18 +139,39 @@
       "category": "cleanser",
       "price": 605,
       "volume": "200mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["sensitivity", "dryness"],
-      "textureTags": ["foam", "fragrance_free", "light"],
-      "ingredientTags": ["amino_acid"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "sensitivity",
+        "dryness"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free",
+        "light"
+      ],
+      "ingredientTags": [
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["cleanse", "remove_dirt", "keep_healthy"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.cow-soap.co.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-rosette-pasta",
@@ -90,18 +180,40 @@
       "category": "cleanser",
       "price": 660,
       "volume": "120g",
-      "skinTags": ["dry", "normal", "sensitive"],
-      "concernTags": ["dryness", "acne_prone"],
-      "textureTags": ["rich", "foam"],
-      "ingredientTags": ["clay"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["cleanse", "remove_dirt", "qd_prevent_rough"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness",
+        "acne_prone"
+      ],
+      "textureTags": [
+        "rich",
+        "foam"
+      ],
+      "ingredientTags": [
+        "clay"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.rosette.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-dprogram-essencein",
@@ -110,18 +222,42 @@
       "category": "cleanser",
       "price": 2750,
       "volume": "120g",
-      "skinTags": ["sensitive", "dry", "combination"],
-      "concernTags": ["sensitivity", "dryness", "redness"],
-      "textureTags": ["foam", "fragrance_free", "rich"],
-      "ingredientTags": ["glycerin", "amino_acid"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "combination"
+      ],
+      "concernTags": [
+        "sensitivity",
+        "dryness",
+        "redness"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free",
+        "rich"
+      ],
+      "ingredientTags": [
+        "glycerin",
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["cleanse", "remove_dirt", "moisture", "qd_prevent_rough"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "moisture",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/dp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "cl-innisfree-greentea",
@@ -130,18 +266,42 @@
       "category": "cleanser",
       "price": 1650,
       "volume": "150mL",
-      "skinTags": ["combination", "oily", "normal"],
-      "concernTags": ["oiliness", "pores", "dullness"],
-      "textureTags": ["foam", "light"],
-      "ingredientTags": ["amino_acid", "glycerin"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["cleanse", "remove_dirt", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "oily",
+        "normal"
+      ],
+      "concernTags": [
+        "oiliness",
+        "pores",
+        "dullness"
+      ],
+      "textureTags": [
+        "foam",
+        "light"
+      ],
+      "ingredientTags": [
+        "amino_acid",
+        "glycerin"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.innisfree.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "cl-vt-cica-foam",
@@ -150,20 +310,43 @@
       "category": "cleanser",
       "price": 1980,
       "volume": "300mL",
-      "skinTags": ["sensitive", "combination", "oily"],
-      "concernTags": ["acne_prone", "redness", "sensitivity"],
-      "textureTags": ["foam", "light"],
-      "ingredientTags": ["centella", "panthenol"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["cleanse", "remove_dirt", "keep_healthy"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "sensitive",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "acne_prone",
+        "redness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "foam",
+        "light"
+      ],
+      "ingredientTags": [
+        "centella",
+        "panthenol"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://vtcosmetics.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
-
     {
       "id": "lo-hadalabo-gokujyun",
       "brand": "肌ラボ",
@@ -171,18 +354,42 @@
       "category": "lotion",
       "price": 858,
       "volume": "170mL",
-      "skinTags": ["dry", "normal", "combination", "sensitive"],
-      "concernTags": ["dryness", "texture"],
-      "textureTags": ["watery", "fragrance_free", "sticky"],
-      "ingredientTags": ["hyaluronic_acid", "glycerin"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "combination",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness",
+        "texture"
+      ],
+      "textureTags": [
+        "watery",
+        "fragrance_free",
+        "sticky"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "glycerin"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "condition_skin", "soften"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "condition_skin",
+        "soften"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://jp.rohto.com/hadalabo/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-hadalabo-shirojyun",
@@ -191,18 +398,39 @@
       "category": "lotion",
       "price": 1078,
       "volume": "170mL",
-      "skinTags": ["normal", "dry", "combination"],
-      "concernTags": ["dullness", "dryness"],
-      "textureTags": ["watery", "fragrance_free"],
-      "ingredientTags": ["vitamin_c_derivative", "hyaluronic_acid"],
+      "skinTags": [
+        "normal",
+        "dry",
+        "combination"
+      ],
+      "concernTags": [
+        "dullness",
+        "dryness"
+      ],
+      "textureTags": [
+        "watery",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "vitamin_c_derivative",
+        "hyaluronic_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["qd_whitening", "moisture", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "qd_whitening",
+        "moisture",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://jp.rohto.com/hadalabo/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-curel-lotion3",
@@ -211,18 +439,40 @@
       "category": "lotion",
       "price": 1980,
       "volume": "150mL",
-      "skinTags": ["dry", "sensitive"],
-      "concernTags": ["dryness", "sensitivity", "redness"],
-      "textureTags": ["rich", "fragrance_free"],
-      "ingredientTags": ["ceramide", "amino_acid"],
+      "skinTags": [
+        "dry",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "redness"
+      ],
+      "textureTags": [
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "ceramide",
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "qd_prevent_rough", "keep_healthy"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "qd_prevent_rough",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.kao.co.jp/curel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-muji-sensitive-high",
@@ -231,18 +481,40 @@
       "category": "lotion",
       "price": 790,
       "volume": "200mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["dryness", "sensitivity"],
-      "textureTags": ["rich", "fragrance_free"],
-      "ingredientTags": ["hyaluronic_acid", "amino_acid", "glycerin"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "amino_acid",
+        "glycerin"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.muji.com/jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-ihada-lotion",
@@ -251,18 +523,40 @@
       "category": "lotion",
       "price": 1650,
       "volume": "180mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["sensitivity", "dryness", "redness"],
-      "textureTags": ["light", "fragrance_free", "non_sticky"],
-      "ingredientTags": ["glycerin"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "sensitivity",
+        "dryness",
+        "redness"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["qd_prevent_rough", "moisture", "protect"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "qd_prevent_rough",
+        "moisture",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/ihada/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-naturie-hatomugi",
@@ -271,18 +565,43 @@
       "category": "lotion",
       "price": 715,
       "volume": "500mL",
-      "skinTags": ["oily", "combination", "normal"],
-      "concernTags": ["oiliness", "texture"],
-      "textureTags": ["watery", "light", "non_sticky", "fragrance_free"],
-      "ingredientTags": ["glycerin", "alcohol"],
-      "cautionTags": ["contains_alcohol"],
-      "allowedClaims": ["moisture", "condition_skin", "tighten"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "oily",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "oiliness",
+        "texture"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "non_sticky",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "glycerin",
+        "alcohol"
+      ],
+      "cautionTags": [
+        "contains_alcohol"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "condition_skin",
+        "tighten"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.imju.jp/naturie/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-anua-heartleaf-toner",
@@ -291,18 +610,43 @@
       "category": "lotion",
       "price": 2860,
       "volume": "250mL",
-      "skinTags": ["sensitive", "combination", "oily"],
-      "concernTags": ["redness", "acne_prone", "sensitivity"],
-      "textureTags": ["watery", "light", "fragrance_free"],
-      "ingredientTags": ["panthenol", "glycerin"],
-      "cautionTags": ["patch_test_recommended"],
-      "allowedClaims": ["moisture", "condition_skin", "keep_healthy"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "sensitive",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "redness",
+        "acne_prone",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "panthenol",
+        "glycerin"
+      ],
+      "cautionTags": [
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "condition_skin",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://anua.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "lo-innisfree-greentea-toner",
@@ -311,18 +655,41 @@
       "category": "lotion",
       "price": 2860,
       "volume": "200mL",
-      "skinTags": ["combination", "normal", "oily"],
-      "concernTags": ["dryness", "oiliness"],
-      "textureTags": ["watery", "light"],
-      "ingredientTags": ["hyaluronic_acid", "amino_acid"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["moisture", "condition_skin", "water_oil_balance"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "dryness",
+        "oiliness"
+      ],
+      "textureTags": [
+        "watery",
+        "light"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "amino_acid"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "condition_skin",
+        "water_oil_balance"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.innisfree.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "lo-elixir-refle-water",
@@ -331,18 +698,42 @@
       "category": "lotion",
       "price": 3080,
       "volume": "168mL",
-      "skinTags": ["combination", "normal", "oily"],
-      "concernTags": ["oiliness", "pores", "texture"],
-      "textureTags": ["light", "non_sticky", "fragranced"],
-      "ingredientTags": ["glycerin"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["water_oil_balance", "condition_texture", "moisture"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "oiliness",
+        "pores",
+        "texture"
+      ],
+      "textureTags": [
+        "light",
+        "non_sticky",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "water_oil_balance",
+        "condition_texture",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/elixir/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-aqualabel-balance-lotion",
@@ -351,18 +742,40 @@
       "category": "lotion",
       "price": 1650,
       "volume": "200mL",
-      "skinTags": ["combination", "normal"],
-      "concernTags": ["dryness", "oiliness"],
-      "textureTags": ["light", "fragranced"],
-      "ingredientTags": ["hyaluronic_acid", "amino_acid"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["water_oil_balance", "moisture", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "oiliness"
+      ],
+      "textureTags": [
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "amino_acid"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "water_oil_balance",
+        "moisture",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/aqualabel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "lo-torriden-dive-in-toner",
@@ -371,20 +784,43 @@
       "category": "lotion",
       "price": 2200,
       "volume": "300mL",
-      "skinTags": ["dry", "sensitive", "combination", "normal"],
-      "concernTags": ["dryness", "sensitivity"],
-      "textureTags": ["watery", "light", "fragrance_free", "non_sticky"],
-      "ingredientTags": ["hyaluronic_acid", "panthenol"],
+      "skinTags": [
+        "dry",
+        "sensitive",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "panthenol"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "soften"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "soften"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://torriden.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
-
     {
       "id": "se-melanocc-premium",
       "brand": "メラノCC",
@@ -392,18 +828,43 @@
       "category": "serum",
       "price": 1738,
       "volume": "20mL",
-      "skinTags": ["oily", "combination", "normal"],
-      "concernTags": ["dullness", "acne_prone", "pores"],
-      "textureTags": ["light", "non_sticky", "fragranced"],
-      "ingredientTags": ["vitamin_c_derivative", "alcohol"],
-      "cautionTags": ["contains_alcohol", "contains_fragrance", "patch_test_recommended"],
-      "allowedClaims": ["qd_whitening", "qd_prevent_acne"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "oily",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dullness",
+        "acne_prone",
+        "pores"
+      ],
+      "textureTags": [
+        "light",
+        "non_sticky",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "vitamin_c_derivative",
+        "alcohol"
+      ],
+      "cautionTags": [
+        "contains_alcohol",
+        "contains_fragrance",
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "qd_whitening",
+        "qd_prevent_acne"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://jp.rohto.com/melano-cc/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "se-hadalabo-gokujyun-essence",
@@ -412,18 +873,39 @@
       "category": "serum",
       "price": 1078,
       "volume": "30g",
-      "skinTags": ["dry", "normal", "sensitive", "combination"],
-      "concernTags": ["dryness"],
-      "textureTags": ["gel", "fragrance_free", "sticky"],
-      "ingredientTags": ["hyaluronic_acid"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "sensitive",
+        "combination"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "gel",
+        "fragrance_free",
+        "sticky"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "soften"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "soften"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://jp.rohto.com/hadalabo/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "se-anua-niacinamide",
@@ -432,18 +914,41 @@
       "category": "serum",
       "price": 3300,
       "volume": "30mL",
-      "skinTags": ["combination", "oily", "normal"],
-      "concernTags": ["dullness", "pores", "texture"],
-      "textureTags": ["light", "fragrance_free", "non_sticky"],
-      "ingredientTags": ["niacinamide"],
-      "cautionTags": ["patch_test_recommended"],
-      "allowedClaims": ["condition_skin", "condition_texture", "moisture"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "combination",
+        "oily",
+        "normal"
+      ],
+      "concernTags": [
+        "dullness",
+        "pores",
+        "texture"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "niacinamide"
+      ],
+      "cautionTags": [
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "condition_skin",
+        "condition_texture",
+        "moisture"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://anua.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "se-manyo-galac-niacin",
@@ -452,18 +957,41 @@
       "category": "serum",
       "price": 3630,
       "volume": "50mL",
-      "skinTags": ["combination", "normal", "oily"],
-      "concernTags": ["dullness", "pores", "texture"],
-      "textureTags": ["watery", "light", "fragrance_free"],
-      "ingredientTags": ["niacinamide"],
-      "cautionTags": ["patch_test_recommended"],
-      "allowedClaims": ["condition_skin", "condition_texture", "smooth"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "combination",
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "dullness",
+        "pores",
+        "texture"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "niacinamide"
+      ],
+      "cautionTags": [
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "condition_skin",
+        "condition_texture",
+        "smooth"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://manyofactory.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "se-torriden-dive-in-serum",
@@ -472,18 +1000,42 @@
       "category": "serum",
       "price": 2420,
       "volume": "50mL",
-      "skinTags": ["dry", "sensitive", "combination", "normal"],
-      "concernTags": ["dryness", "sensitivity"],
-      "textureTags": ["gel", "light", "fragrance_free", "non_sticky"],
-      "ingredientTags": ["hyaluronic_acid", "panthenol"],
+      "skinTags": [
+        "dry",
+        "sensitive",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "gel",
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "panthenol"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://torriden.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "se-vt-cica-essence",
@@ -492,18 +1044,43 @@
       "category": "serum",
       "price": 3080,
       "volume": "50mL",
-      "skinTags": ["sensitive", "combination", "oily"],
-      "concernTags": ["redness", "acne_prone", "sensitivity"],
-      "textureTags": ["gel", "light"],
-      "ingredientTags": ["centella", "panthenol"],
-      "cautionTags": ["contains_fragrance", "patch_test_recommended"],
-      "allowedClaims": ["condition_skin", "keep_healthy", "moisture"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "sensitive",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "redness",
+        "acne_prone",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "gel",
+        "light"
+      ],
+      "ingredientTags": [
+        "centella",
+        "panthenol"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "condition_skin",
+        "keep_healthy",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://vtcosmetics.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "se-muji-sensitive-whitening",
@@ -512,18 +1089,38 @@
       "category": "serum",
       "price": 1990,
       "volume": "50mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["dullness", "sensitivity"],
-      "textureTags": ["light", "fragrance_free"],
-      "ingredientTags": ["vitamin_c_derivative", "amino_acid"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dullness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "vitamin_c_derivative",
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["qd_whitening", "moisture"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "qd_whitening",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.muji.com/jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "se-obagi-c25",
@@ -532,18 +1129,40 @@
       "category": "serum",
       "price": 11000,
       "volume": "12mL",
-      "skinTags": ["oily", "combination", "normal"],
-      "concernTags": ["dullness", "pores", "texture"],
-      "textureTags": ["oily_finish", "rich"],
-      "ingredientTags": ["vitamin_c_derivative"],
-      "cautionTags": ["patch_test_recommended"],
-      "allowedClaims": ["condition_skin", "condition_texture", "gloss"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "oily",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dullness",
+        "pores",
+        "texture"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "rich"
+      ],
+      "ingredientTags": [
+        "vitamin_c_derivative"
+      ],
+      "cautionTags": [
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "condition_skin",
+        "condition_texture",
+        "gloss"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://www.obagi.co.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "se-chifure-essence",
@@ -552,18 +1171,39 @@
       "category": "serum",
       "price": 1100,
       "volume": "30mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["dryness", "sensitivity"],
-      "textureTags": ["gel", "fragrance_free"],
-      "ingredientTags": ["hyaluronic_acid", "glycerin"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "gel",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "glycerin"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.chifure.co.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "se-elixir-firm-essence",
@@ -572,20 +1212,41 @@
       "category": "serum",
       "price": 2200,
       "volume": "80g",
-      "skinTags": ["dry", "normal", "combination"],
-      "concernTags": ["dryness", "firmness"],
-      "textureTags": ["light", "dewy_finish", "fragranced"],
-      "ingredientTags": ["glycerin"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["moisture", "gloss", "condition_skin"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "combination"
+      ],
+      "concernTags": [
+        "dryness",
+        "firmness"
+      ],
+      "textureTags": [
+        "light",
+        "dewy_finish",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "gloss",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/elixir/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
-
     {
       "id": "mo-curel-facecream",
       "brand": "キュレル",
@@ -593,18 +1254,40 @@
       "category": "moisturizer",
       "price": 2530,
       "volume": "40g",
-      "skinTags": ["dry", "sensitive"],
-      "concernTags": ["dryness", "sensitivity", "redness"],
-      "textureTags": ["rich", "fragrance_free"],
-      "ingredientTags": ["ceramide"],
-      "cautionTags": ["may_feel_heavy"],
-      "allowedClaims": ["moisture", "prevent_dryness", "qd_prevent_rough", "protect"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "dry",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "redness"
+      ],
+      "textureTags": [
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "ceramide"
+      ],
+      "cautionTags": [
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "qd_prevent_rough",
+        "protect"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://www.kao.co.jp/curel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-hadalabo-gokujyun-milk",
@@ -613,18 +1296,39 @@
       "category": "moisturizer",
       "price": 858,
       "volume": "140mL",
-      "skinTags": ["dry", "normal", "combination", "sensitive"],
-      "concernTags": ["dryness"],
-      "textureTags": ["milky", "light", "fragrance_free"],
-      "ingredientTags": ["hyaluronic_acid"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "combination",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "water_oil_balance"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "water_oil_balance"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://jp.rohto.com/hadalabo/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-muji-sensitive-milk",
@@ -633,18 +1337,39 @@
       "category": "moisturizer",
       "price": 850,
       "volume": "200mL",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["dryness", "sensitivity"],
-      "textureTags": ["milky", "fragrance_free"],
-      "ingredientTags": ["hyaluronic_acid", "amino_acid"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "milky",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid",
+        "amino_acid"
+      ],
       "cautionTags": [],
-      "allowedClaims": ["moisture", "prevent_dryness", "protect"],
-      "usageTiming": ["morning", "night"],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.muji.com/jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-nivea-cream",
@@ -653,18 +1378,41 @@
       "category": "moisturizer",
       "price": 528,
       "volume": "169g",
-      "skinTags": ["dry", "normal"],
-      "concernTags": ["dryness"],
-      "textureTags": ["rich", "balm", "fragranced"],
-      "ingredientTags": ["glycerin", "squalane"],
-      "cautionTags": ["may_feel_heavy", "contains_fragrance"],
-      "allowedClaims": ["moisture", "prevent_dryness", "protect", "soften"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "rich",
+        "balm",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "glycerin",
+        "squalane"
+      ],
+      "cautionTags": [
+        "may_feel_heavy",
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "protect",
+        "soften"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://www.nivea.co.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-ihada-balm",
@@ -673,18 +1421,40 @@
       "category": "moisturizer",
       "price": 1650,
       "volume": "20g",
-      "skinTags": ["sensitive", "dry"],
-      "concernTags": ["dryness", "sensitivity", "redness"],
-      "textureTags": ["balm", "fragrance_free", "rich"],
-      "ingredientTags": ["glycerin"],
-      "cautionTags": ["may_feel_heavy"],
-      "allowedClaims": ["qd_prevent_rough", "protect", "prevent_dryness"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "redness"
+      ],
+      "textureTags": [
+        "balm",
+        "fragrance_free",
+        "rich"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "qd_prevent_rough",
+        "protect",
+        "prevent_dryness"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/ihada/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-aqualabel-balance-milk",
@@ -693,18 +1463,41 @@
       "category": "moisturizer",
       "price": 1650,
       "volume": "130mL",
-      "skinTags": ["combination", "normal"],
-      "concernTags": ["dryness", "oiliness"],
-      "textureTags": ["milky", "light", "fragranced"],
-      "ingredientTags": ["amino_acid", "hyaluronic_acid"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["water_oil_balance", "moisture", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "oiliness"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid",
+        "hyaluronic_acid"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "water_oil_balance",
+        "moisture",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/aqualabel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "mo-vt-cica-cream",
@@ -713,18 +1506,42 @@
       "category": "moisturizer",
       "price": 2860,
       "volume": "50mL",
-      "skinTags": ["sensitive", "combination", "normal"],
-      "concernTags": ["redness", "acne_prone", "sensitivity"],
-      "textureTags": ["gel", "light"],
-      "ingredientTags": ["centella", "panthenol"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["moisture", "keep_healthy", "protect"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "sensitive",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "redness",
+        "acne_prone",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "gel",
+        "light"
+      ],
+      "ingredientTags": [
+        "centella",
+        "panthenol"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "keep_healthy",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://vtcosmetics.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "mo-manyo-bifida-cream",
@@ -733,18 +1550,41 @@
       "category": "moisturizer",
       "price": 3960,
       "volume": "50mL",
-      "skinTags": ["dry", "normal", "combination"],
-      "concernTags": ["dryness", "firmness", "texture"],
-      "textureTags": ["rich", "fragrance_free"],
-      "ingredientTags": ["panthenol", "squalane"],
-      "cautionTags": ["patch_test_recommended"],
-      "allowedClaims": ["moisture", "condition_skin", "firmness"],
-      "usageTiming": ["night"],
+      "skinTags": [
+        "dry",
+        "normal",
+        "combination"
+      ],
+      "concernTags": [
+        "dryness",
+        "firmness",
+        "texture"
+      ],
+      "textureTags": [
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "panthenol",
+        "squalane"
+      ],
+      "cautionTags": [
+        "patch_test_recommended"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "condition_skin",
+        "firmness"
+      ],
+      "usageTiming": [
+        "night"
+      ],
       "officialUrl": "https://manyofactory.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
     {
       "id": "mo-innisfree-greentea-cream",
@@ -753,20 +1593,43 @@
       "category": "moisturizer",
       "price": 3300,
       "volume": "50mL",
-      "skinTags": ["combination", "oily", "normal"],
-      "concernTags": ["oiliness", "dryness"],
-      "textureTags": ["gel", "light", "non_sticky"],
-      "ingredientTags": ["amino_acid", "glycerin"],
-      "cautionTags": ["contains_fragrance"],
-      "allowedClaims": ["water_oil_balance", "moisture", "condition_skin"],
-      "usageTiming": ["morning", "night"],
+      "skinTags": [
+        "combination",
+        "oily",
+        "normal"
+      ],
+      "concernTags": [
+        "oiliness",
+        "dryness"
+      ],
+      "textureTags": [
+        "gel",
+        "light",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "amino_acid",
+        "glycerin"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "water_oil_balance",
+        "moisture",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
       "officialUrl": "https://www.innisfree.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "kr"
+      "origin": "kr",
+      "domain": "skincare"
     },
-
     {
       "id": "su-biore-aquarich",
       "brand": "ビオレ UV",
@@ -774,18 +1637,41 @@
       "category": "sunscreen",
       "price": 858,
       "volume": "70g",
-      "skinTags": ["normal", "combination", "oily", "dry"],
-      "concernTags": ["uv_protection"],
-      "textureTags": ["watery", "light", "non_sticky"],
-      "ingredientTags": ["chemical_uv", "hyaluronic_acid"],
-      "cautionTags": ["reapply_needed"],
-      "allowedClaims": ["prevent_sunburn", "prevent_sun_spots", "moisture"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "oily",
+        "dry"
+      ],
+      "concernTags": [
+        "uv_protection"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "chemical_uv",
+        "hyaluronic_acid"
+      ],
+      "cautionTags": [
+        "reapply_needed"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "prevent_sun_spots",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.kao.co.jp/biore/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-anessa-perfectuv",
@@ -794,18 +1680,40 @@
       "category": "sunscreen",
       "price": 3300,
       "volume": "60mL",
-      "skinTags": ["normal", "combination", "oily"],
-      "concernTags": ["uv_protection"],
-      "textureTags": ["milky", "light"],
-      "ingredientTags": ["chemical_uv", "mineral_uv"],
-      "cautionTags": ["reapply_needed", "contains_fragrance", "contains_alcohol"],
-      "allowedClaims": ["prevent_sunburn", "prevent_sun_spots"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "uv_protection"
+      ],
+      "textureTags": [
+        "milky",
+        "light"
+      ],
+      "ingredientTags": [
+        "chemical_uv",
+        "mineral_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "contains_fragrance",
+        "contains_alcohol"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "prevent_sun_spots"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/anessa/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-curel-uv-essence",
@@ -814,18 +1722,41 @@
       "category": "sunscreen",
       "price": 1650,
       "volume": "50g",
-      "skinTags": ["sensitive", "dry", "normal"],
-      "concernTags": ["uv_protection", "sensitivity"],
-      "textureTags": ["light", "fragrance_free", "non_sticky"],
-      "ingredientTags": ["ceramide", "chemical_uv"],
-      "cautionTags": ["reapply_needed"],
-      "allowedClaims": ["prevent_sunburn", "qd_prevent_rough", "moisture"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "uv_protection",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "ceramide",
+        "chemical_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "qd_prevent_rough",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.kao.co.jp/curel/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": true,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-skinaqua-toneup",
@@ -834,18 +1765,43 @@
       "category": "sunscreen",
       "price": 869,
       "volume": "80g",
-      "skinTags": ["normal", "combination", "oily"],
-      "concernTags": ["uv_protection", "dullness"],
-      "textureTags": ["light", "dewy_finish"],
-      "ingredientTags": ["chemical_uv", "hyaluronic_acid", "alcohol"],
-      "cautionTags": ["reapply_needed", "contains_alcohol", "contains_fragrance"],
-      "allowedClaims": ["prevent_sunburn", "prevent_sun_spots", "moisture"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "uv_protection",
+        "dullness"
+      ],
+      "textureTags": [
+        "light",
+        "dewy_finish"
+      ],
+      "ingredientTags": [
+        "chemical_uv",
+        "hyaluronic_acid",
+        "alcohol"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "contains_alcohol",
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "prevent_sun_spots",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://jp.rohto.com/skinaqua/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-dprogram-allerbarrier",
@@ -854,18 +1810,41 @@
       "category": "sunscreen",
       "price": 3520,
       "volume": "40mL",
-      "skinTags": ["sensitive", "dry", "combination"],
-      "concernTags": ["uv_protection", "sensitivity", "redness"],
-      "textureTags": ["light", "fragrance_free", "dewy_finish"],
-      "ingredientTags": ["mineral_uv"],
-      "cautionTags": ["reapply_needed"],
-      "allowedClaims": ["prevent_sunburn", "protect", "moisture"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "combination"
+      ],
+      "concernTags": [
+        "uv_protection",
+        "sensitivity",
+        "redness"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free",
+        "dewy_finish"
+      ],
+      "ingredientTags": [
+        "mineral_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "protect",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.shiseido.co.jp/dp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-muji-uv-milk",
@@ -874,18 +1853,40 @@
       "category": "sunscreen",
       "price": 1290,
       "volume": "150mL",
-      "skinTags": ["sensitive", "normal", "dry"],
-      "concernTags": ["uv_protection", "sensitivity"],
-      "textureTags": ["milky", "light", "fragrance_free"],
-      "ingredientTags": ["mineral_uv", "amino_acid"],
-      "cautionTags": ["reapply_needed"],
-      "allowedClaims": ["prevent_sunburn", "prevent_sun_spots"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "sensitive",
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "uv_protection",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "mineral_uv",
+        "amino_acid"
+      ],
+      "cautionTags": [
+        "reapply_needed"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "prevent_sun_spots"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.muji.com/jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-nivea-sun-waterygel",
@@ -894,18 +1895,40 @@
       "category": "sunscreen",
       "price": 715,
       "volume": "80g",
-      "skinTags": ["normal", "combination", "oily"],
-      "concernTags": ["uv_protection"],
-      "textureTags": ["gel", "watery", "non_sticky"],
-      "ingredientTags": ["chemical_uv", "hyaluronic_acid"],
-      "cautionTags": ["reapply_needed", "contains_alcohol"],
-      "allowedClaims": ["prevent_sunburn", "moisture"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "uv_protection"
+      ],
+      "textureTags": [
+        "gel",
+        "watery",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "chemical_uv",
+        "hyaluronic_acid"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "contains_alcohol"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "moisture"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.nivea.co.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,
-      "origin": "jp"
+      "origin": "jp",
+      "domain": "skincare"
     },
     {
       "id": "su-allie-chrono-gel",
@@ -914,14 +1937,1879 @@
       "category": "sunscreen",
       "price": 2200,
       "volume": "90g",
-      "skinTags": ["normal", "combination", "oily"],
-      "concernTags": ["uv_protection"],
-      "textureTags": ["gel", "light", "non_sticky"],
-      "ingredientTags": ["chemical_uv"],
-      "cautionTags": ["reapply_needed", "contains_alcohol", "contains_fragrance"],
-      "allowedClaims": ["prevent_sunburn", "prevent_sun_spots"],
-      "usageTiming": ["morning"],
+      "skinTags": [
+        "normal",
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "uv_protection"
+      ],
+      "textureTags": [
+        "gel",
+        "light",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "chemical_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "contains_alcohol",
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "prevent_sunburn",
+        "prevent_sun_spots"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
       "officialUrl": "https://www.allie-uv.com/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp",
+      "domain": "skincare"
+    },
+    {
+      "id": "ha-tsubaki-premium-sh",
+      "domain": "haircare",
+      "brand": "TSUBAKI",
+      "name": "プレミアムリペア シャンプー",
+      "category": "shampoo",
+      "price": 1100,
+      "volume": "490mL",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "hair_damage",
+        "hair_gloss"
+      ],
+      "textureTags": [
+        "foam",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant",
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "hair_supple"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.shiseido.co.jp/tsubaki/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-tsubaki-premium-tr",
+      "domain": "haircare",
+      "brand": "TSUBAKI",
+      "name": "プレミアムリペア トリートメント",
+      "category": "conditioner",
+      "price": 1100,
+      "volume": "490g",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "hair_damage",
+        "hair_gloss"
+      ],
+      "textureTags": [
+        "rich",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "botanical_oil",
+        "silicone"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "hair_supple",
+        "hair_comb",
+        "hair_gloss"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.shiseido.co.jp/tsubaki/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-minon-sh",
+      "domain": "haircare",
+      "brand": "ミノン",
+      "name": "薬用ヘアシャンプー",
+      "category": "shampoo",
+      "price": 1320,
+      "volume": "450mL",
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "scalp_dryness",
+        "dandruff",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free",
+        "light"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "hair_cleanse",
+        "qd_dandruff"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-minon-tr",
+      "domain": "haircare",
+      "brand": "ミノン",
+      "name": "薬用コンディショナー",
+      "category": "conditioner",
+      "price": 1320,
+      "volume": "450g",
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "scalp_dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "milky",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "hair_moisture",
+        "hair_supple"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-himawari-sh",
+      "domain": "haircare",
+      "brand": "ひまわり",
+      "name": "オイルインシャンプー",
+      "category": "shampoo",
+      "price": 990,
+      "volume": "500mL",
+      "skinTags": [
+        "normal",
+        "combination"
+      ],
+      "concernTags": [
+        "frizz",
+        "hair_damage"
+      ],
+      "textureTags": [
+        "foam",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant",
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "hair_comb"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kracie.co.jp/himawari/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-ichikami-sh",
+      "domain": "haircare",
+      "brand": "いち髪",
+      "name": "なめらかスムースケア シャンプー",
+      "category": "shampoo",
+      "price": 869,
+      "volume": "480mL",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "frizz",
+        "hair_gloss"
+      ],
+      "textureTags": [
+        "foam",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "hair_supple",
+        "hair_gloss"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kracie.co.jp/ichikami/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-lucido-scalp",
+      "domain": "haircare",
+      "brand": "ルシード",
+      "name": "薬用スカルプデオシャンプー",
+      "category": "shampoo",
+      "price": 858,
+      "volume": "450mL",
+      "skinTags": [
+        "oily",
+        "normal"
+      ],
+      "concernTags": [
+        "scalp_oiliness",
+        "body_odor",
+        "dandruff"
+      ],
+      "textureTags": [
+        "foam",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "sulfate_surfactant",
+        "menthol"
+      ],
+      "cautionTags": [
+        "may_feel_drying"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "qd_dandruff"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.mandom.co.jp/lucido/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-oshima-scalp",
+      "domain": "haircare",
+      "brand": "オレンジシャンプー",
+      "name": "スカルプ プレシャンプー",
+      "category": "scalp_care",
+      "price": 1650,
+      "volume": "200mL",
+      "skinTags": [
+        "oily",
+        "combination"
+      ],
+      "concernTags": [
+        "scalp_oiliness",
+        "dandruff"
+      ],
+      "textureTags": [
+        "gel",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "rinse_thoroughly"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "hair_healthy"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.orange-shampoo.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-lorio-outbath",
+      "domain": "haircare",
+      "brand": "ラ・カスタ",
+      "name": "アロマエステ ヘアエマルジョン",
+      "category": "hair_outbath",
+      "price": 2200,
+      "volume": "100mL",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "hair_damage",
+        "frizz",
+        "hair_gloss"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "contains_essential_oil"
+      ],
+      "allowedClaims": [
+        "hair_moisture",
+        "hair_gloss",
+        "hair_prevent_split"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.lacasta.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-loreal-oil",
+      "domain": "haircare",
+      "brand": "エルセーヴ",
+      "name": "エクストラオーディナリー オイル",
+      "category": "hair_outbath",
+      "price": 1320,
+      "volume": "100mL",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "frizz",
+        "hair_gloss",
+        "hair_damage"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "botanical_oil",
+        "silicone"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "hair_gloss",
+        "hair_supple",
+        "hair_water_oil"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.lorealparis.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-fino-mask",
+      "domain": "haircare",
+      "brand": "フィーノ",
+      "name": "プレミアムタッチ 浸透美容液ヘアマスク",
+      "category": "hair_treatment",
+      "price": 1078,
+      "volume": "230g",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "hair_damage",
+        "hair_gloss"
+      ],
+      "textureTags": [
+        "rich",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "botanical_oil",
+        "keratin"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "rinse_thoroughly"
+      ],
+      "allowedClaims": [
+        "hair_moisture",
+        "hair_supple",
+        "hair_prevent_split"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.shiseido.co.jp/fino/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "ha-mise-scalp",
+      "domain": "haircare",
+      "brand": "メリット",
+      "name": "ピュアン クレンズ&コンディショナー",
+      "category": "scalp_care",
+      "price": 748,
+      "volume": "340mL",
+      "skinTags": [
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "scalp_oiliness",
+        "hair_volume"
+      ],
+      "textureTags": [
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "hair_cleanse",
+        "hair_body"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/merit/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-biore-u-body",
+      "domain": "bodycare",
+      "brand": "ビオレu",
+      "name": "ボディウォッシュ",
+      "category": "body_wash",
+      "price": 658,
+      "volume": "480mL",
+      "skinTags": [
+        "normal",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "foam",
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/biore-u/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-curel-body",
+      "domain": "bodycare",
+      "brand": "キュレル",
+      "name": "泡ボディウォッシュ",
+      "category": "body_wash",
+      "price": 1210,
+      "volume": "480mL",
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "ceramide",
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "cleanse",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/curel/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-niveasun-milk",
+      "domain": "bodycare",
+      "brand": "ニベア",
+      "name": "ボディミルク しっとり",
+      "category": "body_moisturizer",
+      "price": 605,
+      "volume": "200g",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "glycerin",
+        "squalane"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.nivea.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-curel-lotion",
+      "domain": "bodycare",
+      "brand": "キュレル",
+      "name": "潤浸保湿 ボディローション",
+      "category": "body_moisturizer",
+      "price": 1650,
+      "volume": "220mL",
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "dryness",
+        "sensitivity",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "milky",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "ceramide"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/curel/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-vaseline-body",
+      "domain": "bodycare",
+      "brand": "ヴァセリン",
+      "name": "アドバンスドリペア ボディローション",
+      "category": "body_moisturizer",
+      "price": 990,
+      "volume": "400mL",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "milky",
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "protect",
+        "prevent_dryness"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.vaseline.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-mamacharm-oil",
+      "domain": "bodycare",
+      "brand": "無印良品",
+      "name": "マッサージオイル スイートアーモンド",
+      "category": "body_special",
+      "price": 1290,
+      "volume": "100mL",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "botanical_oil",
+        "vitamin_e"
+      ],
+      "cautionTags": [
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "soften",
+        "flexibility"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.muji.com/jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-hadalabo-body",
+      "domain": "bodycare",
+      "brand": "肌ラボ",
+      "name": "極潤 ヒアルロン ボディミルク",
+      "category": "body_moisturizer",
+      "price": 968,
+      "volume": "200mL",
+      "skinTags": [
+        "dry",
+        "normal",
+        "sensitive"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "milky",
+        "light",
+        "fragrance_free",
+        "non_sticky"
+      ],
+      "ingredientTags": [
+        "hyaluronic_acid"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://jp.rohto.com/hadalabo/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-8x4-body",
+      "domain": "bodycare",
+      "brand": "エイトフォー",
+      "name": "ボディシート せっけんの香り",
+      "category": "body_special",
+      "price": 418,
+      "volume": "30枚",
+      "skinTags": [
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "body_odor",
+        "oiliness"
+      ],
+      "textureTags": [
+        "light",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "alcohol"
+      ],
+      "cautionTags": [
+        "contains_alcohol",
+        "contains_fragrance",
+        "not_for_broken_skin"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "prevent_body_odor"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.kao.co.jp/8x4/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "bo-scrub-house",
+      "domain": "bodycare",
+      "brand": "ハウス オブ ローゼ",
+      "name": "バスキュア ボディスクラブ",
+      "category": "body_special",
+      "price": 1650,
+      "volume": "350g",
+      "skinTags": [
+        "normal",
+        "oily"
+      ],
+      "concernTags": [
+        "body_roughness",
+        "texture"
+      ],
+      "textureTags": [
+        "rich",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "clay"
+      ],
+      "cautionTags": [
+        "exfoliating",
+        "contains_fragrance",
+        "not_for_broken_skin"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "smooth",
+        "keratin_care"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.houseofrose.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-cezanne-base",
+      "domain": "makeup",
+      "brand": "セザンヌ",
+      "name": "皮脂テカリ防止下地",
+      "category": "makeup_base",
+      "price": 660,
+      "volume": "30mL",
+      "skinTags": [
+        "oily",
+        "combination"
+      ],
+      "concernTags": [
+        "shine_control",
+        "makeup_lasting",
+        "pores"
+      ],
+      "textureTags": [
+        "matte_finish",
+        "light"
+      ],
+      "ingredientTags": [
+        "mineral_uv",
+        "clay"
+      ],
+      "cautionTags": [
+        "reapply_needed"
+      ],
+      "allowedClaims": [
+        "protect",
+        "condition_skin",
+        "prevent_sunburn"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.cezanne.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-primavista-base",
+      "domain": "makeup",
+      "brand": "プリマヴィスタ",
+      "name": "スキンプロテクトベース <皮脂くずれ防止>",
+      "category": "makeup_base",
+      "price": 3080,
+      "volume": "25mL",
+      "skinTags": [
+        "oily",
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "makeup_lasting",
+        "shine_control"
+      ],
+      "textureTags": [
+        "light",
+        "matte_finish"
+      ],
+      "ingredientTags": [
+        "chemical_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "remover_needed"
+      ],
+      "allowedClaims": [
+        "protect",
+        "prevent_sunburn"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.sofina.co.jp/primavista/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-canmake-base",
+      "domain": "makeup",
+      "brand": "キャンメイク",
+      "name": "ポアレスクリアプライマー",
+      "category": "makeup_base",
+      "price": 770,
+      "volume": "10g",
+      "skinTags": [
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "pores",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "light",
+        "matte_finish",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "condition_texture",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.canmake.com/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-maquillage-fd",
+      "domain": "makeup",
+      "brand": "マキアージュ",
+      "name": "ドラマティックスキンセンサーベース EX",
+      "category": "foundation",
+      "price": 3520,
+      "volume": "25mL",
+      "skinTags": [
+        "combination",
+        "normal"
+      ],
+      "concernTags": [
+        "coverage",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "dewy_finish",
+        "light"
+      ],
+      "ingredientTags": [
+        "chemical_uv"
+      ],
+      "cautionTags": [
+        "reapply_needed",
+        "remover_needed"
+      ],
+      "allowedClaims": [
+        "protect",
+        "prevent_sunburn",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.shiseido.co.jp/maquillage/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-cezanne-fd",
+      "domain": "makeup",
+      "brand": "セザンヌ",
+      "name": "ラスティング カバー ファンデーション",
+      "category": "foundation",
+      "price": 748,
+      "volume": "30mL",
+      "skinTags": [
+        "combination",
+        "oily"
+      ],
+      "concernTags": [
+        "coverage",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "matte_finish",
+        "light"
+      ],
+      "ingredientTags": [
+        "mineral_uv"
+      ],
+      "cautionTags": [
+        "remover_needed"
+      ],
+      "allowedClaims": [
+        "protect",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.cezanne.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-innisfree-powder",
+      "domain": "makeup",
+      "brand": "innisfree",
+      "name": "ノーセバム ミネラルパウダー",
+      "category": "face_powder",
+      "price": 880,
+      "volume": "5g",
+      "skinTags": [
+        "oily",
+        "combination"
+      ],
+      "concernTags": [
+        "shine_control",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "matte_finish",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "clay"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "condition_skin",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.innisfree.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "kr"
+    },
+    {
+      "id": "mk-canmake-powder",
+      "domain": "makeup",
+      "brand": "キャンメイク",
+      "name": "マシュマロフィニッシュパウダー",
+      "category": "face_powder",
+      "price": 1078,
+      "volume": "10g",
+      "skinTags": [
+        "normal",
+        "combination"
+      ],
+      "concernTags": [
+        "shine_control",
+        "coverage"
+      ],
+      "textureTags": [
+        "matte_finish",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "clay"
+      ],
+      "cautionTags": [
+        "contains_fragrance"
+      ],
+      "allowedClaims": [
+        "condition_skin",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.canmake.com/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-opera-lip",
+      "domain": "makeup",
+      "brand": "オペラ",
+      "name": "リップティント N",
+      "category": "lip",
+      "price": 1650,
+      "volume": "2g",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "color_transfer",
+        "makeup_lasting",
+        "dewy_look"
+      ],
+      "textureTags": [
+        "dewy_finish",
+        "light"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "color_may_transfer"
+      ],
+      "allowedClaims": [
+        "lip_moisture",
+        "lip_protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.operacosmetics.com/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-rommand-lip",
+      "domain": "makeup",
+      "brand": "rom&nd",
+      "name": "ジューシーラスティングティント",
+      "category": "lip",
+      "price": 1320,
+      "volume": "5.5g",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "color_transfer",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "dewy_finish"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "color_may_transfer",
+        "may_feel_drying"
+      ],
+      "allowedClaims": [
+        "lip_moisture",
+        "lip_smooth"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://romand.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "kr"
+    },
+    {
+      "id": "mk-dhc-lip",
+      "domain": "makeup",
+      "brand": "DHC",
+      "name": "薬用リップクリーム",
+      "category": "lip",
+      "price": 770,
+      "volume": "1.5g",
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "dryness"
+      ],
+      "textureTags": [
+        "balm",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "botanical_oil",
+        "vitamin_e"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "lip_prevent_rough",
+        "lip_moisture",
+        "lip_protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.dhc.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-heroine-mascara",
+      "domain": "makeup",
+      "brand": "ヒロインメイク",
+      "name": "スムースリキッド アイライナー スーパーキープ",
+      "category": "eye_makeup",
+      "price": 1210,
+      "volume": "0.4mL",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "makeup_lasting",
+        "color_transfer"
+      ],
+      "textureTags": [
+        "light"
+      ],
+      "ingredientTags": [],
+      "cautionTags": [
+        "avoid_eye_area",
+        "remover_needed"
+      ],
+      "allowedClaims": [
+        "protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.kissme.co.jp/heroine/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-excel-eye",
+      "domain": "makeup",
+      "brand": "excel",
+      "name": "スキニーリッチシャドウ",
+      "category": "eye_makeup",
+      "price": 1650,
+      "volume": "5.4g",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "coverage",
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "squalane"
+      ],
+      "cautionTags": [
+        "avoid_eye_area"
+      ],
+      "allowedClaims": [
+        "protect",
+        "condition_skin"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.noevirgroup.jp/excel/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-bifesta-remover",
+      "domain": "makeup",
+      "brand": "ビフェスタ",
+      "name": "うるおい クレンジングローション",
+      "category": "makeup_remover",
+      "price": 968,
+      "volume": "300mL",
+      "skinTags": [
+        "normal",
+        "combination",
+        "sensitive"
+      ],
+      "concernTags": [
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "watery",
+        "light",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "rinse_thoroughly"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "moisture"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.mandom.co.jp/bifesta/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-softymo-oil",
+      "domain": "makeup",
+      "brand": "ソフティモ",
+      "name": "スピーディ クレンジングオイル",
+      "category": "makeup_remover",
+      "price": 748,
+      "volume": "230mL",
+      "skinTags": [
+        "normal",
+        "oily",
+        "combination"
+      ],
+      "concernTags": [
+        "makeup_lasting"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "light"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "rinse_thoroughly",
+        "may_feel_drying"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.kose-cosmeport.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "mk-fancl-remover",
+      "domain": "makeup",
+      "brand": "ファンケル",
+      "name": "マイルドクレンジング オイル",
+      "category": "makeup_remover",
+      "price": 1870,
+      "volume": "120mL",
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "sensitivity"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "botanical_oil"
+      ],
+      "cautionTags": [
+        "rinse_thoroughly"
+      ],
+      "allowedClaims": [
+        "cleanse",
+        "remove_dirt",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.fancl.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-uka-oil",
+      "domain": "nailcare",
+      "brand": "uka",
+      "name": "ネイルオイル 13:00",
+      "category": "nail_oil",
+      "price": 3630,
+      "volume": "5mL",
+      "skinTags": [
+        "normal",
+        "dry",
+        "sensitive"
+      ],
+      "concernTags": [
+        "nail_dryness",
+        "cuticle_care",
+        "nail_brittle"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "jojoba_oil",
+        "botanical_oil",
+        "vitamin_e"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "contains_essential_oil"
+      ],
+      "allowedClaims": [
+        "nail_moisture",
+        "nail_protect",
+        "nail_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://uka.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-oputo-oil",
+      "domain": "nailcare",
+      "brand": "オプティ",
+      "name": "ネイル&キューティクルオイル",
+      "category": "nail_oil",
+      "price": 990,
+      "volume": "11mL",
+      "skinTags": [
+        "normal",
+        "dry"
+      ],
+      "concernTags": [
+        "nail_dryness",
+        "cuticle_care"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "jojoba_oil",
+        "vitamin_e"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "nail_moisture",
+        "nail_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.opti-nail.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-muji-nail-oil",
+      "domain": "nailcare",
+      "brand": "無印良品",
+      "name": "ネイルケアオイル",
+      "category": "nail_oil",
+      "price": 890,
+      "volume": "5mL",
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "nail_dryness",
+        "cuticle_care"
+      ],
+      "textureTags": [
+        "oily_finish",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "jojoba_oil",
+        "botanical_oil"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "nail_moisture",
+        "nail_protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.muji.com/jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-atrix-hand",
+      "domain": "nailcare",
+      "brand": "アトリックス",
+      "name": "ビューティーチャージ",
+      "category": "hand_cream",
+      "price": 646,
+      "volume": "80g",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "hand_dryness",
+        "dryness"
+      ],
+      "textureTags": [
+        "rich",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "glycerin",
+        "vitamin_e"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/atrix/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-curel-hand",
+      "domain": "nailcare",
+      "brand": "キュレル",
+      "name": "ハンドクリーム",
+      "category": "hand_cream",
+      "price": 1100,
+      "volume": "50g",
+      "skinTags": [
+        "sensitive",
+        "dry"
+      ],
+      "concernTags": [
+        "hand_dryness",
+        "sensitivity",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "rich",
+        "fragrance_free"
+      ],
+      "ingredientTags": [
+        "ceramide"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "qd_prevent_rough"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.kao.co.jp/curel/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "na-yuskin-hand",
+      "domain": "nailcare",
+      "brand": "ユースキン",
+      "name": "ユースキンA",
+      "category": "hand_cream",
+      "price": 935,
+      "volume": "120g",
+      "skinTags": [
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "hand_dryness",
+        "body_roughness"
+      ],
+      "textureTags": [
+        "rich",
+        "fragranced"
+      ],
+      "ingredientTags": [
+        "vitamin_e",
+        "glycerin"
+      ],
+      "cautionTags": [
+        "contains_fragrance",
+        "may_feel_heavy"
+      ],
+      "allowedClaims": [
+        "moisture",
+        "prevent_dryness",
+        "protect"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.yuskin.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": true,
+      "origin": "jp"
+    },
+    {
+      "id": "na-mucota-handwash",
+      "domain": "nailcare",
+      "brand": "カウブランド",
+      "name": "無添加 ハンドソープ 泡タイプ",
+      "category": "hand_wash",
+      "price": 495,
+      "volume": "250mL",
+      "skinTags": [
+        "sensitive",
+        "dry",
+        "normal"
+      ],
+      "concernTags": [
+        "hand_dryness",
+        "sensitivity"
+      ],
+      "textureTags": [
+        "foam",
+        "fragrance_free",
+        "light"
+      ],
+      "ingredientTags": [
+        "amino_acid_surfactant"
+      ],
+      "cautionTags": [],
+      "allowedClaims": [
+        "cleanse",
+        "keep_healthy"
+      ],
+      "usageTiming": [
+        "morning",
+        "night"
+      ],
+      "officialUrl": "https://www.cow-soap.co.jp/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-canmake-base",
+      "domain": "nailcare",
+      "brand": "キャンメイク",
+      "name": "カラフルネイルズ ベースコート",
+      "category": "nail_base",
+      "price": 396,
+      "volume": "8mL",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "nail_brittle"
+      ],
+      "textureTags": [
+        "light"
+      ],
+      "ingredientTags": [],
+      "cautionTags": [
+        "remover_needed",
+        "avoid_eye_area"
+      ],
+      "allowedClaims": [
+        "nail_protect"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.canmake.com/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-nailholic-base",
+      "domain": "nailcare",
+      "brand": "ネイルホリック",
+      "name": "ベース&トップコート",
+      "category": "nail_base",
+      "price": 330,
+      "volume": "5mL",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "nail_brittle"
+      ],
+      "textureTags": [
+        "light"
+      ],
+      "ingredientTags": [],
+      "cautionTags": [
+        "remover_needed"
+      ],
+      "allowedClaims": [
+        "nail_protect",
+        "nail_healthy"
+      ],
+      "usageTiming": [
+        "morning"
+      ],
+      "officialUrl": "https://www.kose-cosmeport.co.jp/nailholic/",
+      "sourceCheckedAt": null,
+      "dataConfidence": "seed",
+      "isQuasiDrug": false,
+      "origin": "jp"
+    },
+    {
+      "id": "na-hoshinoya-cuticle",
+      "domain": "nailcare",
+      "brand": "ネイルネイル",
+      "name": "キューティクルリムーバー",
+      "category": "nail_oil",
+      "price": 880,
+      "volume": "10mL",
+      "skinTags": [
+        "normal"
+      ],
+      "concernTags": [
+        "cuticle_care",
+        "nail_dryness"
+      ],
+      "textureTags": [
+        "watery",
+        "light"
+      ],
+      "ingredientTags": [
+        "glycerin"
+      ],
+      "cautionTags": [
+        "not_for_broken_skin",
+        "rinse_thoroughly"
+      ],
+      "allowedClaims": [
+        "nail_moisture",
+        "nail_healthy"
+      ],
+      "usageTiming": [
+        "night"
+      ],
+      "officialUrl": "https://www.bcl-brand.jp/",
       "sourceCheckedAt": null,
       "dataConfidence": "seed",
       "isQuasiDrug": false,

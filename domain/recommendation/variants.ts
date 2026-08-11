@@ -1,7 +1,8 @@
-import type { Category } from "@/schemas/product";
+import type { Category, Domain } from "@/schemas/product";
 import type { Profile } from "@/schemas/profile";
 import type { RoutinePlan, RoutinePlanKind } from "@/schemas/recommendation";
-import { buildRoutine, REQUIREMENTS } from "./routine-builder";
+import { buildRoutine } from "./routine-builder";
+import { domainConfig } from "./domains";
 import type { ScoredProduct } from "./scorer";
 
 /**
@@ -45,6 +46,7 @@ const PLAN_META: Record<
 export function buildPlans(
   groups: ReadonlyMap<Category, readonly ScoredProduct[]>,
   profile: Profile,
+  domain: Domain,
 ): RoutinePlan[] {
   const specs: Array<{ kind: RoutinePlanKind; profile: Profile }> = [
     { kind: "standard", profile },
@@ -70,8 +72,8 @@ export function buildPlans(
   const seen = new Set<string>();
 
   for (const spec of specs) {
-    const morning = buildRoutine("morning", groups, spec.profile);
-    const night = buildRoutine("night", groups, spec.profile);
+    const morning = buildRoutine("morning", groups, spec.profile, domain);
+    const night = buildRoutine("night", groups, spec.profile, domain);
 
     const steps = [...morning.routine.steps, ...night.routine.steps];
 
@@ -113,11 +115,13 @@ export function buildPlans(
  */
 export function countArrangements(
   groups: ReadonlyMap<Category, readonly ScoredProduct[]>,
+  domain: Domain,
 ): number {
   let total = 1;
+  const config = domainConfig(domain);
 
   for (const timing of ["morning", "night"] as const) {
-    for (const req of REQUIREMENTS[timing]) {
+    for (const req of config.requirements[timing]) {
       const usable = (groups.get(req.category) ?? []).filter((c) =>
         c.product.usageTiming.includes(timing),
       ).length;

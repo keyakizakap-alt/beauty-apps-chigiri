@@ -33,6 +33,7 @@ export default function InventoryPage() {
       <div className="mt-6">
         {hydrated ? (
           <ProductSelector
+            domain={profile.domain}
             selectedIds={profile.ownedProductIds}
             onToggle={(id) =>
               setProfile(

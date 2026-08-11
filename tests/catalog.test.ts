@@ -5,7 +5,9 @@ import {
   claimSentence,
   getProduct,
   isKnownProductId,
+  productsInDomain,
 } from "@/domain/recommendation/catalog";
+import { domainConfig } from "@/domain/recommendation/domains";
 import { CatalogSchema } from "@/schemas/product";
 import catalogJson from "@/data/products.json";
 
@@ -14,20 +16,37 @@ describe("商品カタログ", () => {
     expect(() => CatalogSchema.parse(catalogJson)).not.toThrow();
   });
 
-  it("MVP の想定件数（30〜50点）に収まっている", () => {
-    expect(PRODUCTS.length).toBeGreaterThanOrEqual(30);
-    expect(PRODUCTS.length).toBeLessThanOrEqual(50);
+  it("各分野に十分な点数がある", () => {
+    for (const d of ["skincare", "haircare", "bodycare", "makeup", "nailcare"] as const) {
+      expect(productsInDomain(d).length, d).toBeGreaterThanOrEqual(8);
+    }
   });
 
-  it("対象カテゴリーがすべて存在する", () => {
-    const categories = new Set(PRODUCTS.map((p) => p.category));
-    expect([...categories].sort()).toEqual([
-      "cleanser",
-      "lotion",
-      "moisturizer",
-      "serum",
-      "sunscreen",
-    ]);
+  it("すべての商品がいずれかの分野に属する", () => {
+    const total = (["skincare", "haircare", "bodycare", "makeup", "nailcare"] as const)
+      .map((d) => productsInDomain(d).length)
+      .reduce((a, b) => a + b, 0);
+    expect(total).toBe(PRODUCTS.length);
+  });
+
+  it("分野ごとに、その分野で定義された役割だけが登録されている", () => {
+    for (const d of ["skincare", "haircare", "bodycare", "makeup", "nailcare"] as const) {
+      const allowed = new Set(domainConfig(d).order);
+      for (const p of productsInDomain(d)) {
+        expect(allowed.has(p.category), `${p.id}: ${p.category}`).toBe(true);
+      }
+    }
+  });
+
+  it("すべての役割に、少なくとも1点の商品がある", () => {
+    for (const d of ["skincare", "haircare", "bodycare", "makeup", "nailcare"] as const) {
+      for (const c of domainConfig(d).order) {
+        expect(
+          productsInDomain(d).some((p) => p.category === c),
+          `${d}/${c}`,
+        ).toBe(true);
+      }
+    }
   });
 
   it("すべての商品が公式URLを持つ（根拠表示の前提）", () => {

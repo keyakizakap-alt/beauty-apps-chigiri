@@ -177,30 +177,26 @@ describe("ルーティンの複数案", () => {
 
 describe("組み立て方の総数", () => {
   it("手持ちが無ければ1通り", () => {
-    expect(countArrangements(groupsFor(profileWith({ ownedProductIds: [] })))).toBe(1);
+    expect(countArrangements(groupsFor(profileWith({ ownedProductIds: [] })), "skincare")).toBe(1);
   });
 
   it("手持ちが増えると組み合わせも増える", () => {
     const few = countArrangements(
-      groupsFor(profileWith({ ownedProductIds: ["cl-curel-foam"] })),
-    );
+      groupsFor(profileWith({ ownedProductIds: ["cl-curel-foam"] })), "skincare");
     const many = countArrangements(
-      groupsFor(profileWith({ ownedProductIds: FULL_INVENTORY })),
-    );
+      groupsFor(profileWith({ ownedProductIds: FULL_INVENTORY })), "skincare");
     expect(many).toBeGreaterThan(few);
   });
 
   it("同じカテゴリーを2点持つと選択肢が増える", () => {
     const one = countArrangements(
-      groupsFor(profileWith({ ownedProductIds: ["lo-hadalabo-gokujyun"] })),
-    );
+      groupsFor(profileWith({ ownedProductIds: ["lo-hadalabo-gokujyun"] })), "skincare");
     const two = countArrangements(
       groupsFor(
         profileWith({
           ownedProductIds: ["lo-hadalabo-gokujyun", "lo-hadalabo-shirojyun"],
         }),
-      ),
-    );
+      ), "skincare");
     expect(two).toBeGreaterThan(one);
   });
 

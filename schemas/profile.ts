@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   ConcernTagSchema,
+  DomainSchema,
   IngredientTagSchema,
   SkinTagSchema,
   TextureTagSchema,
@@ -29,6 +30,8 @@ export type ProfileField = z.infer<typeof ProfileFieldSchema>;
  * すべての API 入力はこのスキーマを通す。
  */
 export const ProfileSchema = z.object({
+  /** 相談している分野。商品も工程もこの単位で切り替わる */
+  domain: DomainSchema.default("skincare"),
   /** 肌傾向（自己申告。医療的な診断ではない） */
   skinType: SkinTagSchema,
   /** 美容上の関心（優先順位順。先頭ほど重み大） */
@@ -66,10 +69,12 @@ export type Profile = z.infer<typeof ProfileSchema>;
 export const ProfilePatchSchema = ProfileSchema.omit({
   statedFields: true,
   ownedProductIds: true,
+  domain: true,
 }).partial();
 export type ProfilePatch = z.infer<typeof ProfilePatchSchema>;
 
 export const DEFAULT_PROFILE: Profile = {
+  domain: "skincare",
   skinType: "normal",
   concerns: [],
   avoidTextures: [],

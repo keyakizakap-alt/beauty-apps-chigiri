@@ -1,7 +1,13 @@
 "use client";
 
 import { markStated, type Profile, type ProfileField } from "@/schemas/profile";
-import type { ConcernTag, IngredientTag, SkinTag, TextureTag } from "@/schemas/product";
+import type {
+  ConcernTag,
+  Domain,
+  IngredientTag,
+  SkinTag,
+  TextureTag,
+} from "@/schemas/product";
 import { CONCERN_LABEL, SKIN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL, TEXTURE_LABEL } from "@/domain/recommendation/filters";
 
@@ -12,18 +18,54 @@ import { INGREDIENT_LABEL, TEXTURE_LABEL } from "@/domain/recommendation/filters
 
 const SKIN_TYPES: SkinTag[] = ["dry", "oily", "combination", "normal", "sensitive"];
 
-const CONCERNS: ConcernTag[] = [
-  "dryness",
-  "oiliness",
-  "pores",
-  "dullness",
-  "acne_prone",
-  "texture",
-  "firmness",
-  "uv_protection",
-  "redness",
-  "sensitivity",
-];
+/** 分野ごとに、選べる関心を出し分ける */
+const CONCERNS_BY_DOMAIN: Record<Domain, ConcernTag[]> = {
+  skincare: [
+    "dryness",
+    "oiliness",
+    "pores",
+    "dullness",
+    "acne_prone",
+    "texture",
+    "firmness",
+    "uv_protection",
+    "redness",
+    "sensitivity",
+  ],
+  haircare: [
+    "hair_damage",
+    "frizz",
+    "hair_volume",
+    "hair_gloss",
+    "scalp_dryness",
+    "scalp_oiliness",
+    "dandruff",
+    "hair_color_care",
+  ],
+  bodycare: [
+    "dryness",
+    "body_roughness",
+    "body_odor",
+    "sensitivity",
+    "redness",
+  ],
+  makeup: [
+    "makeup_lasting",
+    "color_transfer",
+    "shine_control",
+    "coverage",
+    "dewy_look",
+    "pores",
+    "dryness",
+  ],
+  nailcare: [
+    "nail_brittle",
+    "nail_dryness",
+    "cuticle_care",
+    "hand_dryness",
+    "sensitivity",
+  ],
+};
 
 const AVOID_TEXTURES: TextureTag[] = [
   "sticky",
@@ -82,8 +124,16 @@ export default function ProfileForm({
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     onChange(markStated({ ...profile, [key]: value }, key as ProfileField));
 
+  const CONCERNS = CONCERNS_BY_DOMAIN[profile.domain];
+  // 肌の傾向は、肌に直接触れる分野でだけ意味を持つ
+  const showSkinType =
+    profile.domain === "skincare" ||
+    profile.domain === "makeup" ||
+    profile.domain === "bodycare";
+
   return (
     <div className="space-y-6">
+      {showSkinType && (
       <section>
         <h3 className="chigiri-label mb-2">肌傾向（自己申告）</h3>
         <div className="flex flex-wrap gap-2">
@@ -98,6 +148,7 @@ export default function ProfileForm({
           ))}
         </div>
       </section>
+      )}
 
       <section>
         <h3 className="chigiri-label mb-2">

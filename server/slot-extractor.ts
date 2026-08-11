@@ -42,7 +42,7 @@ export async function extractSlots(
 ): Promise<SlotResult> {
   // 決定論的なキーワード抽出は、外部送信の可否に関わらず必ず行う。
   // 「端末内のみ」設定でも条件の読み取りが動くようにするため。
-  const deterministic = extractSlotsFromText(message);
+  const deterministic = extractSlotsFromText(message, current.domain);
 
   const decision = decideExternalAi({
     userAllows: options.userAllowsExternalAi,

@@ -22,7 +22,7 @@ export default function ConciergePicker({
       </p>
       <p className="mt-1.5 text-sm font-medium">相談先を選ぶ</p>
       <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/60">
-        いまご相談いただけるのはスキンケアのみです。
+        分野ごとに商品カタログと工程が切り替わります。
       </p>
 
       <ul className="mt-3 grid grid-cols-2 gap-2">
@@ -46,18 +46,12 @@ export default function ConciergePicker({
                 <span className="block text-[10px] leading-tight text-sumi/55">
                   {c.area}
                 </span>
-                {!c.ready && (
-                  <span className="mt-1 inline-block rounded-full bg-kinari px-1.5 py-px text-[9px] text-sumi/55">
-                    準備中
-                  </span>
-                )}
               </span>
             </>
           );
 
           return (
             <li key={c.id}>
-              {c.ready ? (
                 <button
                   type="button"
                   onClick={() => onSelect(c.id)}
@@ -70,15 +64,6 @@ export default function ConciergePicker({
                 >
                   {body}
                 </button>
-              ) : (
-                <div
-                  aria-disabled="true"
-                  title={`${c.area}は準備中です`}
-                  className="flex h-full min-h-[44px] w-full items-center gap-2 rounded-xl border border-beige bg-blushSoft px-2.5 py-2 opacity-70"
-                >
-                  {body}
-                </div>
-              )}
             </li>
           );
         })}

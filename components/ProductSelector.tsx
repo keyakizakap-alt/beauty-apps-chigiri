@@ -1,31 +1,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CATEGORY_LABEL, PRODUCTS } from "@/domain/recommendation/catalog";
-import type { Category } from "@/schemas/product";
+import { CATEGORY_LABEL, productsInDomain } from "@/domain/recommendation/catalog";
+import { domainConfig } from "@/domain/recommendation/domains";
+import type { Category, Domain } from "@/schemas/product";
 
 /**
  * 手持ち商品の選択。
  * 商品カードを大量に並べない方針のため、カテゴリー別の一覧＋検索に絞る。
  */
 
-const CATEGORIES: Category[] = [
-  "cleanser",
-  "lotion",
-  "serum",
-  "moisturizer",
-  "sunscreen",
-];
-
 export default function ProductSelector({
   selectedIds,
   onToggle,
   compact = false,
+  domain,
 }: {
   selectedIds: string[];
   onToggle: (id: string) => void;
   compact?: boolean;
+  /** 表示する分野。相談中の分野の商品だけを出す。 */
+  domain: Domain;
 }) {
+  const pool = useMemo(() => productsInDomain(domain), [domain]);
+  const CATEGORIES: Category[] = useMemo(
+    () => [...domainConfig(domain).order],
+    [domain],
+  );
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | "all">("all");
 
@@ -33,12 +34,12 @@ export default function ProductSelector({
 
   const filtered = useMemo(() => {
     const q = query.trim().normalize("NFKC").toLowerCase();
-    return PRODUCTS.filter((p) => {
+    return pool.filter((p) => {
       if (category !== "all" && p.category !== category) return false;
       if (q.length === 0) return true;
       return `${p.brand} ${p.name}`.toLowerCase().includes(q);
     });
-  }, [query, category]);
+  }, [query, category, pool]);
 
   return (
     <div className="space-y-3">
@@ -74,7 +75,7 @@ export default function ProductSelector({
       </div>
 
       <p className="text-xs text-sumi/50">
-        選択中 {selectedIds.length} 点 / カタログ {PRODUCTS.length} 点
+        選択中 {selectedIds.length} 点 / この分野のカタログ {pool.length} 点
       </p>
 
       <ul
@@ -119,7 +120,7 @@ export default function ProductSelector({
           <li className="rounded-lg border border-dashed border-beige px-3 py-6 text-center text-sm text-sumi/50">
             該当する商品がカタログにありません。
             <br />
-            MVP のカタログは {PRODUCTS.length} 点に限定しています。
+            この分野のカタログは {pool.length} 点です。
           </li>
         )}
       </ul>

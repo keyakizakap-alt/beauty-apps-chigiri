@@ -382,7 +382,7 @@ describe("境界条件", () => {
 
   it("S32: 全カタログを手持ちにしても破綻しない", () => {
     const all = profile({
-      ownedProductIds: PRODUCTS.map((p) => p.id),
+      ownedProductIds: PRODUCTS.filter((p) => p.domain === "skincare").map((p) => p.id),
       morningMinutes: 20,
       nightMinutes: 20,
     });

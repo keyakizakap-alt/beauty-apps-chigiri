@@ -1,4 +1,4 @@
-import type { Category, UsageTiming } from "@/schemas/product";
+import type { Category, Domain, UsageTiming } from "@/schemas/product";
 import type {
   Gap,
   Routine,
@@ -6,7 +6,8 @@ import type {
   UnusedProduct,
 } from "@/schemas/recommendation";
 import type { Profile } from "@/schemas/profile";
-import { CATEGORY_LABEL, claimSentence } from "./catalog";
+import { claimSentence } from "./catalog";
+import { CATEGORY_LABEL, domainConfig, type Requirement } from "./domains";
 import type { ScoredProduct } from "./scorer";
 
 /**
@@ -14,56 +15,6 @@ import type { ScoredProduct } from "./scorer";
  * 使用順・必須カテゴリー・所要時間は決定論的に確定させる。
  * LLM はここで確定した並びを説明するだけで、並びを変えることはできない。
  */
-
-/** 一般的な使用順（洗顔 → 化粧水 → 美容液 → 乳液/クリーム → 日焼け止め） */
-export const CATEGORY_ORDER: Category[] = [
-  "cleanser",
-  "lotion",
-  "serum",
-  "moisturizer",
-  "sunscreen",
-];
-
-/** 1 工程あたりの推定所要時間(分) */
-export const STEP_MINUTES: Record<Category, number> = {
-  cleanser: 2,
-  lotion: 1,
-  serum: 1,
-  moisturizer: 1,
-  sunscreen: 1,
-};
-
-type Requirement = { category: Category; severity: Gap["severity"] | "optional" };
-
-/**
- * 朝・夜それぞれの必要カテゴリー。
- * critical    : 欠けるとルーティンとして成立しない
- * recommended : 欠けても成立するが、関心によっては不足として提示する
- * optional    : 時間がなければ省略してよい
- */
-export const REQUIREMENTS: Record<UsageTiming, Requirement[]> = {
-  morning: [
-    { category: "cleanser", severity: "optional" },
-    { category: "lotion", severity: "critical" },
-    { category: "serum", severity: "optional" },
-    { category: "moisturizer", severity: "recommended" },
-    { category: "sunscreen", severity: "critical" },
-  ],
-  night: [
-    { category: "cleanser", severity: "critical" },
-    { category: "lotion", severity: "critical" },
-    { category: "serum", severity: "optional" },
-    { category: "moisturizer", severity: "critical" },
-  ],
-};
-
-const PURPOSE: Record<Category, string> = {
-  cleanser: "皮膚の汚れを落とし、肌を清浄にする工程",
-  lotion: "洗顔後の肌にうるおいを与える工程",
-  serum: "関心のある部分に集中してうるおいを届ける工程",
-  moisturizer: "水分・油分を補い、うるおいを閉じ込める工程",
-  sunscreen: "日やけを防ぎ、肌を保護する工程",
-};
 
 /** 決定論的な採用理由（LLM が失敗してもこの文章で成立する） */
 function deterministicReason(
@@ -104,6 +55,29 @@ export const CONCERN_LABEL: Record<string, string> = {
   uv_protection: "紫外線対策",
   redness: "赤み",
   sensitivity: "ゆらぎ・敏感",
+  // ヘア・頭皮
+  hair_damage: "髪のダメージ",
+  frizz: "広がり・うねり",
+  hair_volume: "ボリューム・コシ",
+  scalp_dryness: "頭皮の乾燥",
+  scalp_oiliness: "頭皮のべたつき",
+  dandruff: "フケ・かゆみ",
+  hair_color_care: "カラーの色持ち",
+  hair_gloss: "髪のつや",
+  // ボディ
+  body_roughness: "ざらつき",
+  body_odor: "汗のにおい",
+  // メイク
+  makeup_lasting: "メイクの持ち",
+  color_transfer: "色移り・色落ち",
+  shine_control: "テカリ",
+  coverage: "カバー力",
+  dewy_look: "ツヤのある仕上がり",
+  // ネイル・ハンド
+  nail_brittle: "爪の割れ・二枚爪",
+  nail_dryness: "爪の乾燥",
+  hand_dryness: "手の乾燥",
+  cuticle_care: "甘皮・ささくれ",
 };
 
 export const SKIN_LABEL: Record<string, string> = {
@@ -148,13 +122,15 @@ export function buildRoutine(
   timing: UsageTiming,
   groups: ReadonlyMap<Category, readonly ScoredProduct[]>,
   profile: Profile,
+  domain: Domain,
 ): BuildRoutineResult {
+  const config = domainConfig(domain);
   const budgetMinutes =
     timing === "morning" ? profile.morningMinutes : profile.nightMinutes;
 
-  const requirements = REQUIREMENTS[timing];
+  const requirements = config.requirements[timing];
   const gaps: Gap[] = [];
-  const timingLabel = timing === "morning" ? "朝" : "夜";
+  const timingLabel = config.timingLabel[timing];
 
   type Candidate = {
     category: Category;
@@ -188,8 +164,9 @@ export function buildRoutine(
   // 工程過多ペナルティ：使える時間に収まるまで optional → recommended の順に外す
   const trimmed: UnusedProduct[] = [];
   const selected = [...candidates];
+  const stepMinutes = (c: Category) => config.minutes[c] ?? 1;
   const totalMinutes = () =>
-    selected.reduce((sum, c) => sum + STEP_MINUTES[c.category], 0);
+    selected.reduce((sum, c) => sum + stepMinutes(c.category), 0);
 
   const trimOrder: Array<Requirement["severity"]> = ["optional", "recommended"];
   for (const severity of trimOrder) {
@@ -209,17 +186,17 @@ export function buildRoutine(
     }
   }
 
-  // 使用順は CATEGORY_ORDER に固定する
+  // 使用順は分野ごとの定義に固定する
   selected.sort(
     (a, b) =>
-      CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category),
+      config.order.indexOf(a.category) - config.order.indexOf(b.category),
   );
 
   const steps: RoutineStep[] = selected.map((c, i) => ({
     order: i + 1,
     productId: c.item.product.id,
     category: c.category,
-    purpose: PURPOSE[c.category],
+    purpose: config.purpose[c.category] ?? "この工程",
     reason: deterministicReason(c.item, profile, c.category),
     cautions: cautionMessages(c.item.product.cautionTags),
     score: c.item.score,
@@ -231,7 +208,7 @@ export function buildRoutine(
       steps,
       budgetMinutes,
       estimatedMinutes: selected.reduce(
-        (sum, c) => sum + STEP_MINUTES[c.category],
+        (sum, c) => sum + stepMinutes(c.category),
         0,
       ),
     },

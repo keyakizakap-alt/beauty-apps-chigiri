@@ -49,6 +49,14 @@ export const INGREDIENT_LABEL: Record<string, string> = {
   alcohol: "アルコール(エタノール)",
   fragrance: "香料",
   essential_oil: "精油",
+  amino_acid_surfactant: "アミノ酸系洗浄成分",
+  sulfate_surfactant: "硫酸系洗浄成分",
+  silicone: "シリコーン",
+  keratin: "ケラチン",
+  botanical_oil: "植物油",
+  menthol: "メントール",
+  jojoba_oil: "ホホバ油",
+  vitamin_e: "ビタミンE",
 };
 
 export const TEXTURE_LABEL: Record<string, string> = {
