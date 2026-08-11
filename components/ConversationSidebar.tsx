@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChigiriMark } from "./AppSplash";
+import ConciergePicker from "./ConciergePicker";
 import {
   deriveSnippet,
   type Conversation,
@@ -23,6 +24,8 @@ export default function ConversationSidebar({
   onDelete,
   storage,
   onClose,
+  conciergeId,
+  onSelectConcierge,
 }: {
   conversations: Conversation[];
   activeId: string | null;
@@ -33,6 +36,9 @@ export default function ConversationSidebar({
   storage: StorageState;
   /** モバイルの引き出し表示から閉じる（デスクトップでは渡さない） */
   onClose?: () => void;
+  /** 選択中の相談先 */
+  conciergeId: string;
+  onSelectConcierge: (id: string) => void;
 }) {
   return (
     <div className="flex h-full flex-col bg-blushSoft">
@@ -56,6 +62,8 @@ export default function ConversationSidebar({
         )}
       </div>
 
+      {/* ブランドと注意書きの間はまとめてスクロールさせる */}
+      <div className="min-h-0 flex-1 overflow-y-auto pb-2">
       {/* 約束 */}
       <div className="mx-4 rounded-2xl border border-beige/70 bg-white px-4 py-4">
         <p className="text-[10px] font-medium tracking-[0.18em] text-moriSoft">
@@ -71,8 +79,11 @@ export default function ConversationSidebar({
         </p>
       </div>
 
+      {/* 相談先 */}
+      <ConciergePicker activeId={conciergeId} onSelect={onSelectConcierge} />
+
       {/* 相談ログ */}
-      <div className="mt-6 flex min-h-0 flex-1 flex-col">
+      <div className="mt-6 flex flex-col">
         <div className="flex items-center gap-2 px-5">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-medium tracking-[0.18em] text-moriSoft">
@@ -105,7 +116,7 @@ export default function ConversationSidebar({
           </div>
         )}
 
-        <div className="mt-3 min-h-0 flex-1 overflow-y-auto px-4 pb-4">
+        <div className="mt-3 px-4 pb-4">
           {conversations.length === 0 ? (
             <p className="px-1 text-[11px] leading-relaxed text-sumi/45">
               まだ相談がありません。話しかけると、ここに記録されます。
@@ -161,6 +172,8 @@ export default function ConversationSidebar({
             </ul>
           )}
         </div>
+      </div>
+
       </div>
 
       {/* 導線と注意書き */}

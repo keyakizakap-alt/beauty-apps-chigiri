@@ -17,6 +17,7 @@ import RecommendationCard from "./RecommendationCard";
 import ConversationSidebar from "./ConversationSidebar";
 import AiConsentCard from "./AiConsentCard";
 import { ChigiriMark } from "./AppSplash";
+import { DEFAULT_CONCIERGE, findConcierge, type Concierge } from "@/domain/concierges";
 
 /**
  * チャット本体。
@@ -49,18 +50,14 @@ const THINKING_STEPS = [
   "説明文を組み立てています",
 ];
 
-const SUGGESTIONS = [
-  "混合肌で、毛穴と乾燥が気になります。予算は3000円くらいです",
-  "朝は3分しか時間がありません",
-  "予算を1000円に変えて計算し直して",
-  "アルコールが入っているものは避けたいです",
-];
-
 let bubbleSeq = 0;
 const nextId = () => `b${Date.now().toString(36)}-${++bubbleSeq}`;
 
-/** 時間帯に合わせた挨拶。描画後（クライアント）でのみ組み立てる。 */
-function openingBubble(): Bubble {
+/**
+ * 時間帯に合わせた挨拶と、相談先からの最初の一言。
+ * 描画後（クライアント）でのみ組み立てる。
+ */
+function openingBubble(concierge: Concierge): Bubble {
   const h = new Date().getHours();
   const greeting =
     h < 5 ? "こんばんは" : h < 11 ? "おはようございます" : h < 18 ? "こんにちは" : "こんばんは";
@@ -70,7 +67,7 @@ function openingBubble(): Bubble {
     role: "assistant",
     at: new Date().toISOString(),
     text:
-      `${greeting}。今日は、コスメ選びでどんなことに迷っていますか？\n\n` +
+      `${greeting}。${concierge.opening}\n\n` +
       "うまく言葉にできなくても大丈夫です。今いちばん気になることから、ゆっくり聞かせてください。",
   };
 }
@@ -140,6 +137,8 @@ export default function ChatPanel() {
   const [error, setError] = useState<string | null>(null);
   const [panel, setPanel] = useState<"none" | "profile" | "inventory">("none");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [conciergeId, setConciergeId] = useState(DEFAULT_CONCIERGE.id);
+  const concierge = findConcierge(conciergeId);
 
   const endRef = useRef<HTMLDivElement>(null);
   /** 保存時に読む最新のプロファイル（発言の変化だけで保存を起こすため） */
@@ -168,7 +167,7 @@ export default function ChatPanel() {
       messages:
         conversation && conversation.messages.length > 0
           ? conversation.messages.map(toBubble)
-          : [openingBubble()],
+          : [openingBubble(concierge)],
     });
     setPanel("none");
     setError(null);
@@ -344,6 +343,8 @@ export default function ChatPanel() {
             onNew={handleNew}
             onDelete={remove}
             storage={storage}
+            conciergeId={conciergeId}
+            onSelectConcierge={setConciergeId}
           />
         </div>
       </aside>
@@ -366,6 +367,8 @@ export default function ChatPanel() {
               onDelete={remove}
               storage={storage}
               onClose={() => setSidebarOpen(false)}
+              conciergeId={conciergeId}
+              onSelectConcierge={setConciergeId}
             />
           </div>
         </div>
@@ -542,16 +545,18 @@ export default function ChatPanel() {
           {/* 導入。初回の相談でだけ出す。 */}
           {isFresh && (
             <div className="mb-7">
-              <p className="text-[10px] font-medium tracking-[0.2em] text-moriSoft">
-                PERSONAL BEAUTY DIALOGUE
+              <p className="chigiri-eyebrow">
+                {concierge.name}・{concierge.area}
               </p>
-              <h1 className="mt-2.5 text-[28px] font-semibold leading-[1.35] tracking-tight text-mori sm:text-[34px]">
-                一緒に、いまのあなたに
-                <br />
-                ちょうどいいケアを。
+              <h1 className="mt-2.5 text-[28px] font-normal leading-[1.45] tracking-tight text-mori sm:text-[38px]">
+                {concierge.heading.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
               </h1>
               <p className="mt-3 text-[13px] leading-relaxed text-sumi/60">
-                診断結果を押しつけるのではなく、会話しながら無理のない形に整えます。
+                {concierge.subheading}
               </p>
             </div>
           )}
@@ -634,15 +639,15 @@ export default function ChatPanel() {
           {isFresh && (
             <div className="mt-6">
               <p className="chigiri-label mb-2">こんなふうに話しかけてください</p>
-              <div className="flex flex-wrap gap-1.5">
-                {SUGGESTIONS.map((s) => (
+              <div className="flex flex-wrap gap-2">
+                {concierge.quickChoices.map((q) => (
                   <button
-                    key={s}
+                    key={q}
                     type="button"
-                    onClick={() => void send(s)}
-                    className="rounded-full border border-beige bg-white px-3 py-1.5 text-left text-xs text-sumi/75 transition-colors hover:border-ai/40"
+                    onClick={() => void send(q)}
+                    className="chigiri-chip chigiri-chip-off text-left"
                   >
-                    {s}
+                    {q}
                   </button>
                 ))}
               </div>
