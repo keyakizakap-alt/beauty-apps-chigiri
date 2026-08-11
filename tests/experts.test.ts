@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   INITIAL_STATE,
+  openingMessage,
+  openingQuickReplies,
+  openingState,
   planTurn,
-  switchExpert,
   type CounselState,
 } from "@/domain/conversation/counsel";
 import {
@@ -45,110 +47,93 @@ function advance(
   });
 }
 
-describe("分野の切り替え", () => {
-  it("会話は続いたまま、担当だけが代わる", () => {
-    const moved = switchExpert(stateFor("skincare"), "haircare", DEFAULT_PROFILE);
-    expect(moved.state.expert).toBe("haircare");
-    expect(moved.quickReplies.length).toBeGreaterThan(0);
-    expect(moved.message).toContain("ヘアケア");
-  });
-
-  it("伺った条件を引き継ぎ、引き継いだことを言葉にする", () => {
-    let profile = profileWith({
-      concerns: ["dryness"],
-      morningMinutes: 3,
-      budgetYen: 1000,
-    });
-    profile = markStated(profile, "morningMinutes", "budgetYen");
-
-    const moved = switchExpert(stateFor("skincare"), "bodycare", profile);
-    expect(moved.message).toContain("引き継いでいます");
-    expect(moved.message).toContain("朝は3分");
-    expect(moved.message).toContain("1,000円まで");
-  });
-
-  it("答えていない条件は引き継ぎに並べない", () => {
-    // 初期値のままの予算・時間を「伺った」ことにしない
-    const moved = switchExpert(stateFor("skincare"), "haircare", DEFAULT_PROFILE);
-    expect(moved.message).not.toContain("3,000円");
-    expect(moved.message).not.toContain("朝は5分");
-  });
-
-  it("切り替え前の分野の聞き取り内容を失わない", () => {
-    const hair = stateFor("haircare", {
-      stage: "habits",
-      asked: ["concerns"],
-      topics: ["hair_dry"],
-      habits: ["air_dry"],
-    });
-
-    const toBody = switchExpert(hair, "bodycare", DEFAULT_PROFILE);
-    expect(toBody.state.topics).toEqual([]);
-    expect(toBody.state.parked.find((p) => p.expert === "haircare")?.topics).toEqual([
-      "hair_dry",
-    ]);
-
-    // 戻ってくると続きから
-    const back = switchExpert(toBody.state, "haircare", DEFAULT_PROFILE);
-    expect(back.state.topics).toEqual(["hair_dry"]);
-    expect(back.state.habits).toEqual(["air_dry"]);
-    expect(back.state.stage).toBe("habits");
-    expect(back.message).toContain("続きから");
-  });
-
-  it("関心事を持たない分野でも、尋ねた記録があれば続きから再開する", () => {
-    // スキンケアは topics ではなく手持ち商品で進むため、
-    // 「尋ねたか」で再開を判断できていないと初回扱いに戻ってしまう
-    const skin = stateFor("skincare", {
-      stage: "inventory",
-      asked: ["concerns", "skin", "time", "budget"],
-    });
-    const toHair = switchExpert(skin, "haircare", DEFAULT_PROFILE);
-    const back = switchExpert(toHair.state, "skincare", DEFAULT_PROFILE);
-
-    expect(back.state.stage).toBe("inventory");
-    expect(back.message).toContain("続けます");
-  });
-
-  it("切り替えの案内で、次の問いかけまでは書かない", () => {
-    // 実際に何を尋ねるかは planTurn が決める。
-    // ここに書くと、同じ問いが二度並ぶ。
-    const moved = switchExpert(stateFor("skincare"), "haircare", DEFAULT_PROFILE);
-    expect(moved.message).not.toContain(EXPERTS.haircare.opening);
-  });
-
-  it("同じ分野を選び直しても、聞き取り内容は消えない", () => {
-    const hair = stateFor("haircare", { topics: ["hair_frizz"] });
-    const same = switchExpert(hair, "haircare", DEFAULT_PROFILE);
-    expect(same.state.topics).toEqual(["hair_frizz"]);
-  });
-
-  it("退避は分野ごとに1件だけ残る", () => {
-    let state = stateFor("skincare");
-    for (const to of ["haircare", "bodycare", "skincare", "healthcare"] as ExpertId[]) {
-      state = switchExpert(state, to, DEFAULT_PROFILE).state;
+describe("分野ごとに独立した相談", () => {
+  it("相談の開始状態は、その分野のもの", () => {
+    for (const expert of EXPERT_IDS) {
+      const state = openingState(expert);
+      expect(state.expert, expert).toBe(expert);
+      expect(state.topics, expert).toEqual([]);
+      expect(state.habits, expert).toEqual([]);
+      expect(state.stage, expert).toBe("concerns");
     }
-    const experts = state.parked.map((p) => p.expert);
-    expect(new Set(experts).size).toBe(experts.length);
-    expect(state.parked.length).toBeLessThanOrEqual(EXPERT_IDS.length - 1);
   });
 
-  it("扱える範囲が狭い分野では、それを先に伝える", () => {
-    const moved = switchExpert(stateFor("skincare"), "healthcare", DEFAULT_PROFILE);
-    expect(moved.message).toContain("生活習慣の整理");
-    expect(moved.message).toContain("医療機関");
+  it("最初の問いかけと選択肢が分野ごとに違う", () => {
+    const hair = openingMessage(new Date("2026-08-11T10:00:00"), "haircare");
+    const body = openingMessage(new Date("2026-08-11T10:00:00"), "bodycare");
+    expect(hair).toContain("髪や頭皮");
+    expect(body).toContain("体のこと");
+    expect(hair).not.toBe(body);
+
+    expect(openingQuickReplies("haircare").map((q) => q.label)).toContain(
+      "パサつき",
+    );
+    expect(openingQuickReplies("bodycare").map((q) => q.label)).not.toContain(
+      "パサつき",
+    );
+  });
+
+  it("進み具合は1分野分しか持たない", () => {
+    // ほかの分野の聞き取り内容を抱え込む場所が無いこと。
+    // 持ってしまうと、独立しているはずの相談が互いに影響する。
+    const state = openingState("haircare");
+    expect(Object.keys(state).sort()).toEqual(
+      ["asked", "expert", "habits", "stage", "topics", "turn"].sort(),
+    );
+  });
+
+  it("相談を進めても分野は変わらない", () => {
+    let state = openingState("bodycare");
+    for (let i = 0; i < 8; i++) {
+      const plan = advance(DEFAULT_PROFILE, state, {
+        topics: ["body_dry"],
+        habits: [],
+      });
+      expect(plan.state.expert).toBe("bodycare");
+      state = plan.state;
+    }
+  });
+
+  it("確認では、ほかの分野で伺った内容を前提に並べない", () => {
+    // 別の相談で答えたことを、この相談が知っている前提にしない
+    let profile = profileWith({ concerns: ["dryness", "pores"] });
+    profile = markStated(profile, "skinType");
+
+    const plan = advance(
+      profile,
+      stateFor("haircare", {
+        asked: ["concerns", "habits", "time", "constraints"],
+        topics: ["hair_dry"],
+      }),
+    );
+    expect(plan.state.stage).toBe("confirm");
+    expect(plan.message).not.toContain("引き継");
+    expect(plan.message).not.toContain("乾燥");
+    expect(plan.message).not.toContain("毛穴");
+  });
+
+  it("手順の前提にも、ほかの分野の内容が出てこない", () => {
+    const profile = profileWith({ concerns: ["dryness", "pores"] });
+    const plan = buildCarePlan({
+      expert: "haircare",
+      profile,
+      topics: ["hair_dry"],
+      habits: [],
+    });
+    expect(plan.basis.some((b) => b.includes("肌"))).toBe(false);
+    expect(plan.basis.some((b) => b.includes("乾燥"))).toBe(false);
   });
 });
 
-describe("会話からの切り替え要求", () => {
-  it("切り替えを表す言い回しを拾う", () => {
+describe("ほかの分野の話が出たとき", () => {
+  it("どの分野の相談かを言い当てる", () => {
     expect(detectExpertSwitch("髪のことも相談したいです")).toBe("haircare");
     expect(detectExpertSwitch("体のケアについて教えてください")).toBe("bodycare");
     expect(detectExpertSwitch("生活リズムを整えたいです")).toBe("healthcare");
     expect(detectExpertSwitch("肌の相談に戻りたいです")).toBe("skincare");
   });
 
-  it("話題に触れただけでは切り替えない", () => {
+  it("話題に触れただけでは案内しない", () => {
     expect(detectExpertSwitch("髪もパサついています")).toBeNull();
     expect(detectExpertSwitch("体が冷えます")).toBeNull();
     expect(detectExpertSwitch("乾燥が気になります")).toBeNull();
@@ -171,7 +156,7 @@ describe("条件の書き換え範囲", () => {
 
   it("髪や体の話で、肌の条件を書き換えない", () => {
     // 「髪のパサつき」を肌の乾燥として記録すると、
-    // 引き継ぎのときに言っていないことを言ったことにしてしまう
+    // 肌の相談を開いたときに言っていないことを言ったことにしてしまう
     for (const expert of ["haircare", "bodycare", "healthcare"] as ExpertId[]) {
       const scoped = scopePatchToExpert(expert, patch);
       expect(scoped.concerns, expert).toBeUndefined();
@@ -180,7 +165,7 @@ describe("条件の書き換え範囲", () => {
     }
   });
 
-  it("時間・予算・避けたい成分は分野をまたいで共有する", () => {
+  it("時間・予算・避けたい成分は、その相談の中で受け取れる", () => {
     const scoped = scopePatchToExpert("haircare", patch);
     expect(scoped.budgetYen).toBe(1000);
     expect(scoped.morningMinutes).toBe(3);
@@ -390,8 +375,8 @@ describe("手順の組み立て", () => {
     expect(plan.scopeNote).toContain("商品名");
   });
 
-  it("引き継いだ条件を前提として明示する", () => {
-    let profile = profileWith({ concerns: ["dryness"], budgetYen: 0 });
+  it("この相談で伺った条件を前提として明示する", () => {
+    let profile = profileWith({ budgetYen: 0 });
     profile = markStated(profile, "budgetYen");
 
     const plan = buildCarePlan({
@@ -401,7 +386,6 @@ describe("手順の組み立て", () => {
       habits: [],
     });
     expect(plan.basis.some((b) => b.includes("買い足しはなし"))).toBe(true);
-    expect(plan.basis.some((b) => b.includes("肌のご相談"))).toBe(true);
   });
 
   it("伺っていない条件を前提に並べない", () => {

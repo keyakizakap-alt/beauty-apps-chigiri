@@ -262,6 +262,11 @@ export const ChatResponseSchema = z.object({
   /** 相談の進み具合（次のリクエストへそのまま返す） */
   counsel: CounselStateSchema,
   quickReplies: z.array(QuickReplySchema).default([]),
+  /**
+   * ほかの分野の相談へ移る導線を出す場合、その分野。
+   * こちらから勝手に移さないため、案内だけを返す。
+   */
+  suggestExpert: ExpertIdSchema.nullable().default(null),
   /** 手持ちの選択 UI を出すか */
   showInventoryPicker: z.boolean().default(false),
   /** 写真で登録する導線を出すか */

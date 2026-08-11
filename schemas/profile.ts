@@ -137,33 +137,22 @@ export const StageSchema = z.enum([
 ]);
 export type Stage = z.infer<typeof StageSchema>;
 
-/** 待機中の分野の進み具合 */
-export const ExpertProgressSchema = z.object({
-  expert: ExpertIdSchema,
-  stage: StageSchema.default("greeting"),
-  asked: z.array(StageSchema).max(20).default([]),
-  topics: z.array(z.string().max(40)).max(12).default([]),
-  habits: z.array(z.string().max(40)).max(12).default([]),
-});
-
 /**
  * 相談の進み具合。サーバーは状態を保持せず、やり取りのたびに受け渡す。
  *
- * 分野を切り替えても聞き取り内容を失わないよう、
- * 待機中の分野の進み具合は parked に退避して一緒に持ち回る。
+ * 相談は分野ごとに独立しているため、この状態も1分野分しか持たない。
+ * ほかの分野の進み具合はそれぞれの相談が別に持つ。
  */
 export const CounselStateSchema = z.object({
   stage: StageSchema.default("greeting"),
   asked: z.array(StageSchema).max(20).default([]),
   turn: z.number().int().min(0).max(500).default(0),
-  /** いま話している分野。省略時はスキンケア（従来の挙動）。 */
+  /** この相談の分野。省略時はスキンケア（従来の挙動）。 */
   expert: ExpertIdSchema.default("skincare"),
-  /** いまの分野で伺った関心事 */
+  /** この分野で伺った関心事 */
   topics: z.array(z.string().max(40)).max(12).default([]),
-  /** いまの分野で伺ったやり方・習慣 */
+  /** この分野で伺ったやり方・習慣 */
   habits: z.array(z.string().max(40)).max(12).default([]),
-  /** 待機中の分野の進み具合 */
-  parked: z.array(ExpertProgressSchema).max(4).default([]),
 });
 
 export const ChatRequestSchema = z.object({
@@ -183,12 +172,6 @@ export const ChatRequestSchema = z.object({
     expert: "skincare",
     topics: [],
     habits: [],
-    parked: [],
   }),
-  /**
-   * 分野の切り替え要求。
-   * 画面の選択から届く。会話は切り替えず、担当だけが代わる。
-   */
-  switchTo: ExpertIdSchema.nullable().default(null),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;

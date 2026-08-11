@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   CounselStateSchema,
   DEFAULT_PROFILE,
+  ExpertIdSchema,
   ProfileSchema,
   type ExpertId,
   type Profile,
@@ -45,43 +46,47 @@ export const StoredMessageSchema = z.object({
 export type StoredMessage = z.infer<typeof StoredMessageSchema>;
 
 /** 相談を開き直したときに戻る進み具合の初期値 */
-const INITIAL_COUNSEL = {
+const initialCounsel = (expert: ExpertId) => ({
   stage: "greeting" as const,
   asked: [],
   turn: 0,
-  expert: "skincare" as const,
+  expert,
   topics: [],
   habits: [],
-  parked: [],
-};
+});
 
 export const ConversationSchema = z.object({
   id: z.string(),
   title: z.string(),
+  /**
+   * この相談の分野。作成時に決まり、あとから変わらない。
+   * 分野ごとに独立した相談にするための要。
+   */
+  expert: ExpertIdSchema.catch("skincare").default("skincare"),
   messages: z.array(StoredMessageSchema).default([]),
   /** この相談を行ったときの条件 */
   profile: ProfileSchema.catch(DEFAULT_PROFILE),
   /**
-   * 相談の進み具合。分野と、分野ごとの聞き取り内容を含む。
-   * これを残さないと、開き直したときにどの分野の話だったのか分からなくなる。
+   * 相談の進み具合。
+   * これを残さないと、開き直したときに最初から聞き直すことになる。
    */
-  counsel: CounselStateSchema.catch(INITIAL_COUNSEL).default(INITIAL_COUNSEL),
+  counsel: CounselStateSchema.catch(initialCounsel("skincare")).default(
+    initialCounsel("skincare"),
+  ),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
 export type Conversation = z.infer<typeof ConversationSchema>;
 
-/**
- * その相談で話した分野。
- * 進み具合から導く（別に持つと、片方だけ更新されて食い違うため）。
- */
-export function conversationExperts(c: Conversation): ExpertId[] {
-  return [...new Set([c.counsel.expert, ...c.counsel.parked.map((p) => p.expert)])];
-}
-
 const StoreSchema = z.object({
   version: z.literal(1).catch(1),
   activeId: z.string().nullable().default(null),
+  /**
+   * いま開いている分野。
+   * その分野の相談がまだ1件も無い状態でも覚えておく必要があるため、
+   * activeId とは別に持つ。
+   */
+  activeExpert: ExpertIdSchema.catch("skincare").default("skincare"),
   conversations: z.array(ConversationSchema).default([]),
 });
 export type ConversationStore = z.infer<typeof StoreSchema>;
@@ -89,6 +94,7 @@ export type ConversationStore = z.infer<typeof StoreSchema>;
 const EMPTY_STORE: ConversationStore = {
   version: 1,
   activeId: null,
+  activeExpert: "skincare",
   conversations: [],
 };
 
@@ -122,14 +128,18 @@ export function deriveSnippet(conversation: Conversation): string {
   return text.length > 34 ? `${text.slice(0, 34)}…` : text;
 }
 
-export function createConversation(profile: Profile): Conversation {
+export function createConversation(
+  profile: Profile,
+  expert: ExpertId,
+): Conversation {
   const now = new Date().toISOString();
   return {
     id: newId(),
     title: NEW_CONVERSATION_TITLE,
+    expert,
     messages: [],
     profile,
-    counsel: INITIAL_COUNSEL,
+    counsel: initialCounsel(expert),
     createdAt: now,
     updatedAt: now,
   };
@@ -166,6 +176,106 @@ function prune(store: ConversationStore): ConversationStore {
     conversations,
     activeId: store.activeId && ids.has(store.activeId) ? store.activeId : null,
   };
+}
+
+/** その分野のうち、いちばん新しい相談 */
+function latestOf(
+  conversations: readonly Conversation[],
+  expert: ExpertId,
+): Conversation | null {
+  return (
+    [...conversations]
+      .filter((c) => c.expert === expert)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * 状態の遷移（純粋な関数）
+ *
+ * 相談が分野をまたいで混ざらないことが、この機能の要になる。
+ * React の外に出しておき、そのまま検証できるようにする。
+ * ------------------------------------------------------------------ */
+
+/**
+ * 分野を開く。
+ * その分野の最新の相談へ移るだけで、ほかの相談には何も起こらない。
+ */
+export function openExpertIn(
+  store: ConversationStore,
+  expert: ExpertId,
+): ConversationStore {
+  if (store.activeExpert === expert) return store;
+  return {
+    ...store,
+    activeExpert: expert,
+    activeId: latestOf(store.conversations, expert)?.id ?? null,
+  };
+}
+
+/**
+ * 相談を開く。
+ * 相談には分野が固定されているので、開いた相談の分野へ揃える。
+ * ここを揃えないと、一覧と本文の分野が食い違う。
+ */
+export function openConversationIn(
+  store: ConversationStore,
+  id: string,
+): ConversationStore {
+  const target = store.conversations.find((c) => c.id === id);
+  if (!target) return store;
+  return { ...store, activeId: id, activeExpert: target.expert };
+}
+
+/** いま開いている分野に、新しい相談を足す */
+export function addConversationIn(
+  store: ConversationStore,
+  conversation: Conversation,
+): ConversationStore {
+  return {
+    ...store,
+    activeId: conversation.id,
+    activeExpert: conversation.expert,
+    // 発言のないまま放置された相談は残さない。
+    // 「新しい相談」を続けて押したときに空の行が積み上がるのを防ぐ。
+    conversations: [
+      conversation,
+      ...store.conversations.filter((c) => c.messages.length > 0),
+    ],
+  };
+}
+
+/**
+ * 相談を消す。
+ * いま見ているものを消した場合は、同じ分野の次の相談へ移る。
+ * ほかの分野へ飛ばさない。
+ */
+export function removeConversationIn(
+  store: ConversationStore,
+  id: string,
+): ConversationStore {
+  const conversations = store.conversations.filter((c) => c.id !== id);
+  return {
+    ...store,
+    conversations,
+    activeId:
+      store.activeId === id
+        ? (latestOf(conversations, store.activeExpert)?.id ?? null)
+        : store.activeId,
+  };
+}
+
+/** 分野ごとの相談件数（発言のないものは数えない） */
+export function countByExpert(
+  conversations: readonly Conversation[],
+): Record<ExpertId, number> {
+  const counts = Object.fromEntries(
+    ExpertIdSchema.options.map((id) => [id, 0]),
+  ) as Record<ExpertId, number>;
+  for (const c of conversations) {
+    if (c.messages.length > 0) counts[c.expert] += 1;
+  }
+  return counts;
 }
 
 /**
@@ -222,9 +332,18 @@ export type UseConversations = {
   hydrated: boolean;
   /** 端末への保存が効いているか */
   storage: StorageState;
+  /**
+   * いま開いている分野の相談だけ。
+   * 分野ごとに独立した相談にするため、一覧も分野で分ける。
+   */
   conversations: Conversation[];
+  /** 分野ごとの相談件数（選択タブに出す） */
+  countByExpert: Record<ExpertId, number>;
   active: Conversation | null;
   activeId: string | null;
+  activeExpert: ExpertId;
+  /** 分野を開く。その分野の最新の相談へ移る（無ければ空のまま） */
+  selectExpert: (expert: ExpertId) => void;
   startNew: (profile: Profile) => string;
   select: (id: string) => void;
   remove: (id: string) => void;
@@ -270,40 +389,42 @@ export function useConversations(): UseConversations {
     [],
   );
 
+  /**
+   * いま開いている分野に、新しい相談を作る。
+   * 分野は相談に固定されるため、あとから変わることはない。
+   */
   const startNew = useCallback(
     (profile: Profile) => {
-      const conversation = createConversation(profile);
-      update((prev) => ({
-        ...prev,
-        activeId: conversation.id,
-        // 発言のないまま放置された相談は残さない。
-        // 「新しい相談」を続けて押したときに空の行が積み上がるのを防ぐ。
-        conversations: [
-          conversation,
-          ...prev.conversations.filter((c) => c.messages.length > 0),
-        ],
-      }));
-      return conversation.id;
+      const id = newId();
+      update((prev) =>
+        addConversationIn(prev, {
+          ...createConversation(profile, prev.activeExpert),
+          id,
+        }),
+      );
+      return id;
     },
     [update],
   );
 
+  /**
+   * 分野を開く。
+   *
+   * その分野の最新の相談へ移るだけで、いまの相談には何も起こらない。
+   * 戻ってきたときには、そのまま続きが残っている。
+   */
+  const selectExpert = useCallback(
+    (expert: ExpertId) => update((prev) => openExpertIn(prev, expert)),
+    [update],
+  );
+
   const select = useCallback(
-    (id: string) => update((prev) => ({ ...prev, activeId: id })),
+    (id: string) => update((prev) => openConversationIn(prev, id)),
     [update],
   );
 
   const remove = useCallback(
-    (id: string) =>
-      update((prev) => {
-        const conversations = prev.conversations.filter((c) => c.id !== id);
-        return {
-          ...prev,
-          conversations,
-          activeId:
-            prev.activeId === id ? (conversations[0]?.id ?? null) : prev.activeId,
-        };
-      }),
+    (id: string) => update((prev) => removeConversationIn(prev, id)),
     [update],
   );
 
@@ -342,11 +463,17 @@ export function useConversations(): UseConversations {
     [update],
   );
 
+  /* 一覧はいま開いている分野の分だけ。相談は分野ごとに独立している。 */
   const conversations = useMemo(
     () =>
-      [...store.conversations].sort((a, b) =>
-        b.updatedAt.localeCompare(a.updatedAt),
-      ),
+      store.conversations
+        .filter((c) => c.expert === store.activeExpert)
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+    [store.conversations, store.activeExpert],
+  );
+
+  const counts = useMemo(
+    () => countByExpert(store.conversations),
     [store.conversations],
   );
 
@@ -359,8 +486,11 @@ export function useConversations(): UseConversations {
     hydrated,
     storage,
     conversations,
+    countByExpert: counts,
     active,
     activeId: store.activeId,
+    activeExpert: store.activeExpert,
+    selectExpert,
     startNew,
     select,
     remove,

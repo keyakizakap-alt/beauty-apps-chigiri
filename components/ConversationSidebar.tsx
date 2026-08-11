@@ -3,18 +3,21 @@
 import Link from "next/link";
 import { ChigiriMark } from "./AppSplash";
 import {
-  conversationExperts,
   deriveSnippet,
   type Conversation,
   type StorageState,
 } from "@/lib/conversations";
-import { EXPERTS } from "@/domain/conversation/experts";
+import { EXPERTS, type ExpertId } from "@/domain/conversation/experts";
 
 /**
  * 相談ログのサイドバー。
  *
  * 過去の相談を開き直せることを主目的にしている。
  * 見出しだけでは何の話だったか思い出せないため、直近の返答の抜粋も出す。
+ *
+ * 一覧に出すのは、いま開いている分野の相談だけ。
+ * 分野ごとに独立した相談にしているため、ここも分野で分ける。
+ * ほかの分野の相談は、上の相談先を選ぶと出てくる。
  *
  * レイアウトの要点:
  * - 高さは3段（上：固定、中：伸びてスクロール、下：固定）に分ける。
@@ -24,6 +27,7 @@ import { EXPERTS } from "@/domain/conversation/experts";
  */
 export default function ConversationSidebar({
   conversations,
+  expert,
   activeId,
   onSelect,
   onNew,
@@ -32,6 +36,8 @@ export default function ConversationSidebar({
   onClose,
 }: {
   conversations: Conversation[];
+  /** いま開いている分野（一覧はこの分野の相談だけ） */
+  expert: ExpertId;
   activeId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
@@ -74,14 +80,14 @@ export default function ConversationSidebar({
           <span aria-hidden className="text-base leading-none">
             +
           </span>
-          新しく相談する
+          {EXPERTS[expert].label}を新しく相談する
         </button>
       </div>
 
       {/* 中段：一覧。ここだけが伸びてスクロールする。 */}
       <div className="flex min-h-0 flex-1 flex-col">
         <p className="shrink-0 px-4 pb-1.5 text-[11px] font-medium text-sumi/45">
-          これまでの相談
+          {EXPERTS[expert].label}の相談
           {conversations.length > 0 && `（${conversations.length}）`}
         </p>
 
@@ -101,7 +107,8 @@ export default function ConversationSidebar({
         <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
           {conversations.length === 0 ? (
             <p className="px-1 py-2 text-[11px] leading-relaxed text-sumi/45">
-              まだ相談がありません。話しかけると、ここに残ります。
+              {EXPERTS[expert].label}の相談はまだありません。
+              話しかけると、ここに残ります。
             </p>
           ) : (
             <ul className="space-y-1">
@@ -135,20 +142,6 @@ export default function ConversationSidebar({
                         {deriveSnippet(c)}
                       </p>
 
-                      {/*
-                        どの分野の話だったか。
-                        見出しと抜粋だけでは、髪の話か肌の話か分からないことがある。
-                      */}
-                      <p className="mt-1 flex flex-wrap gap-1">
-                        {conversationExperts(c).map((id) => (
-                          <span
-                            key={id}
-                            className="rounded-full bg-kinari px-1.5 py-0.5 text-[9px] leading-[1.5] text-sumi/50"
-                          >
-                            {EXPERTS[id].mark} {EXPERTS[id].label}
-                          </span>
-                        ))}
-                      </p>
                     </button>
 
                     {/*

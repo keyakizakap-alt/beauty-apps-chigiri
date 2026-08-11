@@ -1,6 +1,5 @@
 import type { Profile } from "@/schemas/profile";
 import { isStated } from "@/schemas/profile";
-import { CONCERN_LABEL } from "@/domain/recommendation/routine-builder";
 import { DISCLAIMER } from "@/domain/recommendation/safety-rules";
 import { EXPERTS, topicLabel, type ExpertId } from "./experts";
 
@@ -28,7 +27,7 @@ export type CareStep = {
 export type CarePlan = {
   expert: ExpertId;
   headline: string;
-  /** 何を前提に組んだか（分野をまたいで引き継いだ条件を含む） */
+  /** 何を前提に組んだか（この相談の中で伺ったことだけ） */
   basis: string[];
   steps: CareStep[];
   cautions: string[];
@@ -578,8 +577,9 @@ function buildHeadline(expert: ExpertId, topics: string[]): string {
 /**
  * 何を前提に組んだか。
  *
- * 分野を切り替えても、前の分野で伺った条件はそのまま使う。
- * 使ったのなら、使ったと書く。伺っていない項目は前提に並べない。
+ * この相談の中で伺ったことだけを並べる。
+ * 相談は分野ごとに独立しているため、ほかの分野で話した内容を
+ * 「知っている」ことにしない。伺っていない項目も前提に並べない。
  */
 function buildBasis(
   profile: Profile,
@@ -601,15 +601,6 @@ function buildBasis(
       profile.budgetYen === 0
         ? "買い足しはなしで"
         : `買い足しは ${profile.budgetYen.toLocaleString()}円まで`,
-    );
-  }
-  /* 別の分野で伺った内容も、関係するものは前提として引き継ぐ */
-  if (profile.concerns.length > 0) {
-    basis.push(
-      `肌のご相談で伺った ${profile.concerns
-        .slice(0, 2)
-        .map((c) => CONCERN_LABEL[c] ?? c)
-        .join("・")} も踏まえています`,
     );
   }
   if (profile.avoidIngredients.length > 0) {

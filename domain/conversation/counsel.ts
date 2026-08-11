@@ -26,9 +26,8 @@ export type { QuickReply };
  * 「わからない」と言われたら、こちらで仮に置いて先へ進み、
  * 何を仮に置いたかを確認のときに伝える。
  *
- * 分野を切り替えても、伺った条件（時間・予算・避けたいもの）は
- * プロファイルに残るため引き継がれる。分野ごとの聞き取り内容は
- * parked に退避し、戻ってきたときに続きから再開する。
+ * 相談は分野ごとに独立している。ひとつの相談はひとつの分野のもので、
+ * 途中で分野が変わることはない。したがってこの状態も1分野分しか持たない。
  *
  * この判断に AI は関与しない。同じ状況では同じ聞き方になる。
  */
@@ -39,28 +38,17 @@ export type { QuickReply };
  */
 export type { Stage };
 
-/** 待機中の分野の進み具合 */
-export type ExpertProgress = {
-  expert: ExpertId;
-  stage: Stage;
-  asked: Stage[];
-  topics: string[];
-  habits: string[];
-};
-
 export type CounselState = {
   stage: Stage;
   /** すでに尋ねた段階（同じことを二度聞かない） */
   asked: Stage[];
   turn: number;
-  /** いま話している分野 */
+  /** この相談の分野。相談の途中で変わることはない。 */
   expert: ExpertId;
-  /** いまの分野で伺った関心事 */
+  /** この分野で伺った関心事 */
   topics: string[];
-  /** いまの分野で伺ったやり方・習慣 */
+  /** この分野で伺ったやり方・習慣 */
   habits: string[];
-  /** 待機中の分野の進み具合。切り替えても失わない。 */
-  parked: ExpertProgress[];
 };
 
 export const INITIAL_STATE: CounselState = {
@@ -70,7 +58,6 @@ export const INITIAL_STATE: CounselState = {
   expert: DEFAULT_EXPERT,
   topics: [],
   habits: [],
-  parked: [],
 };
 
 export type TurnPlan = {
@@ -212,145 +199,24 @@ export function openingMessage(
   );
 }
 
-/** 最初から出しておく選択肢 */
-export const OPENING_QUICK_REPLIES: QuickReply[] = CONCERN_CHIPS;
-
-/** 最初の問いかけは済ませてある状態から始める */
-export const OPENING_STATE: CounselState = {
-  ...INITIAL_STATE,
-  stage: "concerns",
-  asked: ["concerns"],
-};
-
-/* ------------------------------------------------------------------ *
- * 分野の切り替え
- * ------------------------------------------------------------------ */
-
-export type ExpertSwitch = {
-  state: CounselState;
-  /** 引き継いだ内容を明示する案内文 */
-  message: string;
-  quickReplies: QuickReply[];
-};
-
-/**
- * 分野を切り替える。
- *
- * 会話そのものは切り替えない。同じ相談の中で担当が代わるだけで、
- * 伺った条件はそのまま引き継ぐ。
- * 何を引き継いだかは、こちらから言葉にして返す。
- * 黙って持ち越すと、利用者側からは何が伝わっているのか分からないため。
- */
-export function switchExpert(
-  state: CounselState,
-  to: ExpertId,
-  profile: Profile,
-): ExpertSwitch {
-  const definition = EXPERTS[to];
-
-  if (to === state.expert) {
-    return {
-      state,
-      message: `いまも${definition.title}を承っています。続けてどうぞ。`,
-      quickReplies: toQuickReplies(definition.concerns),
-    };
-  }
-
-  /* いまの分野を退避する（戻ってきたときに続きから話せるように） */
-  const parked: ExpertProgress[] = [
-    ...state.parked.filter((p) => p.expert !== state.expert && p.expert !== to),
-    {
-      expert: state.expert,
-      stage: state.stage,
-      asked: state.asked,
-      topics: state.topics,
-      habits: state.habits,
-    },
-  ];
-
-  const resumed = state.parked.find((p) => p.expert === to);
-
-  const next: CounselState = {
-    stage: resumed?.stage ?? "greeting",
-    asked: resumed?.asked ?? [],
-    turn: state.turn,
-    expert: to,
-    topics: resumed?.topics ?? [],
-    habits: resumed?.habits ?? [],
-    parked,
-  };
-
-  const carried = carriedOver(profile);
-  const lines = [`${definition.title}に代わりました。${definition.tagline}`];
-
-  if (carried.length > 0) {
-    lines.push(
-      "",
-      `ここまでのお話は引き継いでいます（${carried.join(" / ")}）。同じことをもう一度伺うことはありません。`,
-    );
-  }
-  if (definition.scopeNote) {
-    lines.push("", definition.scopeNote);
-  }
-
-  /*
-   * 続きから再開する場合はそう伝える。
-   *
-   * 分野によって聞き取りの持ち方が違う（スキンケアは手持ち商品、
-   * ほかは関心事）ので、話が残っているかどうかは topics ではなく
-   * 「一度でも尋ねたか」で判断する。
-   * ここでは次の問いかけまでは書かない。実際に何を尋ねるかは
-   * planTurn が決めるため、二重に問いかけないようにしている。
-   */
-  const resumable =
-    resumed &&
-    (resumed.asked.length > 0 ||
-      resumed.topics.length > 0 ||
-      resumed.habits.length > 0);
-
-  if (resumable) {
-    lines.push(
-      "",
-      resumed.topics.length > 0
-        ? `前回この分野では ${resumed.topics
-            .map((t) => topicLabel(to, t))
-            .join("、")} を伺っていました。続きから進めます。`
-        : "前回伺ったところから続けます。",
-    );
-  }
-
-  return {
-    state: next,
-    message: lines.join("\n"),
-    quickReplies: toQuickReplies(definition.concerns),
-  };
+/** その分野の最初に出しておく選択肢 */
+export function openingQuickReplies(
+  expert: ExpertId = DEFAULT_EXPERT,
+): QuickReply[] {
+  return toQuickReplies(EXPERTS[expert].concerns);
 }
 
-/** 分野をまたいで引き継げる条件（利用者が実際に答えたものだけ） */
-function carriedOver(profile: Profile): string[] {
-  const carried: string[] = [];
-  if (profile.concerns.length > 0) {
-    carried.push(
-      profile.concerns
-        .slice(0, 2)
-        .map((c) => CONCERN_LABEL[c] ?? c)
-        .join("・"),
-    );
-  }
-  if (isStated(profile, "morningMinutes")) {
-    carried.push(`朝は${profile.morningMinutes}分`);
-  }
-  if (isStated(profile, "budgetYen")) {
-    carried.push(
-      profile.budgetYen === 0
-        ? "買い足しなし"
-        : `${profile.budgetYen.toLocaleString()}円まで`,
-    );
-  }
-  if (profile.avoidIngredients.length > 0) {
-    carried.push(`避けたい成分${profile.avoidIngredients.length}件`);
-  }
-  return carried;
+/**
+ * その分野の相談を始める状態。
+ * 最初の問いかけは openingMessage で済ませてあるため、concerns は尋ねた扱いにする。
+ */
+export function openingState(expert: ExpertId = DEFAULT_EXPERT): CounselState {
+  return {
+    ...INITIAL_STATE,
+    expert,
+    stage: "concerns",
+    asked: ["concerns"],
+  };
 }
 
 /* ------------------------------------------------------------------ *
@@ -765,9 +631,13 @@ function buildDomainConfirmation(profile: Profile, state: CounselState): string 
       : `・朝の時間は伺えていないので、${profile.morningMinutes}分として見ています`,
   );
 
-  const carried = carriedOver(profile);
-  if (carried.length > 0) {
-    lines.push(`・ほかの相談から引き継いだ条件: ${carried.join(" / ")}`);
+  /*
+   * ほかの分野の相談内容はここに並べない。
+   * 相談は分野ごとに独立していて、別の相談で話したことを
+   * こちらが知っている前提にしないため。
+   */
+  if (profile.avoidIngredients.length > 0) {
+    lines.push(`・避けたいものが ${profile.avoidIngredients.length}件`);
   }
 
   return [
@@ -791,7 +661,6 @@ function normalize(state: CounselState): CounselState {
     expert: state.expert ?? DEFAULT_EXPERT,
     topics: state.topics ?? [],
     habits: state.habits ?? [],
-    parked: state.parked ?? [],
   };
 }
 

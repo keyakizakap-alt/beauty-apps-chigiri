@@ -14,7 +14,6 @@ import {
 } from "@/domain/recommendation/product-matcher";
 import {
   planTurn,
-  switchExpert,
   wantsProposal,
   type CounselState,
 } from "@/domain/conversation/counsel";
@@ -74,7 +73,6 @@ export async function POST(req: Request) {
     profile: incomingProfile,
     allowExternalAi,
     counsel,
-    switchTo,
   } = parsed.data;
 
   const state = counsel as CounselState;
@@ -100,49 +98,29 @@ export async function POST(req: Request) {
 
   try {
     /*
-     * 2. 分野の切り替え。
+     * 2. ほかの分野の話だったとき。
      *
-     * 画面の選択（switchTo）が本来の入口だが、会話の中で言われることもある。
-     * いまと同じ分野を指している場合は、通常の発言として扱う。
+     * 相談は分野ごとに独立しているため、この相談の中で担当は代わらない。
+     * 勝手に別の分野へ移すと、いま進めている相談が途中で置き去りになる。
+     * どこへ行けばよいかだけを伝えて、移るかどうかは利用者に決めてもらう。
      */
-    const requested = switchTo ?? detectExpertSwitch(message);
-    if (requested && requested !== state.expert) {
-      const moved = switchExpert(state, requested, incomingProfile);
-
-      /*
-       * 引き継ぎを伝えたうえで、その分野で次に尋ねるべきことまで続ける。
-       * 「担当が代わりました」で止めると、利用者が次の一言を探すことになる。
-       */
-      const opener = planTurn({
-        profile: incomingProfile,
-        state: moved.state,
-        learned: [],
-        wantsProposal: false,
-        detected: { topics: [], habits: [] },
-      });
-
-      /*
-       * 切り替えた直後に組み立てまで走らせない。
-       * 分野を選んだだけで結果が出ると、頼んでいないものを出されたことになる。
-       * 一度こちらから声をかけ、進めるかどうかは利用者に決めてもらう。
-       */
-      const proceed = !opener.propose;
-
+    const elsewhere = detectExpertSwitch(message);
+    if (elsewhere && elsewhere !== state.expert) {
+      const target = EXPERTS[elsewhere];
       return respond({
-        reply: proceed
-          ? `${moved.message}\n\n${opener.message}`
-          : `${moved.message}\n\n伺っている内容はそろっています。このまま組み立ててよければ、そうお伝えください。`,
+        reply:
+          `${target.label}のご相談は、${target.title}として別に承っています。\n` +
+          `上の「${target.label}」を選ぶと、そちらの相談が開きます。` +
+          "この相談はこのまま残るので、あとで戻ってこられます。\n\n" +
+          `${EXPERTS[state.expert].title}については、続けてどうぞ。`,
         acknowledgement: null,
         profile: incomingProfile,
-        counsel: proceed ? opener.state : moved.state,
-        quickReplies: proceed
-          ? opener.quickReplies.length > 0
-            ? opener.quickReplies
-            : moved.quickReplies
-          : [{ label: "これで組んでください", send: "この内容で組み立ててください" }],
-        showInventoryPicker: proceed && opener.showInventoryPicker,
-        offerPhoto: proceed && opener.offerPhoto,
-        missing: proceed && opener.showInventoryPicker ? ["ownedProductIds"] : [],
+        counsel: state,
+        quickReplies: [],
+        suggestExpert: elsewhere,
+        showInventoryPicker: false,
+        offerPhoto: false,
+        missing: [],
         recommendation: null,
         carePlan: null,
         ai: IDLE_AI,

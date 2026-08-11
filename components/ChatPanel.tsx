@@ -10,9 +10,9 @@ import {
 } from "@/schemas/recommendation";
 import { markStated, type ExpertId, type Profile } from "@/schemas/profile";
 import {
-  OPENING_QUICK_REPLIES,
-  OPENING_STATE,
   openingMessage,
+  openingQuickReplies,
+  openingState,
   type CounselState,
 } from "@/domain/conversation/counsel";
 import { EXPERTS } from "@/domain/conversation/experts";
@@ -40,6 +40,10 @@ import { ChigiriMark } from "./AppSplash";
  *
  * 画面は「相談ログのサイドバー＋対話」の二段構成。
  * 過去の相談を開き直すと、そのときの条件と生成済みルーティンまで戻る。
+ *
+ * 相談は分野（スキンケア・ヘアケア・ボディケア・ヘルスケア）ごとに独立している。
+ * 相談先を選ぶのは「別の相談を開く」操作であって、
+ * いま話している相談には何も起こらない。戻れば続きがそのまま残っている。
  */
 
 type Bubble = {
@@ -69,12 +73,12 @@ let bubbleSeq = 0;
 const nextId = () => `b${Date.now().toString(36)}-${++bubbleSeq}`;
 
 /** 最初のひとこと。時刻を使うため、描画後（クライアント）で組み立てる。 */
-function openingBubble(): Bubble {
+function openingBubble(expert: ExpertId): Bubble {
   return {
     id: OPENING_ID,
     role: "assistant",
     at: new Date().toISOString(),
-    text: openingMessage(),
+    text: openingMessage(new Date(), expert),
   };
 }
 
@@ -109,7 +113,10 @@ export default function ChatPanel() {
     hydrated: convHydrated,
     storage,
     conversations,
+    countByExpert,
     activeId,
+    activeExpert,
+    selectExpert,
     startNew,
     select,
     remove,
@@ -145,9 +152,14 @@ export default function ChatPanel() {
   const [error, setError] = useState<string | null>(null);
   const [panel, setPanel] = useState<"none" | "profile" | "inventory">("none");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [counsel, setCounsel] = useState<CounselState>(OPENING_STATE);
-  const [quickReplies, setQuickReplies] =
-    useState<QuickReply[]>(OPENING_QUICK_REPLIES);
+  const [counsel, setCounsel] = useState<CounselState>(() =>
+    openingState("skincare"),
+  );
+  const [quickReplies, setQuickReplies] = useState<QuickReply[]>(() =>
+    openingQuickReplies("skincare"),
+  );
+  /** 別の分野の相談を勧めているとき、その分野 */
+  const [suggested, setSuggested] = useState<ExpertId | null>(null);
   const [showPhoto, setShowPhoto] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
@@ -167,6 +179,7 @@ export default function ChatPanel() {
   useEffect(() => {
     if (!ready) return;
 
+    // その分野の相談がまだ無ければ、この分野の相談をひとつ作る
     if (!activeId) {
       startNew(profileRef.current);
       return;
@@ -174,28 +187,29 @@ export default function ChatPanel() {
     if (session?.id === activeId) return;
 
     const conversation = conversations.find((c) => c.id === activeId);
+    const expert = conversation?.expert ?? activeExpert;
 
     setSession({
       id: activeId,
       messages:
         conversation && conversation.messages.length > 0
           ? conversation.messages.map(toBubble)
-          : [openingBubble()],
+          : [openingBubble(expert)],
     });
     setPanel("none");
     setError(null);
     setShowPhoto(false);
+    setSuggested(null);
 
     /*
-     * 新しい相談は最初の問いかけから。
-     * 続きの相談は、そのとき話していた分野と聞き取り内容まで戻す。
-     * 分野を覚えていないと、髪の話の続きが肌の話として再開してしまう。
+     * 新しい相談はその分野の最初の問いかけから。
+     * 続きの相談は、聞き取り内容まで戻す。
      */
     const fresh = !conversation || conversation.messages.length === 0;
     setCounsel(
-      fresh ? OPENING_STATE : (conversation.counsel as CounselState),
+      fresh ? openingState(expert) : (conversation.counsel as CounselState),
     );
-    setQuickReplies(fresh ? OPENING_QUICK_REPLIES : []);
+    setQuickReplies(fresh ? openingQuickReplies(expert) : []);
 
     // 過去の相談を開いたときは、そのときの条件まで戻す。
     // 「何を前提に出した結論か」が分からないと振り返りにならないため。
@@ -204,7 +218,7 @@ export default function ChatPanel() {
     }
     // conversations を依存に入れると保存のたびに再読み込みされるため入れない
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, activeId, session?.id, startNew, setProfile]);
+  }, [ready, activeId, activeExpert, session?.id, startNew, setProfile]);
 
   /* 発言が変わったら相談ログへ保存する */
   useEffect(() => {
@@ -233,12 +247,7 @@ export default function ChatPanel() {
   }, [loading]);
 
   const send = useCallback(
-    async (
-      text: string,
-      overrideProfile?: Profile,
-      /** 分野の切り替えを伴う送信か */
-      switchTo?: ExpertId,
-    ) => {
+    async (text: string, overrideProfile?: Profile) => {
       const trimmed = text.trim();
       if (trimmed.length === 0 || loading) return;
 
@@ -263,7 +272,6 @@ export default function ChatPanel() {
             // 既定は false。利用者が明示的に許可したときだけ外部AIを使う。
             allowExternalAi: privacyRef.current.allowExternalAi,
             counsel: counselRef.current,
-            switchTo: switchTo ?? null,
           }),
         });
 
@@ -281,6 +289,7 @@ export default function ChatPanel() {
         setCounsel(parsed.data.counsel as CounselState);
         setQuickReplies(parsed.data.quickReplies);
         setShowPhoto(parsed.data.offerPhoto);
+        setSuggested(parsed.data.suggestExpert);
 
         /*
          * 受け止めの一言と本文を、少し間を空けて別々に出す。
@@ -379,24 +388,22 @@ export default function ChatPanel() {
     [messages],
   );
 
-  /** これまでに話した分野（いまの分野＋退避中の分野） */
-  const visitedExperts = useMemo(
-    () => [counsel.expert, ...counsel.parked.map((p) => p.expert)],
-    [counsel],
-  );
-
   /**
-   * 相談先を切り替える。
-   * 会話は続いたまま、担当だけが代わる。何を引き継いだかはサーバーが返す。
+   * 相談先を開く。
+   *
+   * これは「別の相談へ移る」操作で、いまの相談には何も起こらない。
+   * 送信もしない（担当が代わるのではなく、相談そのものが別だから）。
+   * 戻ってくれば、続きがそのまま残っている。
    */
-  const switchExpertTo = useCallback(
+  const openExpert = useCallback(
     (id: ExpertId) => {
-      if (id === counselRef.current.expert || loading) return;
+      if (id === activeExpert) return;
       setPanel("none");
       setShowPhoto(false);
-      void send(`${EXPERTS[id].label}の相談をお願いします`, undefined, id);
+      setSidebarOpen(false);
+      selectExpert(id);
     },
-    [loading, send],
+    [activeExpert, selectExpert],
   );
 
   if (!ready) {
@@ -414,6 +421,7 @@ export default function ChatPanel() {
         <div className="sticky top-0 h-dvh">
           <ConversationSidebar
             conversations={conversations}
+            expert={activeExpert}
             activeId={activeId}
             onSelect={handleSelect}
             onNew={handleNew}
@@ -435,6 +443,7 @@ export default function ChatPanel() {
           <div className="absolute inset-y-0 left-0 w-[86%] max-w-[320px] border-r border-beige shadow-xl">
             <ConversationSidebar
               conversations={conversations}
+              expert={activeExpert}
               activeId={activeId}
               onSelect={handleSelect}
               onNew={handleNew}
@@ -477,13 +486,13 @@ export default function ChatPanel() {
                 }`}
               />
               <span className="truncate">
-                {loading ? "整理しています" : EXPERTS[counsel.expert].title}
+                {loading ? "整理しています" : EXPERTS[activeExpert].title}
               </span>
             </p>
 
             <div className="ml-auto flex shrink-0 items-center gap-1.5">
               {/* 手持ちのカタログを持つのはスキンケアだけ */}
-              {EXPERTS[counsel.expert].recommendsProducts && (
+              {EXPERTS[activeExpert].recommendsProducts && (
                 <button
                   type="button"
                   onClick={() =>
@@ -534,10 +543,10 @@ export default function ChatPanel() {
           */}
           <div className="border-t border-beige/40 px-4 pb-2.5 sm:px-6">
             <ExpertPicker
-              active={counsel.expert}
-              visited={visitedExperts}
+              active={activeExpert}
+              countByExpert={countByExpert}
               disabled={loading}
-              onSelect={switchExpertTo}
+              onSelect={openExpert}
             />
           </div>
 
@@ -607,7 +616,7 @@ export default function ChatPanel() {
                     onClick={() => recalc(profile)}
                     disabled={
                       loading ||
-                      (EXPERTS[counsel.expert].recommendsProducts &&
+                      (EXPERTS[activeExpert].recommendsProducts &&
                         profile.ownedProductIds.length === 0)
                     }
                     className="flex-1 rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
@@ -770,6 +779,27 @@ export default function ChatPanel() {
             </div>
           )}
 
+          {/*
+            ほかの分野の話だったとき。
+            こちらで勝手に移すと、いまの相談が途中で置き去りになる。
+            移るかどうかは押してもらう。
+          */}
+          {suggested && !loading && (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => openExpert(suggested)}
+                className="flex items-center gap-1.5 rounded-xl border border-ai/40 bg-white px-4 py-2.5 text-sm text-ai transition-colors hover:bg-ai/5"
+              >
+                <span aria-hidden>{EXPERTS[suggested].mark}</span>
+                {EXPERTS[suggested].label}の相談を開く
+              </button>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/45">
+                いまの{EXPERTS[activeExpert].label}の相談はそのまま残ります。
+              </p>
+            </div>
+          )}
+
           {/* その場で答えられる選択肢 */}
           {quickReplies.length > 0 && !loading && (
             <div className="mt-4 flex flex-wrap gap-1.5">
@@ -814,9 +844,9 @@ export default function ChatPanel() {
                 }}
                 rows={1}
                 placeholder={
-                  EXPERTS[counsel.expert].recommendsProducts
+                  EXPERTS[activeExpert].recommendsProducts
                     ? "肌の悩み、予算、持っている化粧品など"
-                    : `${EXPERTS[counsel.expert].label}で気になっていること`
+                    : `${EXPERTS[activeExpert].label}で気になっていること`
                 }
                 aria-label="メッセージ"
                 className="max-h-32 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-sm outline-none"
