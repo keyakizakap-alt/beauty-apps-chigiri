@@ -14,14 +14,32 @@ body {
 }
 
 body {
-  background-color: #fcfbf8;
-  color: #2e2a26;
+  background-color: #f3f6f1;
+  color: #1b2a20;
   -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid #24402f;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
 }
 
 @layer components {
   .chigiri-card {
-    @apply rounded-card border border-beige/70 bg-white/80 shadow-[0_1px_2px_rgba(46,42,38,0.04)];
+    @apply rounded-card border border-beige/70 bg-white shadow-soft;
+  }
+
+  /* 字間を広げた英字・小見出し */
+  .chigiri-eyebrow {
+    @apply text-[11px] font-medium tracking-eyebrow text-moriSoft;
+  }
+
+  /* タップ領域は 44px 以上 */
+  .chigiri-tap {
+    @apply min-h-[44px];
   }
 
   .chigiri-label {
@@ -29,15 +47,15 @@ body {
   }
 
   .chigiri-chip {
-    @apply rounded-full border px-3 py-1.5 text-sm transition-colors;
+    @apply inline-flex min-h-[40px] items-center rounded-full border px-4 py-2 text-sm transition-colors;
   }
 
   .chigiri-chip-off {
-    @apply border-beige bg-white text-sumi/70 hover:border-ai/40;
+    @apply border-beige bg-white text-sumi/80 hover:border-moriSoft;
   }
 
   .chigiri-chip-on {
-    @apply border-ai bg-ai text-white;
+    @apply border-moriSoft bg-matchaSoft text-mori;
   }
 }
 
@@ -84,7 +102,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fcfbf8;
+  background-color: #f3f6f1;
   pointer-events: none;
   animation: chigiri-splash-out 0.45s ease-in 1.05s forwards;
 }
@@ -103,13 +121,13 @@ body {
 .chigiri-splash-name {
   font-size: 0.8125rem;
   letter-spacing: 0.16em;
-  color: rgba(46, 42, 38, 0.7);
+  color: rgba(27, 42, 32, 0.72);
   animation: chigiri-text-in 0.5s ease-out 0.22s both;
 }
 
 .chigiri-splash-tagline {
   font-size: 0.75rem;
-  color: rgba(46, 42, 38, 0.45);
+  color: rgba(27, 42, 32, 0.5);
   animation: chigiri-text-in 0.5s ease-out 0.36s both;
 }
 
@@ -145,5 +163,16 @@ body {
   .chigiri-thinking-dot {
     animation: none;
     opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

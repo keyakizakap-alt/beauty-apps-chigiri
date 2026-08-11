@@ -55,6 +55,20 @@ export default function HomePage() {
         </Link>
       </div>
 
+      <Link
+        href="/database"
+        className="chigiri-card mt-8 block p-5 transition-shadow hover:shadow-lift"
+      >
+        <p className="chigiri-eyebrow">Official Product Database</p>
+        <h2 className="mt-2 text-[15px] font-semibold text-mori">
+          公式情報データベース
+        </h2>
+        <p className="mt-2 text-[13px] leading-relaxed text-sumi/70">
+          扱っている {PRODUCTS.length} 点を、国・カテゴリー・価格帯・悩みで絞り込んで確認できます。
+          公式ページとの突合が済んでいない項目は「未確認」と表示します。
+        </p>
+      </Link>
+
       <p className="mt-8 text-xs leading-relaxed text-sumi/50">
         MVP のカタログは日本で購入できる日本・韓国コスメ {PRODUCTS.length} 点
         （洗顔・化粧水・美容液・乳液クリーム・日焼け止め）に限定しています。
