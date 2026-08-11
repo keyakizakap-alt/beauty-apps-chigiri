@@ -108,38 +108,62 @@ export const ChatMessageSchema = z.object({
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
-/** 相談の進み具合。サーバーは状態を保持せず、やり取りのたびに受け渡す。 */
+/**
+ * 相談できる分野。
+ * 語彙をここ1か所に置き、domain 側もこの型を使う。
+ * 2か所で列挙すると、片方だけ増えたときに静かに食い違うため。
+ */
+export const ExpertIdSchema = z.enum([
+  "skincare",
+  "haircare",
+  "bodycare",
+  "healthcare",
+]);
+export type ExpertId = z.infer<typeof ExpertIdSchema>;
+
+/** 相談の段階 */
+export const StageSchema = z.enum([
+  "greeting",
+  "concerns",
+  "skin",
+  "time",
+  "budget",
+  "inventory",
+  "habits",
+  "constraints",
+  "confirm",
+  "proposed",
+  "aftercare",
+]);
+export type Stage = z.infer<typeof StageSchema>;
+
+/** 待機中の分野の進み具合 */
+export const ExpertProgressSchema = z.object({
+  expert: ExpertIdSchema,
+  stage: StageSchema.default("greeting"),
+  asked: z.array(StageSchema).max(20).default([]),
+  topics: z.array(z.string().max(40)).max(12).default([]),
+  habits: z.array(z.string().max(40)).max(12).default([]),
+});
+
+/**
+ * 相談の進み具合。サーバーは状態を保持せず、やり取りのたびに受け渡す。
+ *
+ * 分野を切り替えても聞き取り内容を失わないよう、
+ * 待機中の分野の進み具合は parked に退避して一緒に持ち回る。
+ */
 export const CounselStateSchema = z.object({
-  stage: z
-    .enum([
-      "greeting",
-      "concerns",
-      "skin",
-      "time",
-      "budget",
-      "inventory",
-      "confirm",
-      "proposed",
-      "aftercare",
-    ])
-    .default("greeting"),
-  asked: z
-    .array(
-      z.enum([
-        "greeting",
-        "concerns",
-        "skin",
-        "time",
-        "budget",
-        "inventory",
-        "confirm",
-        "proposed",
-        "aftercare",
-      ]),
-    )
-    .max(20)
-    .default([]),
+  stage: StageSchema.default("greeting"),
+  asked: z.array(StageSchema).max(20).default([]),
   turn: z.number().int().min(0).max(500).default(0),
+  /** いま話している分野。省略時はスキンケア（従来の挙動）。 */
+  expert: ExpertIdSchema.default("skincare"),
+  /** いまの分野で伺った関心事 */
+  topics: z.array(z.string().max(40)).max(12).default([]),
+  /** いまの分野で伺ったやり方・習慣 */
+  habits: z.array(z.string().max(40)).max(12).default([]),
+  /** 待機中の分野の進み具合 */
+  parked: z.array(ExpertProgressSchema).max(4).default([]),
 });
 
 export const ChatRequestSchema = z.object({
@@ -152,6 +176,19 @@ export const ChatRequestSchema = z.object({
    */
   allowExternalAi: z.boolean().default(false),
   /** 相談の進み具合 */
-  counsel: CounselStateSchema.default({ stage: "greeting", asked: [], turn: 0 }),
+  counsel: CounselStateSchema.default({
+    stage: "greeting",
+    asked: [],
+    turn: 0,
+    expert: "skincare",
+    topics: [],
+    habits: [],
+    parked: [],
+  }),
+  /**
+   * 分野の切り替え要求。
+   * 画面の選択から届く。会話は切り替えず、担当だけが代わる。
+   */
+  switchTo: ExpertIdSchema.nullable().default(null),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;

@@ -2,8 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
-import { ProfileSchema, DEFAULT_PROFILE, type Profile } from "@/schemas/profile";
-import { RecommendationSchema } from "@/schemas/recommendation";
+import {
+  CounselStateSchema,
+  DEFAULT_PROFILE,
+  ProfileSchema,
+  type ExpertId,
+  type Profile,
+} from "@/schemas/profile";
+import { CarePlanSchema, RecommendationSchema } from "@/schemas/recommendation";
 
 /**
  * 相談ログ（会話履歴）の保存。
@@ -31,10 +37,23 @@ export const StoredMessageSchema = z.object({
    * スキーマ変更で読めない場合は null に落として、発言そのものは残す。
    */
   rec: RecommendationSchema.nullable().catch(null).default(null),
+  /** 髪・体・生活の手順（スキンケア以外の分野で確定したもの） */
+  carePlan: CarePlanSchema.nullable().catch(null).default(null),
   missing: z.array(z.string()).default([]),
   at: z.string(),
 });
 export type StoredMessage = z.infer<typeof StoredMessageSchema>;
+
+/** 相談を開き直したときに戻る進み具合の初期値 */
+const INITIAL_COUNSEL = {
+  stage: "greeting" as const,
+  asked: [],
+  turn: 0,
+  expert: "skincare" as const,
+  topics: [],
+  habits: [],
+  parked: [],
+};
 
 export const ConversationSchema = z.object({
   id: z.string(),
@@ -42,10 +61,23 @@ export const ConversationSchema = z.object({
   messages: z.array(StoredMessageSchema).default([]),
   /** この相談を行ったときの条件 */
   profile: ProfileSchema.catch(DEFAULT_PROFILE),
+  /**
+   * 相談の進み具合。分野と、分野ごとの聞き取り内容を含む。
+   * これを残さないと、開き直したときにどの分野の話だったのか分からなくなる。
+   */
+  counsel: CounselStateSchema.catch(INITIAL_COUNSEL).default(INITIAL_COUNSEL),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
 export type Conversation = z.infer<typeof ConversationSchema>;
+
+/**
+ * その相談で話した分野。
+ * 進み具合から導く（別に持つと、片方だけ更新されて食い違うため）。
+ */
+export function conversationExperts(c: Conversation): ExpertId[] {
+  return [...new Set([c.counsel.expert, ...c.counsel.parked.map((p) => p.expert)])];
+}
 
 const StoreSchema = z.object({
   version: z.literal(1).catch(1),
@@ -97,6 +129,7 @@ export function createConversation(profile: Profile): Conversation {
     title: NEW_CONVERSATION_TITLE,
     messages: [],
     profile,
+    counsel: INITIAL_COUNSEL,
     createdAt: now,
     updatedAt: now,
   };
@@ -196,8 +229,12 @@ export type UseConversations = {
   select: (id: string) => void;
   remove: (id: string) => void;
   clearAll: () => void;
-  /** 現在の相談の発言とプロファイルを差し替える */
-  syncActive: (messages: StoredMessage[], profile: Profile) => void;
+  /** 現在の相談の発言・条件・進み具合を差し替える */
+  syncActive: (
+    messages: StoredMessage[],
+    profile: Profile,
+    counsel: Conversation["counsel"],
+  ) => void;
 };
 
 export function useConversations(): UseConversations {
@@ -276,7 +313,11 @@ export function useConversations(): UseConversations {
   );
 
   const syncActive = useCallback(
-    (messages: StoredMessage[], profile: Profile) =>
+    (
+      messages: StoredMessage[],
+      profile: Profile,
+      counsel: Conversation["counsel"],
+    ) =>
       update((prev) => {
         if (!prev.activeId) return prev;
         return {
@@ -287,6 +328,7 @@ export function useConversations(): UseConversations {
                   ...c,
                   messages,
                   profile,
+                  counsel,
                   title:
                     c.title === NEW_CONVERSATION_TITLE
                       ? deriveTitle(messages)

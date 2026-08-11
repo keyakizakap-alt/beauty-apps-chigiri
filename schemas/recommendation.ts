@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CategorySchema, ProductSchema, UsageTimingSchema } from "./product";
-import { CounselStateSchema, ProfileSchema } from "./profile";
+import { CounselStateSchema, ExpertIdSchema, ProfileSchema } from "./profile";
 
 /** 推薦 API のリクエスト */
 export const RecommendRequestSchema = z.object({
@@ -226,6 +226,33 @@ export const QuickReplySchema = z.object({
 });
 export type QuickReply = z.infer<typeof QuickReplySchema>;
 
+/**
+ * 髪・体・生活の手順。
+ *
+ * 商品カタログを持たない分野では、商品ではなく手順を確定させる。
+ * ここも AI ではなく決定論的な規則で組み立てる。
+ */
+export const CareStepSchema = z.object({
+  order: z.number().int().min(1),
+  title: z.string().min(1).max(60),
+  detail: z.string().min(1).max(400),
+  cadence: z.string().min(1).max(30),
+  core: z.boolean(),
+});
+
+export const CarePlanSchema = z.object({
+  expert: ExpertIdSchema,
+  headline: z.string().min(1).max(120),
+  basis: z.array(z.string().max(120)).max(8).default([]),
+  steps: z.array(CareStepSchema).max(12),
+  cautions: z.array(z.string().max(300)).max(8).default([]),
+  beforeBuying: z.array(z.string().max(300)).max(8).default([]),
+  considerNext: z.array(z.string().max(120)).max(8).default([]),
+  scopeNote: z.string().max(400).nullable().default(null),
+  disclaimer: z.string(),
+});
+export type CarePlan = z.infer<typeof CarePlanSchema>;
+
 /** チャット API のレスポンス */
 export const ChatResponseSchema = z.object({
   reply: z.string(),
@@ -242,6 +269,8 @@ export const ChatResponseSchema = z.object({
   /** 追加で聞くべき項目 */
   missing: z.array(z.string()),
   recommendation: RecommendationSchema.nullable(),
+  /** スキンケア以外の分野で確定した手順 */
+  carePlan: CarePlanSchema.nullable().default(null),
   ai: AiMetaSchema,
   safety: z.array(SafetyNoticeSchema),
 });

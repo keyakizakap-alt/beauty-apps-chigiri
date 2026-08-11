@@ -1,4 +1,5 @@
 import type { SafetyNotice } from "@/schemas/recommendation";
+import type { ExpertId } from "@/schemas/profile";
 import { BANNED_PATTERNS } from "./catalog";
 
 export const DISCLAIMER =
@@ -28,17 +29,99 @@ const MEDICAL_REQUEST_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /処方|皮膚科の薬|ステロイド|抗生物質/, label: "医薬品" },
 ];
 
+/**
+ * 生命に関わる可能性のあるシグナル。
+ *
+ * 分野を問わず最優先で拾う。ここで拾ったときは、
+ * 提案も助言も行わず、相談先だけをお伝えする。
+ */
+const CRISIS_PATTERNS =
+  /死にたい|消えたい|生きているのが(つら|辛)|自殺|自傷|リストカット|OD(した|して)|オーバードーズ/;
+
+const CRISIS_MESSAGE =
+  "つらい状態が書かれていました。ここでお答えするより、話を聞ける窓口につながっていただくほうが確かです。" +
+  "こころの健康相談統一ダイヤル（0570-064-556）で、お住まいの地域の相談窓口につながります。" +
+  "いますぐ危険がある場合は 119 番へご連絡ください。";
+
+/**
+ * 体調そのものに関わるシグナル。
+ *
+ * ヘルスケアの相談では生活習慣の整理までしか扱わない。
+ * ここに当たる内容は、生活習慣の話に置き換えずに止める。
+ */
+const HEALTH_URGENT_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+  { pattern: /胸(が|の)痛|動悸|息切れ|息苦し/, label: "胸や呼吸の症状" },
+  { pattern: /めまい|立ちくらみ|失神|意識が(飛|遠)/, label: "めまい・意識の症状" },
+  /*
+   * 温度そのものは日常語（湯温など）でも出るため、
+   * 発熱を指していると読める形に限って拾う。
+   */
+  { pattern: /高熱|熱が下がら|(3[89]|40)度.{0,3}(熱|発熱)|熱が(3[89]|40)度/, label: "発熱" },
+  { pattern: /しびれ|ろれつ|手足が動か/, label: "しびれ・麻痺" },
+  { pattern: /血を吐|血便|不正出血/, label: "出血" },
+  { pattern: /体重が(急|一気)|急に(\d+)?キロ(痩|や)せ/, label: "急激な体重の変化" },
+  { pattern: /一睡もでき|眠れない日が(続|何日)|何日も眠れ/, label: "続く不眠" },
+];
+
+/**
+ * 判断を求められているが、こちらでは扱えない領域。
+ * 分野を問わず、化粧品と生活習慣の外にあるもの。
+ */
+const OUT_OF_SCOPE_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+  { pattern: /サプリ(メント)?|(市販|飲み|処方)薬|薬を(飲|服用|使)|服用/, label: "薬・サプリメント" },
+  { pattern: /ダイエット|断食|ファスティング|糖質制限|何キロ(痩|落と)/, label: "減量" },
+];
+
+/**
+ * 止めるほどではないが、こちらの前提を先に伝えるべき状態。
+ *
+ * 妊娠・授乳中は「使ってよい／いけない」を判断できないが、
+ * 相談そのものを断ると、いま持っているものを整理する手段まで失われる。
+ * 進めたうえで、判断はしないことを明示する。
+ */
+const CAUTION_PATTERNS: Array<{ pattern: RegExp; message: string }> = [
+  {
+    pattern: /妊娠|授乳|妊活|マタニティ/,
+    message:
+      "妊娠・授乳中に使ってよいかどうかの判断は、このサービスでは行いません。" +
+      "手持ちのものをどう組み合わせるかまではご案内できますので、" +
+      "個々の成分については、かかりつけの医師や薬剤師へご確認ください。",
+  },
+];
+
 export type SafetyGate =
   | { kind: "ok"; notices: SafetyNotice[] }
   | { kind: "stop"; notices: SafetyNotice[] };
 
 /**
  * ユーザーの自由入力に対する安全ゲート。
- * 推薦処理より前に実行し、stop の場合は商品提案を一切行わない。
+ * 推薦処理より前に実行し、stop の場合は商品提案も手順の提示も一切行わない。
+ *
+ * @param expert 相談中の分野。ヘルスケアでは扱える範囲がさらに狭い。
  */
-export function evaluateSafety(freeText: string): SafetyGate {
+export function evaluateSafety(
+  freeText: string,
+  expert: ExpertId = "skincare",
+): SafetyGate {
   const text = freeText.normalize("NFKC");
   const notices: SafetyNotice[] = [];
+
+  if (CRISIS_PATTERNS.test(text)) {
+    notices.push({ level: "stop", message: CRISIS_MESSAGE });
+    return { kind: "stop", notices };
+  }
+
+  const urgent = HEALTH_URGENT_PATTERNS.filter((r) => r.pattern.test(text));
+  if (urgent.length > 0) {
+    notices.push({
+      level: "stop",
+      message:
+        `「${urgent.map((r) => r.label).join("・")}」に当てはまる可能性のある状態が書かれていました。` +
+        "体調そのものの判断は、このサービスでは行いません。生活習慣の話に置き換えずに、" +
+        "医療機関へご相談ください。続いているようでしたら、早めのほうが安心です。",
+    });
+    return { kind: "stop", notices };
+  }
 
   const redFlags = RED_FLAG_PATTERNS.filter((r) => r.pattern.test(text));
   if (redFlags.length > 0) {
@@ -62,6 +145,25 @@ export function evaluateSafety(freeText: string): SafetyGate {
         "医師の治療を受けながら使える化粧品の整理をご希望の場合は、その旨をお知らせください。",
     });
     return { kind: "stop", notices };
+  }
+
+  const outOfScope = OUT_OF_SCOPE_PATTERNS.filter((r) => r.pattern.test(text));
+  if (outOfScope.length > 0) {
+    notices.push({
+      level: "stop",
+      message:
+        `「${outOfScope.map((r) => r.label).join("・")}」に関わる内容が含まれていました。` +
+        (expert === "healthcare"
+          ? "ここで扱えるのは、睡眠・食事の時刻・体を動かす時間といった生活習慣の置き方までです。"
+          : "ここで扱えるのは、化粧品の使い方と日々の手入れの順番までです。") +
+        "この点については医師・薬剤師・管理栄養士など、判断できる方へご相談ください。" +
+        "それ以外のことでしたら、続けて伺えます。",
+    });
+    return { kind: "stop", notices };
+  }
+
+  for (const c of CAUTION_PATTERNS) {
+    if (c.pattern.test(text)) notices.push({ level: "info", message: c.message });
   }
 
   return { kind: "ok", notices };

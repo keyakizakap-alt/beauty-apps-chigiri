@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { ChigiriMark } from "./AppSplash";
 import {
+  conversationExperts,
   deriveSnippet,
   type Conversation,
   type StorageState,
 } from "@/lib/conversations";
+import { EXPERTS } from "@/domain/conversation/experts";
 
 /**
  * 相談ログのサイドバー。
@@ -131,6 +133,21 @@ export default function ConversationSidebar({
                       </div>
                       <p className="mt-0.5 truncate text-[11px] leading-relaxed text-sumi/45">
                         {deriveSnippet(c)}
+                      </p>
+
+                      {/*
+                        どの分野の話だったか。
+                        見出しと抜粋だけでは、髪の話か肌の話か分からないことがある。
+                      */}
+                      <p className="mt-1 flex flex-wrap gap-1">
+                        {conversationExperts(c).map((id) => (
+                          <span
+                            key={id}
+                            className="rounded-full bg-kinari px-1.5 py-0.5 text-[9px] leading-[1.5] text-sumi/50"
+                          >
+                            {EXPERTS[id].mark} {EXPERTS[id].label}
+                          </span>
+                        ))}
                       </p>
                     </button>
 

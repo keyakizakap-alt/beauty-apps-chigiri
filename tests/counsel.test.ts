@@ -160,7 +160,7 @@ describe("相談の進め方", () => {
   it("提案後は追加の相談を受ける", () => {
     const plan = advance(
       profileWith({ ownedProductIds: ["cl-curel-foam"] }),
-      { stage: "proposed", asked: [], turn: 5 },
+      { ...INITIAL_STATE, stage: "proposed", turn: 5 },
     );
     expect(plan.state.stage).toBe("aftercare");
     expect(plan.propose).toBe(false);
@@ -173,7 +173,7 @@ describe("相談の進め方", () => {
         ownedProductIds: ["cl-curel-foam"],
         budgetYen: 1000,
       }),
-      state: { stage: "proposed", asked: [], turn: 5 },
+      state: { ...INITIAL_STATE, stage: "proposed", turn: 5 },
       learned: ["budgetYen"] as never,
       wantsProposal: false,
     });

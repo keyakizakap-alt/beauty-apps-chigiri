@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ChatResponseSchema,
+  type CarePlan,
   type QuickReply,
   type Recommendation,
 } from "@/schemas/recommendation";
-import { markStated, type Profile } from "@/schemas/profile";
+import { markStated, type ExpertId, type Profile } from "@/schemas/profile";
 import {
   OPENING_QUICK_REPLIES,
   OPENING_STATE,
   openingMessage,
   type CounselState,
 } from "@/domain/conversation/counsel";
+import { EXPERTS } from "@/domain/conversation/experts";
 import { PRODUCTS } from "@/domain/recommendation/catalog";
 import { useProfile } from "@/lib/storage";
 import { usePrivacy } from "@/lib/privacy";
@@ -24,7 +26,9 @@ import {
 import ProfileForm from "./ProfileForm";
 import ProductSelector from "./ProductSelector";
 import RecommendationCard from "./RecommendationCard";
+import CarePlanCard from "./CarePlanCard";
 import ConversationSidebar from "./ConversationSidebar";
+import ExpertPicker from "./ExpertPicker";
 import AiConsentCard from "./AiConsentCard";
 import PhotoCapture, { type Identified } from "./PhotoCapture";
 import { ChigiriMark } from "./AppSplash";
@@ -43,6 +47,8 @@ type Bubble = {
   role: "user" | "assistant";
   text: string;
   rec?: Recommendation | null;
+  /** 髪・体・生活の手順（スキンケア以外の分野） */
+  carePlan?: CarePlan | null;
   /** サーバーが「まだ聞けていない」と判断した項目 */
   missing?: string[];
   at: string;
@@ -77,6 +83,7 @@ const toStored = (b: Bubble): StoredMessage => ({
   role: b.role,
   text: b.text,
   rec: b.rec ?? null,
+  carePlan: b.carePlan ?? null,
   missing: b.missing ?? [],
   at: b.at,
 });
@@ -86,6 +93,7 @@ const toBubble = (m: StoredMessage): Bubble => ({
   role: m.role,
   text: m.text,
   rec: m.rec,
+  carePlan: m.carePlan,
   missing: m.missing,
   at: m.at,
 });
@@ -178,9 +186,15 @@ export default function ChatPanel() {
     setError(null);
     setShowPhoto(false);
 
-    // 新しい相談は最初の問いかけから、続きの相談は選択肢なしで再開する
+    /*
+     * 新しい相談は最初の問いかけから。
+     * 続きの相談は、そのとき話していた分野と聞き取り内容まで戻す。
+     * 分野を覚えていないと、髪の話の続きが肌の話として再開してしまう。
+     */
     const fresh = !conversation || conversation.messages.length === 0;
-    setCounsel(fresh ? OPENING_STATE : { stage: "aftercare", asked: [], turn: 0 });
+    setCounsel(
+      fresh ? OPENING_STATE : (conversation.counsel as CounselState),
+    );
     setQuickReplies(fresh ? OPENING_QUICK_REPLIES : []);
 
     // 過去の相談を開いたときは、そのときの条件まで戻す。
@@ -199,7 +213,7 @@ export default function ChatPanel() {
     if (session.id !== activeId) return;
     const persistable = session.messages.filter((m) => m.id !== OPENING_ID);
     if (persistable.length === 0) return;
-    syncActive(persistable.map(toStored), profileRef.current);
+    syncActive(persistable.map(toStored), profileRef.current, counselRef.current);
   }, [session, ready, activeId, syncActive]);
 
   useEffect(() => {
@@ -219,7 +233,12 @@ export default function ChatPanel() {
   }, [loading]);
 
   const send = useCallback(
-    async (text: string, overrideProfile?: Profile) => {
+    async (
+      text: string,
+      overrideProfile?: Profile,
+      /** 分野の切り替えを伴う送信か */
+      switchTo?: ExpertId,
+    ) => {
       const trimmed = text.trim();
       if (trimmed.length === 0 || loading) return;
 
@@ -244,6 +263,7 @@ export default function ChatPanel() {
             // 既定は false。利用者が明示的に許可したときだけ外部AIを使う。
             allowExternalAi: privacyRef.current.allowExternalAi,
             counsel: counselRef.current,
+            switchTo: switchTo ?? null,
           }),
         });
 
@@ -288,6 +308,7 @@ export default function ChatPanel() {
             role: "assistant",
             text: parsed.data.reply,
             rec: parsed.data.recommendation,
+            carePlan: parsed.data.carePlan,
             missing: parsed.data.missing,
             at: new Date().toISOString(),
           },
@@ -356,6 +377,26 @@ export default function ChatPanel() {
   const isFresh = useMemo(
     () => messages.filter((m) => m.id !== OPENING_ID).length === 0,
     [messages],
+  );
+
+  /** これまでに話した分野（いまの分野＋退避中の分野） */
+  const visitedExperts = useMemo(
+    () => [counsel.expert, ...counsel.parked.map((p) => p.expert)],
+    [counsel],
+  );
+
+  /**
+   * 相談先を切り替える。
+   * 会話は続いたまま、担当だけが代わる。何を引き継いだかはサーバーが返す。
+   */
+  const switchExpertTo = useCallback(
+    (id: ExpertId) => {
+      if (id === counselRef.current.expert || loading) return;
+      setPanel("none");
+      setShowPhoto(false);
+      void send(`${EXPERTS[id].label}の相談をお願いします`, undefined, id);
+    },
+    [loading, send],
   );
 
   if (!ready) {
@@ -436,22 +477,25 @@ export default function ChatPanel() {
                 }`}
               />
               <span className="truncate">
-                {loading ? "整理しています" : "相談できます"}
+                {loading ? "整理しています" : EXPERTS[counsel.expert].title}
               </span>
             </p>
 
             <div className="ml-auto flex shrink-0 items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() =>
-                  setPanel(panel === "inventory" ? "none" : "inventory")
-                }
-                className="rounded-lg border border-beige bg-white px-2.5 py-1.5 text-xs"
-              >
-                手持ち
-                {profile.ownedProductIds.length > 0 &&
-                  `（${profile.ownedProductIds.length}）`}
-              </button>
+              {/* 手持ちのカタログを持つのはスキンケアだけ */}
+              {EXPERTS[counsel.expert].recommendsProducts && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPanel(panel === "inventory" ? "none" : "inventory")
+                  }
+                  className="rounded-lg border border-beige bg-white px-2.5 py-1.5 text-xs"
+                >
+                  手持ち
+                  {profile.ownedProductIds.length > 0 &&
+                    `（${profile.ownedProductIds.length}）`}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => setPanel(panel === "profile" ? "none" : "profile")}
@@ -481,6 +525,20 @@ export default function ChatPanel() {
                 日本・韓国コスメ {PRODUCTS.length}点
               </p>
             </div>
+          </div>
+
+          {/*
+            相談先の切り替え。
+            会話はそのまま続き、伺った条件も引き継がれるため、
+            場所を移す操作ではなく担当を選ぶ操作として置く。
+          */}
+          <div className="border-t border-beige/40 px-4 pb-2.5 sm:px-6">
+            <ExpertPicker
+              active={counsel.expert}
+              visited={visitedExperts}
+              disabled={loading}
+              onSelect={switchExpertTo}
+            />
           </div>
 
           {/*
@@ -547,7 +605,11 @@ export default function ChatPanel() {
                   <button
                     type="button"
                     onClick={() => recalc(profile)}
-                    disabled={loading || profile.ownedProductIds.length === 0}
+                    disabled={
+                      loading ||
+                      (EXPERTS[counsel.expert].recommendsProducts &&
+                        profile.ownedProductIds.length === 0)
+                    }
                     className="flex-1 rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
                   >
                     この条件で組み立てる
@@ -617,6 +679,7 @@ export default function ChatPanel() {
                     </div>
 
                     {m.rec && <RecommendationCard rec={m.rec} />}
+                    {m.carePlan && <CarePlanCard plan={m.carePlan} />}
 
                     {/* 「選んでください」と書いた直後に、実際に選べるものを出す */}
                     {m.missing?.includes("ownedProductIds") &&
@@ -750,7 +813,11 @@ export default function ChatPanel() {
                   }
                 }}
                 rows={1}
-                placeholder="肌の悩み、予算、持っている化粧品など"
+                placeholder={
+                  EXPERTS[counsel.expert].recommendsProducts
+                    ? "肌の悩み、予算、持っている化粧品など"
+                    : `${EXPERTS[counsel.expert].label}で気になっていること`
+                }
                 aria-label="メッセージ"
                 className="max-h-32 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-sm outline-none"
               />
