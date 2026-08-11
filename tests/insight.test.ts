@@ -6,7 +6,11 @@ import {
   HORIZON_DISCLAIMER,
   INGREDIENT_ROLE,
 } from "@/domain/analysis/insight";
-import { lookupReviews, REVIEW_SOURCES, searchLinksFor } from "@/domain/analysis/reviews";
+import {
+  lookupReviews,
+  REVIEW_SOURCES,
+  searchLinksFor,
+} from "@/domain/analysis/reviews";
 import { getProduct, PRODUCTS } from "@/domain/recommendation/catalog";
 import { isExpressionSafe } from "@/domain/recommendation/safety-rules";
 import { DEFAULT_PROFILE, ProfileSchema, type Profile } from "@/schemas/profile";
@@ -152,11 +156,40 @@ describe("口コミの取り扱い", () => {
     expect(REVIEW_SOURCES).toHaveLength(0);
   });
 
-  it("利用者が自分で確認しに行けるリンクを出す", () => {
+  it("性格の違う複数のサイトを案内する", () => {
     const links = searchLinksFor(getProduct("lo-hadalabo-gokujyun")!);
-    expect(links.some((l) => l.url.includes("cosme.net"))).toBe(true);
-    expect(links.some((l) => l.url.includes("rakuten.co.jp"))).toBe(true);
-    for (const l of links) expect(l.url).toMatch(/^https:\/\//);
+    // 一箇所だけだと評価が偏るため、口コミサイトと購入者レビューを両方出す
+    expect(links.filter((l) => l.kind === "community").length).toBeGreaterThanOrEqual(2);
+    expect(links.filter((l) => l.kind === "marketplace").length).toBeGreaterThanOrEqual(3);
+    for (const id of ["cosme", "lips", "rakuten", "amazon", "yahoo"]) {
+      expect(links.some((l) => l.id === id), id).toBe(true);
+    }
+  });
+
+  it("すべての検索リンクが https で、商品名が正しく符号化されている", () => {
+    for (const p of PRODUCTS) {
+      const q = encodeURIComponent(`${p.brand} ${p.name}`);
+      for (const l of searchLinksFor(p)) {
+        expect(l.url, `${p.id}/${l.id}`).toMatch(/^https:\/\//);
+        expect(l.url, `${p.id}/${l.id}`).toContain(q);
+        expect(l.label.length).toBeGreaterThan(0);
+        expect(l.note.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("韓国コスメのときだけ Qoo10 を足す", () => {
+    const kr = PRODUCTS.find((p) => p.origin === "kr")!;
+    const jp = PRODUCTS.find((p) => p.origin === "jp")!;
+    expect(searchLinksFor(kr).some((l) => l.id === "qoo10")).toBe(true);
+    expect(searchLinksFor(jp).some((l) => l.id === "qoo10")).toBe(false);
+  });
+
+  it("同じサイトを重複して出さない", () => {
+    for (const p of PRODUCTS) {
+      const ids = searchLinksFor(p).map((l) => l.id);
+      expect(new Set(ids).size, p.id).toBe(ids.length);
+    }
   });
 });
 

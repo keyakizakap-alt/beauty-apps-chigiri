@@ -139,20 +139,40 @@ export default function ProductInsight({
             口コミはこのアプリ内には取り込んでいません。各社の著作物であり、
             公式に提供される API と利用許諾が必要なためです。
             許諾のない取得も、AIによる口コミの生成も行いません。
+            サイトによって評価の傾向が違うので、いくつか見比べてみてください。
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {links.map((l) => (
-              <a
-                key={l.url}
-                href={l.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="chigiri-tap inline-flex items-center rounded-full border border-beige bg-white px-3 text-[11px] text-ai"
-              >
-                {l.label}
-              </a>
-            ))}
-          </div>
+
+          {(
+            [
+              ["community", "口コミサイト"],
+              ["marketplace", "購入者レビュー"],
+            ] as const
+          ).map(([kind, heading]) => {
+            const group = links.filter((l) => l.kind === kind);
+            if (group.length === 0) return null;
+            return (
+              <div key={kind} className="mt-2">
+                <p className="text-[10px] text-sumi/50">{heading}</p>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {group.map((l) => (
+                    <a
+                      key={l.id}
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={l.note}
+                      className="chigiri-tap inline-flex items-center rounded-full border border-beige bg-white px-3 text-[11px] text-ai"
+                    >
+                      {l.label}
+                      <span aria-hidden className="ml-1 text-[9px] text-sumi/40">
+                        ↗
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </section>
 
         {/* 公式サイト */}
