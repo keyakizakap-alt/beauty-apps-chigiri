@@ -21,30 +21,30 @@ export default function EvidencePanel({
     <section className="chigiri-card p-4">
       <h3 className="text-base font-semibold">根拠とAIの動作</h3>
 
-      <div className="mt-3 rounded-lg border border-beige/70 bg-kinari/60 px-3 py-2.5">
+      <div className="mt-3 rounded-lg border border-line/70 bg-greige/60 px-3 py-2.5">
         <p className="chigiri-label">OrcaRouter が選択したモデル</p>
         {ai.used ? (
           <p className="mt-1 text-sm">
-            <span className="font-medium text-ai">{ai.model ?? "（モデル名が応答に含まれていません）"}</span>
-            <span className="ml-2 text-xs text-sumi/55">
+            <span className="font-medium text-forest">{ai.model ?? "（モデル名が応答に含まれていません）"}</span>
+            <span className="ml-2 text-xs text-ink/55">
               要求 {ai.requestedModel ?? "-"} ／ 応答 {ai.latencyMs ?? "-"}ms
               {ai.estimatedTokens != null && ` ／ 約${ai.estimatedTokens}トークン`}
             </span>
           </p>
         ) : (
           <p className="mt-1 text-sm">
-            <span className="font-medium text-sakura">AIによる説明生成は未使用</span>
-            <span className="ml-2 text-xs text-sumi/55">
+            <span className="font-medium text-clay">AIによる説明生成は未使用</span>
+            <span className="ml-2 text-xs text-ink/55">
               理由: {ai.fallbackReason ?? "不明"}
             </span>
           </p>
         )}
-        <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/50">
+        <p className="mt-1.5 text-[11px] leading-relaxed text-ink/50">
           商品の選定・使用順・採用可否はすべてサーバー側の決定論的ロジックで確定しています。
           AIは確定済みの内容を日本語で説明する役割のみを担当し、AIが失敗した場合もルーティンの中身は変わりません。
         </p>
         {ai.jsonValid === false && (
-          <p className="mt-1.5 text-[11px] text-sakura">
+          <p className="mt-1.5 text-[11px] text-clay">
             AI出力のスキーマ検証に失敗したため、システムが計算した説明文へ切り替えました。
           </p>
         )}
@@ -58,12 +58,12 @@ export default function EvidencePanel({
           {evidence.map((e) => (
             <li
               key={e.productId}
-              className="rounded-lg border border-beige/70 px-3 py-2"
+              className="rounded-lg border border-line/70 px-3 py-2"
             >
               <p className="text-sm leading-snug">
                 {e.brand} {e.name}
               </p>
-              <p className="mt-0.5 text-xs leading-relaxed text-sumi/60">
+              <p className="mt-0.5 text-xs leading-relaxed text-ink/60">
                 公式に確認できる表現：{e.claims.join("／") || "未確認"}
               </p>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -71,16 +71,16 @@ export default function EvidencePanel({
                   href={e.officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-ai underline underline-offset-2"
+                  className="text-xs text-forest underline underline-offset-2"
                 >
                   公式サイトを開く
                 </a>
                 {e.sourceCheckedAt ? (
-                  <span className="rounded-full bg-ai/10 px-2 py-0.5 text-[10px] text-ai">
+                  <span className="rounded-full bg-forest/10 px-2 py-0.5 text-[10px] text-forest">
                     突合済み {e.sourceCheckedAt}
                   </span>
                 ) : (
-                  <span className="rounded-full bg-sakuraSoft px-2 py-0.5 text-[10px] text-sakura">
+                  <span className="rounded-full bg-claySoft px-2 py-0.5 text-[10px] text-clay">
                     公式突合 未完了（参考データ）
                   </span>
                 )}

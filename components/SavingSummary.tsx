@@ -16,7 +16,7 @@ export default function SavingSummary({
   const rate = Math.round(savings.utilizationRate * 100);
 
   return (
-    <section className="rounded-card border border-ai/15 bg-gradient-to-b from-white to-kinari/70 p-4 sm:p-5">
+    <section className="rounded-card border border-forest/15 bg-gradient-to-b from-white to-greige/70 p-4 sm:p-5">
       <p className="text-[15px] font-medium leading-relaxed sm:text-base">
         {summary}
       </p>
@@ -50,7 +50,7 @@ export default function SavingSummary({
         />
       </dl>
 
-      <p className="mt-3 text-[11px] leading-relaxed text-sumi/45">
+      <p className="mt-3 text-[11px] leading-relaxed text-ink/45">
         削減額は「同じ役割をすべて新しく買いそろえた場合」との比較で、
         カタログ内の各カテゴリーの中央価格を用いた推定です。実際の購入額を保証するものではありません。
       </p>
@@ -72,16 +72,16 @@ function Metric({
   return (
     <div
       className={`rounded-lg border px-3 py-2.5 ${
-        accent ? "border-ai/25 bg-white" : "border-beige/70 bg-white/70"
+        accent ? "border-forest/25 bg-white" : "border-line/70 bg-white/70"
       }`}
     >
       <dt className="chigiri-label">{label}</dt>
       <dd
-        className={`mt-0.5 text-lg font-semibold tabular-nums ${accent ? "text-ai" : "text-sumi"}`}
+        className={`mt-0.5 text-lg font-semibold tabular-nums ${accent ? "text-forest" : "text-ink"}`}
       >
         {value}
       </dd>
-      <dd className="text-[11px] leading-tight text-sumi/50">{sub}</dd>
+      <dd className="text-[11px] leading-tight text-ink/50">{sub}</dd>
     </div>
   );
 }

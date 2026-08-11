@@ -34,7 +34,7 @@ export default function RecommendationCard({
         <RoutineTimeline routine={rec.routines.night} products={products} />
       </div>
 
-      <p className="text-xs text-sumi/50">
+      <p className="text-xs text-ink/50">
         合計 {rec.totalSteps} 工程（朝 {rec.routines.morning.steps.length} ／ 夜{" "}
         {rec.routines.night.steps.length}）
       </p>
@@ -43,32 +43,32 @@ export default function RecommendationCard({
       <section className="chigiri-card p-4">
         <h3 className="text-base font-semibold">買い足すなら、この1点</h3>
         {suggestion && suggested ? (
-          <div className="mt-3 rounded-lg border border-ai/25 bg-white p-3">
-            <p className="text-[11px] font-medium tracking-wide text-ai">
+          <div className="mt-3 rounded-lg border border-forest/25 bg-white p-3">
+            <p className="text-[11px] font-medium tracking-wide text-forest">
               {CATEGORY_LABEL[suggestion.category]}の役割が不足
             </p>
-            <p className="mt-0.5 text-sm text-sumi/60">{suggested.brand}</p>
+            <p className="mt-0.5 text-sm text-ink/60">{suggested.brand}</p>
             <p className="text-[15px] font-medium leading-snug">{suggested.name}</p>
             <p className="mt-1 text-sm tabular-nums">
               参考価格 {suggestion.price.toLocaleString()}円
               {suggested.volume && (
-                <span className="ml-1 text-xs text-sumi/50">／ {suggested.volume}</span>
+                <span className="ml-1 text-xs text-ink/50">／ {suggested.volume}</span>
               )}
             </p>
-            <p className="mt-2 text-xs leading-relaxed text-sumi/70">
+            <p className="mt-2 text-xs leading-relaxed text-ink/70">
               {suggestion.reason}
             </p>
 
             {suggestion.runnerUpIds.length > 0 && (
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs text-ai/80 underline underline-offset-2">
+                <summary className="cursor-pointer text-xs text-forest/80 underline underline-offset-2">
                   次点の候補も見る
                 </summary>
                 <ul className="mt-1.5 space-y-1">
                   {suggestion.runnerUpIds.map((id) => {
                     const p = products.get(id);
                     return (
-                      <li key={id} className="text-xs text-sumi/60">
+                      <li key={id} className="text-xs text-ink/60">
                         {p ? `${p.brand} ${p.name}（${p.price.toLocaleString()}円）` : id}
                       </li>
                     );
@@ -81,13 +81,13 @@ export default function RecommendationCard({
               href={suggested.officialUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-block rounded-lg border border-ai px-3 py-1.5 text-xs text-ai"
+              className="mt-3 inline-block rounded-lg border border-forest px-3 py-1.5 text-xs text-forest"
             >
               公式サイトで確認する
             </a>
           </div>
         ) : (
-          <p className="mt-2 rounded-lg bg-kinari px-3 py-3 text-sm leading-relaxed text-sumi/75">
+          <p className="mt-2 rounded-lg bg-greige px-3 py-3 text-sm leading-relaxed text-ink/75">
             {rec.noPurchaseNeededReason ?? "買い足しは必要ありません。"}
           </p>
         )}
@@ -101,7 +101,7 @@ export default function RecommendationCard({
               {rec.purchaseSuggestions.map((s) => {
                 const p = products.get(s.productId);
                 return (
-                  <li key={s.productId} className="text-xs text-sumi/65">
+                  <li key={s.productId} className="text-xs text-ink/65">
                     {CATEGORY_LABEL[s.category]}：
                     {p ? `${p.brand} ${p.name}（${s.price.toLocaleString()}円）` : s.productId}
                   </li>
@@ -126,12 +126,12 @@ export default function RecommendationCard({
                 {rec.duplications.map((d) => (
                   <li
                     key={d.category}
-                    className="rounded-lg border border-sakura/30 bg-sakuraSoft/40 px-3 py-2"
+                    className="rounded-lg border border-clay/30 bg-claySoft/40 px-3 py-2"
                   >
-                    <p className="text-xs font-medium text-sakura">
+                    <p className="text-xs font-medium text-clay">
                       {CATEGORY_LABEL[d.category]}
                     </p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-sumi/75">
+                    <p className="mt-0.5 text-xs leading-relaxed text-ink/75">
                       {d.note}
                     </p>
                   </li>
@@ -147,11 +147,11 @@ export default function RecommendationCard({
                 {rec.gaps.map((g) => (
                   <li
                     key={`${g.category}-${g.timing}`}
-                    className="rounded-full border border-beige bg-white px-2.5 py-1 text-xs"
+                    className="rounded-full border border-line bg-white px-2.5 py-1 text-xs"
                   >
                     {g.timing === "morning" ? "朝" : "夜"}・
                     {CATEGORY_LABEL[g.category]}
-                    <span className="ml-1 text-[10px] text-sumi/45">
+                    <span className="ml-1 text-[10px] text-ink/45">
                       {g.severity === "critical" ? "必須" : "推奨"}
                     </span>
                   </li>
@@ -162,7 +162,7 @@ export default function RecommendationCard({
 
           {rec.unused.length > 0 && (
             <details className="mt-3">
-              <summary className="cursor-pointer text-sm text-ai underline underline-offset-2">
+              <summary className="cursor-pointer text-sm text-forest underline underline-offset-2">
                 今回使わない商品と、その理由（{rec.unused.length}件）
               </summary>
               <ul className="mt-2 space-y-2">
@@ -171,12 +171,12 @@ export default function RecommendationCard({
                   return (
                     <li
                       key={u.productId}
-                      className="rounded-lg border border-beige/70 px-3 py-2"
+                      className="rounded-lg border border-line/70 px-3 py-2"
                     >
                       <p className="text-sm leading-snug">
                         {p ? `${p.brand} ${p.name}` : u.productId}
                       </p>
-                      <p className="mt-0.5 text-xs leading-relaxed text-sumi/65">
+                      <p className="mt-0.5 text-xs leading-relaxed text-ink/65">
                         {u.reason}
                       </p>
                     </li>
@@ -193,13 +193,13 @@ export default function RecommendationCard({
       {rec.safety.map((s) => (
         <p
           key={s.message}
-          className="rounded-lg bg-kinari px-3 py-2.5 text-[11px] leading-relaxed text-sumi/60"
+          className="rounded-lg bg-greige px-3 py-2.5 text-[11px] leading-relaxed text-ink/60"
         >
           {s.message}
         </p>
       ))}
 
-      <p className="rounded-lg border border-beige bg-white px-3 py-3 text-[11px] leading-relaxed text-sumi/70">
+      <p className="rounded-lg border border-line bg-white px-3 py-3 text-[11px] leading-relaxed text-ink/70">
         {rec.disclaimer}
       </p>
     </div>

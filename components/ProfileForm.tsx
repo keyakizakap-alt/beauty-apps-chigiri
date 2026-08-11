@@ -158,7 +158,7 @@ export default function ProfileForm({
             </Chip>
           ))}
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-sumi/50">
+        <p className="mt-2 text-xs leading-relaxed text-ink/50">
           成分名は公開情報に基づく分類です。配合濃度や処方は公開されていないため、
           刺激の強さをこの情報だけで判断することはできません。
         </p>
@@ -177,7 +177,7 @@ export default function ProfileForm({
             step={500}
             value={profile.budgetYen}
             onChange={(e) => set("budgetYen", Number(e.target.value))}
-            className="w-full accent-ai"
+            className="w-full accent-forest"
           />
         </div>
         <div>
@@ -192,7 +192,7 @@ export default function ProfileForm({
             step={1}
             value={profile.maxNewItems}
             onChange={(e) => set("maxNewItems", Number(e.target.value))}
-            className="w-full accent-ai"
+            className="w-full accent-forest"
           />
         </div>
         <div>
@@ -207,7 +207,7 @@ export default function ProfileForm({
             step={1}
             value={profile.morningMinutes}
             onChange={(e) => set("morningMinutes", Number(e.target.value))}
-            className="w-full accent-ai"
+            className="w-full accent-forest"
           />
         </div>
         <div>
@@ -222,7 +222,7 @@ export default function ProfileForm({
             step={1}
             value={profile.nightMinutes}
             onChange={(e) => set("nightMinutes", Number(e.target.value))}
-            className="w-full accent-ai"
+            className="w-full accent-forest"
           />
         </div>
       </section>
@@ -233,7 +233,7 @@ export default function ProfileForm({
             type="checkbox"
             checked={profile.allowPurchase}
             onChange={(e) => set("allowPurchase", e.target.checked)}
-            className="h-4 w-4 accent-ai"
+            className="h-4 w-4 accent-forest"
           />
           追加購入を許可する（外すと手持ちだけで組み立てます）
         </label>

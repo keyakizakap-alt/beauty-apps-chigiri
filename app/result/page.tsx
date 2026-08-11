@@ -48,7 +48,7 @@ export default function ResultPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-5">
-      <nav className="mb-5 flex flex-wrap items-center gap-x-1.5 text-xs text-sumi/50">
+      <nav className="mb-5 flex flex-wrap items-center gap-x-1.5 text-xs text-ink/50">
         <Link href="/" className="underline underline-offset-2">
           CHIGIRI Beauty
         </Link>
@@ -58,19 +58,19 @@ export default function ResultPage() {
         </Link>
         <span>/</span>
         <span>結果</span>
-        <Link href="/chat" className="ml-auto text-ai underline underline-offset-2">
+        <Link href="/chat" className="ml-auto text-forest underline underline-offset-2">
           チャットで相談する
         </Link>
       </nav>
 
       {!hydrated ? (
-        <p className="text-sm text-sumi/50">読み込んでいます…</p>
+        <p className="text-sm text-ink/50">読み込んでいます…</p>
       ) : profile.ownedProductIds.length === 0 ? (
         <div className="chigiri-card p-5">
           <p className="text-sm">手持ちの化粧品がまだ選ばれていません。</p>
           <Link
             href="/inventory"
-            className="mt-3 inline-block rounded-lg bg-ai px-4 py-2 text-sm text-white"
+            className="mt-3 inline-block rounded-lg bg-forest px-4 py-2 text-sm text-white"
           >
             手持ちを選ぶ
           </Link>
@@ -99,14 +99,14 @@ export default function ResultPage() {
                       ),
                     )
                   }
-                  className="w-full accent-ai"
+                  className="w-full accent-forest"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => void run(profile)}
                 disabled={loading}
-                className="rounded-lg bg-ai px-4 py-2.5 text-sm text-white disabled:opacity-40"
+                className="rounded-lg bg-forest px-4 py-2.5 text-sm text-white disabled:opacity-40"
               >
                 {loading ? "計算中…" : "この予算で再計算"}
               </button>
@@ -114,8 +114,8 @@ export default function ResultPage() {
           </section>
 
           {loading && !rec && (
-            <p className="flex items-center gap-2 py-10 text-sm text-sumi/60">
-              <span aria-hidden className="chigiri-thinking-dot text-ai">
+            <p className="flex items-center gap-2 py-10 text-sm text-ink/60">
+              <span aria-hidden className="chigiri-thinking-dot text-forest">
                 ●
               </span>
               手持ち商品の役割を整理しています…
@@ -123,12 +123,12 @@ export default function ResultPage() {
           )}
 
           {error && (
-            <div className="mb-4 rounded-lg border border-sakura/40 bg-sakuraSoft/50 px-3 py-3 text-sm">
+            <div className="mb-4 rounded-lg border border-clay/40 bg-claySoft/50 px-3 py-3 text-sm">
               <p>結果を取得できませんでした（{error}）。</p>
               <button
                 type="button"
                 onClick={() => void run(profile)}
-                className="mt-2 rounded-lg border border-ai px-3 py-1.5 text-xs text-ai"
+                className="mt-2 rounded-lg border border-forest px-3 py-1.5 text-xs text-forest"
               >
                 もう一度試す
               </button>

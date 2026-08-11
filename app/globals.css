@@ -8,36 +8,68 @@
 
 html,
 body {
-  /* モバイルで横スクロールが発生しないようにする（受け入れ条件） */
+  /* 360px 幅でも横スクロールを発生させない（受け入れ条件） */
   max-width: 100%;
   overflow-x: hidden;
 }
 
 body {
-  background-color: #fcfbf8;
-  color: #2e2a26;
+  background-color: #eff3ec;
+  color: #1b2a20;
   -webkit-font-smoothing: antialiased;
+}
+
+/* フォーカスは色だけでなくリングの形でも分かるようにする */
+@layer base {
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid #24402f;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
 }
 
 @layer components {
   .chigiri-card {
-    @apply rounded-card border border-beige/70 bg-white/80 shadow-[0_1px_2px_rgba(46,42,38,0.04)];
+    @apply rounded-card border border-line bg-cream shadow-soft;
+  }
+
+  /* 字間を広げた英字・小見出し */
+  .chigiri-eyebrow {
+    @apply text-[11px] font-medium tracking-eyebrow text-sage;
   }
 
   .chigiri-label {
-    @apply text-xs font-medium tracking-wide text-sumi/60;
+    @apply text-xs font-medium text-inkSoft;
+  }
+
+  /* タップ領域は 44px 以上 */
+  .chigiri-tap {
+    @apply min-h-[44px];
   }
 
   .chigiri-chip {
-    @apply rounded-full border px-3 py-1.5 text-sm transition-colors;
+    @apply inline-flex min-h-[40px] items-center rounded-full border px-4 py-2 text-sm transition-colors;
   }
 
   .chigiri-chip-off {
-    @apply border-beige bg-white text-sumi/70 hover:border-ai/40;
+    @apply border-line bg-cream text-ink hover:border-sageLine;
   }
 
   .chigiri-chip-on {
-    @apply border-ai bg-ai text-white;
+    @apply border-sageLine bg-sageSoft text-forest;
+  }
+
+  .chigiri-btn-primary {
+    @apply chigiri-tap inline-flex items-center justify-center rounded-full bg-forest px-6 text-sm font-medium text-cream transition-colors hover:bg-forestSoft disabled:opacity-40;
+  }
+
+  .chigiri-btn-ghost {
+    @apply chigiri-tap inline-flex items-center justify-center rounded-full border border-line bg-cream px-6 text-sm text-ink transition-colors hover:border-sageLine;
+  }
+
+  /* 右上の丸いピルボタン */
+  .chigiri-pill {
+    @apply inline-flex min-h-[40px] items-center rounded-full border border-line bg-cream px-4 text-[13px] text-ink transition-colors hover:border-sageLine;
   }
 }
 
@@ -45,7 +77,7 @@ body {
 @keyframes chigiri-pulse {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.3;
   }
   50% {
     opacity: 1;
@@ -60,5 +92,14 @@ body {
   .chigiri-thinking-dot {
     animation: none;
     opacity: 0.7;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

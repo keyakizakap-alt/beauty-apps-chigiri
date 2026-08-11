@@ -12,7 +12,7 @@ export default function InventoryPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8">
-      <nav className="mb-5 text-xs text-sumi/50">
+      <nav className="mb-5 text-xs text-ink/50">
         <Link href="/" className="underline underline-offset-2">
           CHIGIRI Beauty
         </Link>
@@ -25,7 +25,7 @@ export default function InventoryPage() {
       </nav>
 
       <h1 className="text-xl font-semibold">いま持っている化粧品を選んでください</h1>
-      <p className="mt-1.5 text-sm leading-relaxed text-sumi/65">
+      <p className="mt-1.5 text-sm leading-relaxed text-ink/65">
         使い切っていないものをすべて選んでください。使っていないものも含めて構いません。
         重複している役割はこちらで検出します。
       </p>
@@ -49,7 +49,7 @@ export default function InventoryPage() {
             }
           />
         ) : (
-          <p className="text-sm text-sumi/50">読み込んでいます…</p>
+          <p className="text-sm text-ink/50">読み込んでいます…</p>
         )}
       </div>
 
@@ -57,12 +57,12 @@ export default function InventoryPage() {
         type="button"
         disabled={profile.ownedProductIds.length === 0}
         onClick={() => router.push("/result")}
-        className="mt-8 w-full rounded-xl bg-ai px-5 py-3.5 text-sm font-medium text-white disabled:opacity-40"
+        className="mt-8 w-full rounded-xl bg-forest px-5 py-3.5 text-sm font-medium text-white disabled:opacity-40"
       >
         ルーティンを組み立てる
       </button>
       {profile.ownedProductIds.length === 0 && (
-        <p className="mt-2 text-center text-xs text-sumi/50">
+        <p className="mt-2 text-center text-xs text-ink/50">
           1点以上選ぶと進めます
         </p>
       )}

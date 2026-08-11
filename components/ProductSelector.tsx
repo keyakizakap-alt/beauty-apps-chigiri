@@ -49,7 +49,7 @@ export default function ProductSelector({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="ブランド名・商品名で探す"
           aria-label="商品を検索"
-          className="w-full rounded-lg border border-beige bg-white px-3 py-2 text-sm outline-none focus:border-ai"
+          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-forest"
         />
       </div>
 
@@ -73,7 +73,7 @@ export default function ProductSelector({
         ))}
       </div>
 
-      <p className="text-xs text-sumi/50">
+      <p className="text-xs text-ink/50">
         選択中 {selectedIds.length} 点 / カタログ {PRODUCTS.length} 点
       </p>
 
@@ -90,24 +90,24 @@ export default function ProductSelector({
                 aria-pressed={on}
                 className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
                   on
-                    ? "border-ai bg-ai/5"
-                    : "border-beige bg-white hover:border-ai/40"
+                    ? "border-forest bg-forest/5"
+                    : "border-line bg-white hover:border-forest/40"
                 }`}
               >
                 <span
                   aria-hidden
                   className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] ${
-                    on ? "border-ai bg-ai text-white" : "border-beige"
+                    on ? "border-forest bg-forest text-white" : "border-line"
                   }`}
                 >
                   {on ? "✓" : ""}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] text-sumi/60">
+                  <span className="block truncate text-[13px] text-ink/60">
                     {p.brand}
                   </span>
                   <span className="block text-sm leading-snug">{p.name}</span>
-                  <span className="mt-0.5 block text-xs text-sumi/50">
+                  <span className="mt-0.5 block text-xs text-ink/50">
                     {CATEGORY_LABEL[p.category]} ／ 参考 {p.price.toLocaleString()}円
                   </span>
                 </span>
@@ -116,7 +116,7 @@ export default function ProductSelector({
           );
         })}
         {filtered.length === 0 && (
-          <li className="rounded-lg border border-dashed border-beige px-3 py-6 text-center text-sm text-sumi/50">
+          <li className="rounded-lg border border-dashed border-line px-3 py-6 text-center text-sm text-ink/50">
             該当する商品がカタログにありません。
             <br />
             MVP のカタログは {PRODUCTS.length} 点に限定しています。

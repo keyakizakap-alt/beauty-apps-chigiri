@@ -26,14 +26,14 @@ export default function RoutineTimeline({
           </span>
           {isMorning ? "朝のルーティン" : "夜のルーティン"}
         </h3>
-        <p className="text-xs text-sumi/55">
+        <p className="text-xs text-ink/55">
           {routine.steps.length}工程 ／ 目安 約{routine.estimatedMinutes}分
-          <span className="text-sumi/40">（使える時間 {routine.budgetMinutes}分）</span>
+          <span className="text-ink/40">（使える時間 {routine.budgetMinutes}分）</span>
         </p>
       </header>
 
       {routine.steps.length === 0 ? (
-        <p className="rounded-lg bg-kinari px-3 py-4 text-sm text-sumi/60">
+        <p className="rounded-lg bg-greige px-3 py-4 text-sm text-ink/60">
           この時間帯に組めるルーティンがありません。手持ち商品を追加するか、
           不足している役割を確認してください。
         </p>
@@ -48,24 +48,24 @@ export default function RoutineTimeline({
                 {!last && (
                   <span
                     aria-hidden
-                    className="absolute left-[13px] top-7 h-[calc(100%-1.25rem)] w-px bg-beige"
+                    className="absolute left-[13px] top-7 h-[calc(100%-1.25rem)] w-px bg-line"
                   />
                 )}
                 <span
                   aria-hidden
-                  className="z-10 mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ai text-xs font-medium text-white"
+                  className="z-10 mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-medium text-white"
                 >
                   {step.order}
                 </span>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-medium tracking-wide text-ai">
+                  <p className="text-[11px] font-medium tracking-wide text-forest">
                     {CATEGORY_LABEL[step.category]}
                   </p>
                   <p className="text-sm font-medium leading-snug">
                     {p ? `${p.brand} ${p.name}` : step.productId}
                   </p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-sumi/60">
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink/60">
                     {step.purpose}
                   </p>
 
@@ -74,7 +74,7 @@ export default function RoutineTimeline({
                       {step.cautions.map((c) => (
                         <li
                           key={c}
-                          className="text-xs leading-relaxed text-sakura"
+                          className="text-xs leading-relaxed text-clay"
                         >
                           注意：{c}
                         </li>
@@ -83,10 +83,10 @@ export default function RoutineTimeline({
                   )}
 
                   <details className="group mt-1.5">
-                    <summary className="cursor-pointer list-none text-xs text-ai/80 underline underline-offset-2 marker:hidden">
+                    <summary className="cursor-pointer list-none text-xs text-forest/80 underline underline-offset-2 marker:hidden">
                       なぜこれを選んだか
                     </summary>
-                    <p className="mt-1.5 rounded-lg bg-kinari px-3 py-2 text-xs leading-relaxed text-sumi/75">
+                    <p className="mt-1.5 rounded-lg bg-greige px-3 py-2 text-xs leading-relaxed text-ink/75">
                       {step.reason}
                     </p>
                   </details>
