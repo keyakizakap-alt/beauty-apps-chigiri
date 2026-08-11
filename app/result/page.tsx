@@ -135,7 +135,7 @@ export default function ResultPage() {
             </div>
           )}
 
-          {rec && <RecommendationCard rec={rec} />}
+          {rec && <RecommendationCard rec={rec} profile={profile} />}
         </>
       )}
     </main>

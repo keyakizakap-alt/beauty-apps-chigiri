@@ -5,6 +5,8 @@ import { useMemo } from "react";
 import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
 import type { Product } from "@/schemas/product";
 import type { Recommendation } from "@/schemas/recommendation";
+import type { Profile } from "@/schemas/profile";
+import ProductInsight from "./ProductInsight";
 import RoutinePlans from "./RoutinePlans";
 import SavingSummary from "./SavingSummary";
 import EvidencePanel from "./EvidencePanel";
@@ -15,8 +17,11 @@ import EvidencePanel from "./EvidencePanel";
  */
 export default function RecommendationCard({
   rec,
+  profile,
 }: {
   rec: Recommendation;
+  /** 渡すと、手持ちの成分と条件の突き合わせを表示する */
+  profile?: Profile;
 }) {
   const products = useMemo(
     () => new Map<string, Product>(rec.products.map((p) => [p.id, p])),
@@ -25,6 +30,17 @@ export default function RecommendationCard({
 
   const suggestion = rec.purchaseSuggestion;
   const suggested = suggestion ? products.get(suggestion.productId) : undefined;
+
+  // ルーティンで実際に使った手持ちだけを読み解きの対象にする
+  const ownedInUse = useMemo(() => {
+    const used = new Set([
+      ...rec.routines.morning.steps.map((s) => s.productId),
+      ...rec.routines.night.steps.map((s) => s.productId),
+    ]);
+    return rec.products.filter(
+      (p) => used.has(p.id) && p.id !== suggestion?.productId,
+    );
+  }, [rec.routines, rec.products, suggestion?.productId]);
 
   return (
     <div className="space-y-4">
@@ -36,6 +52,39 @@ export default function RecommendationCard({
         products={products}
         arrangementCount={rec.arrangementCount}
       />
+
+      {/* いま使っているものの読み解き */}
+      {profile && ownedInUse.length > 0 && (
+        <section className="chigiri-card p-4">
+          <h3 className="text-base font-semibold">
+            いま使っているものを読み解く
+          </h3>
+          <p className="mt-1 text-xs leading-relaxed text-sumi/65">
+            それぞれに何が入っていて、あなたの条件のどこと対応し、どこが
+            確認できていないかを並べます。提案した商品との違いも比べられます。
+          </p>
+          <ul className="mt-3 space-y-2.5">
+            {ownedInUse.map((p) => (
+              <li key={p.id} className="rounded-xl border border-beige/70 px-3 py-2.5">
+                <p className="text-[11px] text-sumi/60">{p.brand}</p>
+                <p className="text-sm font-medium leading-snug">{p.name}</p>
+                <p className="mt-0.5 text-[11px] text-sumi/55">
+                  {CATEGORY_LABEL[p.category]}
+                </p>
+                <ProductInsight
+                  product={p}
+                  profile={profile}
+                  compareWith={
+                    suggested && suggested.category === p.category
+                      ? suggested
+                      : undefined
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* 買い足し提案 */}
       <section className="chigiri-card p-4">

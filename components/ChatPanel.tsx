@@ -624,7 +624,7 @@ export default function ChatPanel() {
                       </p>
                     </div>
 
-                    {m.rec && <RecommendationCard rec={m.rec} />}
+                    {m.rec && <RecommendationCard rec={m.rec} profile={profile} />}
 
                     {/* 「選んでください」と書いた直後に、実際に選べるものを出す */}
                     {m.missing?.includes("ownedProductIds") &&
