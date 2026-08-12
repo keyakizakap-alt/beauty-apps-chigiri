@@ -50,6 +50,8 @@ export function parseOfferId(
 
 /** 商品の公式 URL から、その商品を扱う販売者を決める */
 function merchantForProduct(product: Product): Merchant | null {
+  // 公式URLが無いもの（利用者が自分で追加したもの）は買い先を決められない
+  if (product.officialUrl === null) return null;
   const check = checkExternalUrl(product.officialUrl);
   return check.ok ? check.merchant : null;
 }
@@ -75,7 +77,7 @@ export function buildOffer(product: Product, now = new Date()): ProductOffer | n
     shippingFee: merchant.shippingFeeYen,
     currency: "JPY",
     availability: "unknown",
-    productUrl: product.officialUrl,
+    productUrl: product.officialUrl ?? "",
     checkedAt: now.toISOString(),
     priceSourceCheckedAt: product.sourceCheckedAt,
     officialSeller: merchant.kind === "brand_official",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChatResponseSchema, type Recommendation } from "@/schemas/recommendation";
-import { markStated, type Profile } from "@/schemas/profile";
+import { markStated, type CustomItem, type Profile } from "@/schemas/profile";
 import { PRODUCTS } from "@/domain/recommendation/catalog";
 import { useProfile } from "@/lib/storage";
 import { usePrivacy } from "@/lib/privacy";
@@ -44,14 +44,16 @@ type Bubble = {
 
 const OPENING_ID = "opening";
 
+/**
+ * 処理中の表示。
+ * 内部の手順をそのまま並べない（何をどう判定しているかは公開しない）。
+ * 利用者にとって意味のある粒度だけを出す。
+ */
 const THINKING_STEPS = [
-  "入力された条件を整理しています",
-  "手持ち商品から使えないものを外しています",
-  "商品の役割を分類しています",
-  "朝と夜に必要な工程を確認しています",
-  "役割が重なっている商品を探しています",
-  "不足している役割だけを取り出しています",
-  "説明文を組み立てています",
+  "うかがった内容を整理しています",
+  "手持ちを見ています",
+  "朝と夜の組み立てを考えています",
+  "ご案内をまとめています",
 ];
 
 let bubbleSeq = 0;
@@ -329,6 +331,35 @@ export default function ChatPanel() {
     [setProfile, startNew],
   );
 
+
+  /** 利用者が自分で追加した手持ちの登録・削除 */
+  const addCustomItem = useCallback(
+    (item: CustomItem) => {
+      setProfile((prev) =>
+        markStated(
+          {
+            ...prev,
+            customItems: [...prev.customItems, item],
+            ownedProductIds: [...prev.ownedProductIds, item.id],
+          },
+          "ownedProductIds",
+        ),
+      );
+    },
+    [setProfile],
+  );
+
+  const removeCustomItem = useCallback(
+    (id: string) => {
+      setProfile((prev) => ({
+        ...prev,
+        customItems: prev.customItems.filter((c) => c.id !== id),
+        ownedProductIds: prev.ownedProductIds.filter((x) => x !== id),
+      }));
+    },
+    [setProfile],
+  );
+
   /** 設定パネルから直接再計算する（予算変更のデモ用） */
   const recalc = useCallback(
     (next: Profile) => {
@@ -515,6 +546,9 @@ export default function ChatPanel() {
                     selectedIds={profile.ownedProductIds}
                     onToggle={toggleOwned}
                     domain={profile.domain}
+                    customItems={profile.customItems}
+                    onAddCustom={addCustomItem}
+                    onRemoveCustom={removeCustomItem}
                   />
                 )}
                 {panel === "settings" && (
@@ -638,6 +672,9 @@ export default function ChatPanel() {
                             onToggle={toggleOwned}
                             compact
                             domain={profile.domain}
+                            customItems={profile.customItems}
+                            onAddCustom={addCustomItem}
+                            onRemoveCustom={removeCustomItem}
                           />
                           <button
                             type="button"
@@ -672,7 +709,7 @@ export default function ChatPanel() {
                       {THINKING_STEPS[thinkingStep]}
                     </p>
                     <p className="mt-1 text-[11px] text-sumi/45">
-                      商品の選定はサーバー側の決定論的ロジックが担当しています
+                      商品の選び方は、AIの気分では変わりません
                     </p>
                   </div>
                 </div>

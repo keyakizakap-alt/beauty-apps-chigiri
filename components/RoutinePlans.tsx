@@ -106,7 +106,6 @@ export default function RoutinePlans({
           </summary>
           <p className="mt-2 text-[11px] leading-relaxed text-sumi/60">
             朝・夜それぞれの工程に、その時間帯に使える手持ち商品のどれを充てるかの組み合わせ数です。
-            省略してよい工程は「使わない」も1通りとして数えています。
             この中から、関心・肌傾向・使用感・注意点で採点して選んだ
             {plans.length}案を表示しています。
             すべてを並べても選べないため、意味のある案だけに絞っています。

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  CategorySchema,
   ConcernTagSchema,
   DomainSchema,
   IngredientTagSchema,
@@ -24,6 +25,23 @@ export const ProfileFieldSchema = z.enum([
   "maxNewItems",
 ]);
 export type ProfileField = z.infer<typeof ProfileFieldSchema>;
+
+/**
+ * 利用者が自分で追加する手持ち。
+ * 入力してもらうのは最小限にとどめ、残りはこちらで既定値を埋める。
+ */
+export const CustomItemSchema = z.object({
+  /** "my-" で始まる。カタログ商品と取り違えないため */
+  id: z.string().regex(/^my-[a-z0-9-]+$/),
+  domain: DomainSchema,
+  category: CategorySchema,
+  brand: z.string().min(1).max(40),
+  name: z.string().min(1).max(80),
+  /** 覚え書き（いつ買ったか、使用感など） */
+  note: z.string().max(200).default(""),
+  usageTiming: z.array(z.enum(["morning", "night"])).min(1),
+});
+export type CustomItem = z.infer<typeof CustomItemSchema>;
 
 /**
  * ユーザープロファイル。
@@ -53,6 +71,12 @@ export const ProfileSchema = z.object({
   /** 最大買い足し商品数 */
   maxNewItems: z.number().int().min(0).max(3).default(1),
   /**
+   * 利用者が自分で追加した手持ち。
+   * カタログに無いものを登録できるようにするため、商品と同じ形で保持する。
+   * 公式情報を持たないので、根拠としては扱わない。
+   */
+  customItems: z.array(CustomItemSchema).max(30).default([]),
+  /**
    * ユーザーが実際に指定した項目。
    * ここに無い項目の値は「こちらが仮に置いた初期値」であり、
    * 説明文で断定してはいけない。
@@ -69,6 +93,7 @@ export type Profile = z.infer<typeof ProfileSchema>;
 export const ProfilePatchSchema = ProfileSchema.omit({
   statedFields: true,
   ownedProductIds: true,
+  customItems: true,
   domain: true,
 }).partial();
 export type ProfilePatch = z.infer<typeof ProfilePatchSchema>;
@@ -83,6 +108,7 @@ export const DEFAULT_PROFILE: Profile = {
   morningMinutes: 5,
   nightMinutes: 10,
   ownedProductIds: [],
+  customItems: [],
   allowPurchase: true,
   maxNewItems: 1,
   statedFields: [],

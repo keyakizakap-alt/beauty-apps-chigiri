@@ -77,6 +77,41 @@ export function claimSentence(p: Product): string {
 
 export { CATEGORY_LABEL } from "./domains";
 
+/**
+ * 利用者が自分で追加した手持ちを、商品と同じ形にそろえる。
+ * 公式情報は持たないので、タグ・効能・出典はすべて空のままにする。
+ * 推測で埋めると、確認していないことを確認したように見せてしまう。
+ */
+export function customItemToProduct(item: {
+  id: string;
+  domain: Domain;
+  category: Category;
+  brand: string;
+  name: string;
+  usageTiming: Array<"morning" | "night">;
+}): Product {
+  return {
+    id: item.id,
+    domain: item.domain,
+    brand: item.brand,
+    name: item.name,
+    category: item.category,
+    price: 0,
+    skinTags: [],
+    concernTags: [],
+    textureTags: [],
+    ingredientTags: [],
+    cautionTags: [],
+    allowedClaims: [],
+    usageTiming: item.usageTiming,
+    officialUrl: null,
+    sourceCheckedAt: null,
+    dataConfidence: "user",
+    isQuasiDrug: false,
+    origin: "other",
+  };
+}
+
 /** 分野で絞り込んだ商品 */
 export function productsInDomain(domain: Domain): Product[] {
   return PRODUCTS.filter((p) => p.domain === domain);

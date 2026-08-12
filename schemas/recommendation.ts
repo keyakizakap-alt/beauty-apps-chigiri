@@ -125,9 +125,9 @@ export const EvidenceSchema = z.object({
   productId: z.string(),
   brand: z.string(),
   name: z.string(),
-  officialUrl: z.string(),
+  officialUrl: z.string().nullable(),
   sourceCheckedAt: z.string().nullable(),
-  dataConfidence: z.enum(["official", "seed"]),
+  dataConfidence: z.enum(["official", "seed", "user"]),
   /** 表示に使った許可表現 */
   claims: z.array(z.string()),
 });

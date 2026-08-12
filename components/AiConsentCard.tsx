@@ -22,8 +22,8 @@ export default function AiConsentCard({
       <p className="text-sm font-medium">説明文の作り方</p>
       <p className="mt-1.5 text-xs leading-relaxed text-sumi/70">
         どちらを選んでも、<span className="font-medium">結論は変わりません</span>。
-        商品の選定・除外・順位づけ・買い足しの判断は、AIではなくサーバー側の
-        決定論的な計算が行うためです。変わるのは説明文の書き方だけです。
+        商品の選定・除外・順位づけ・買い足しの判断は、AIが決めているわけでは
+        ないためです。変わるのは説明文の書き方だけです。
       </p>
 
       <div className="mt-3 grid gap-2 sm:grid-cols-2">

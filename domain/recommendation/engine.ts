@@ -11,6 +11,7 @@ import type {
 import {
   CATEGORY_LABEL,
   CATEGORY_MEDIAN_PRICE,
+  customItemToProduct,
   productsInDomain,
   claimSentence,
   claimText,
@@ -48,10 +49,17 @@ export function buildRecommendation(profile: Profile): EngineResult {
   const domain = profile.domain;
 
   // 1. 手持ち商品の解決（カタログにない ID は静かに無視せず、除外理由に残す）
-  const ownedProducts = getProducts(profile.ownedProductIds).filter(
-    (p) => p.domain === domain,
-  );
+  const ownedProducts = [
+    ...getProducts(profile.ownedProductIds),
+    // 利用者が自分で追加したものも、同じ手持ちとして扱う
+    ...profile.customItems.map(customItemToProduct),
+  ].filter((p) => p.domain === domain);
   const ownedIds = new Set(ownedProducts.map((p) => p.id));
+
+  // 以降の ID 解決は、カタログと手持ち（利用者が追加したものを含む）の両方から引く
+  const byId = new Map<string, Product>(ownedProducts.map((p) => [p.id, p]));
+  const resolve = (id: string): Product | undefined =>
+    byId.get(id) ?? getProduct(id);
 
   // 2. ハードフィルタ
   const { passed: ownedPassed, excluded: ownedExcluded } = applyHardFilters(
@@ -93,7 +101,7 @@ export function buildRecommendation(profile: Profile): EngineResult {
 
     const category = item.product.category;
     const sameCategoryUsed = [...usedIds].some(
-      (used) => getProduct(used)?.category === category,
+      (used) => resolve(used)?.category === category,
     );
 
     if (sameCategoryUsed) {
@@ -143,7 +151,7 @@ export function buildRecommendation(profile: Profile): EngineResult {
   });
 
   const usedProducts = [
-    ...getProducts([...usedIds]),
+    ...[...usedIds].map(resolve).filter((p): p is Product => Boolean(p)),
     ...suggestions.map((s) => s.product),
   ];
 

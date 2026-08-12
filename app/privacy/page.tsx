@@ -40,7 +40,7 @@ export default function PrivacyPage() {
           初期設定では、外部のAIサービスへも
           <span className="font-medium">一切送信していません</span>。
           この状態でも、ルーティンの組み立て・重複の検出・買い足しの判断は
-          すべて動きます（もともとAIではなく決定論的な計算で行っているためです）。
+          すべて動きます（もともとAIが判断しているわけではないためです）。
         </p>
       </header>
 

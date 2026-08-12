@@ -81,7 +81,7 @@ export default function AgentTrace({
       <p className="mt-1 border-t border-beige pt-3 text-[11px] leading-relaxed text-sumi/50">
         現在の状態：<span className="font-medium text-sumi/70">{state}</span>
         <br />
-        商品の選定・除外・順位づけはすべてサーバー側の決定論的な計算で行い、
+        商品の選定・除外・順位づけはサービス側で行い、
         AI が担当しているのは説明文の作成だけです。
       </p>
     </details>

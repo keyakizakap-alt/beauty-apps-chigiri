@@ -276,6 +276,7 @@ export default function DatabasePage() {
                     {p.sourceCheckedAt ?? "未確認（編集時点の参考データ）"}
                   </Field>
 
+                  {p.officialUrl && (
                   <a
                     href={p.officialUrl}
                     target="_blank"
@@ -284,6 +285,7 @@ export default function DatabasePage() {
                   >
                     公式サイトを開く
                   </a>
+                  )}
 
                   <p className="mt-3 text-[11px] leading-relaxed text-sumi/60">
                     配合濃度・処方・使用量は公開されていないため、この情報だけで

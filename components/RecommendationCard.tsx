@@ -131,6 +131,7 @@ export default function RecommendationCard({
               >
                 候補を比べて決める
               </Link>
+              {suggested.officialUrl && (
               <a
                 href={suggested.officialUrl}
                 target="_blank"
@@ -139,6 +140,7 @@ export default function RecommendationCard({
               >
                 公式サイトで確認する
               </a>
+            )}
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-sumi/50">
               「候補を比べて決める」では、他の候補との比較・販売者・送料の扱い・

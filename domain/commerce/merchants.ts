@@ -52,6 +52,8 @@ export function merchantForHost(host: string): Merchant | undefined {
 
 /** カタログの全商品が許可ホスト上にあることを起動時に確認する */
 for (const p of PRODUCTS) {
+  // 公式URLを持たないもの（利用者が自分で追加したもの）は対象外
+  if (p.officialUrl === null) continue;
   let host: string;
   try {
     host = new URL(p.officialUrl).hostname;

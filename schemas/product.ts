@@ -182,13 +182,17 @@ export const ProductSchema = z.object({
   /** allowed-claims.json の claim id のみ */
   allowedClaims: z.array(z.string()),
   usageTiming: z.array(UsageTimingSchema).min(1),
-  officialUrl: z.string().url(),
+  /**
+   * 公式ページ。利用者が自分で追加したものは持たないため null を許す。
+   * 空文字やダミーURLで埋めない（存在しない出典を作らないため）。
+   */
+  officialUrl: z.string().url().nullable(),
   /**
    * 公式ページと突合した日付。null は「未検証」を意味し、
    * UI 上で根拠ありとして扱わない。推測で埋めないこと。
    */
   sourceCheckedAt: z.string().nullable(),
-  dataConfidence: z.enum(["official", "seed"]),
+  dataConfidence: z.enum(["official", "seed", "user"]),
   isQuasiDrug: z.boolean(),
   origin: z.enum(["jp", "kr", "other"]),
 });

@@ -177,19 +177,28 @@ export default function ProductInsight({
 
         {/* 公式サイト */}
         <section>
-          <a
-            href={product.officialUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="chigiri-tap inline-flex items-center rounded-full border border-ai px-4 text-xs text-ai"
-          >
-            {product.brand} の公式サイトを開く
-          </a>
-          <p className="mt-1.5 text-[10px] leading-relaxed text-sumi/50">
-            {product.sourceCheckedAt
-              ? `公式ページとの突合済み（${product.sourceCheckedAt}）`
-              : "公式ページとの突合は未完了です。価格・仕様は公式サイトでご確認ください。"}
-          </p>
+          {product.officialUrl ? (
+            <>
+              <a
+                href={product.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="chigiri-tap inline-flex items-center rounded-full border border-ai px-4 text-xs text-ai"
+              >
+                {product.brand} の公式サイトを開く
+              </a>
+              <p className="mt-1.5 text-[10px] leading-relaxed text-sumi/50">
+                {product.sourceCheckedAt
+                  ? `公式ページとの突合済み（${product.sourceCheckedAt}）`
+                  : "公式ページとの突合は未完了です。価格・仕様は公式サイトでご確認ください。"}
+              </p>
+            </>
+          ) : (
+            <p className="text-[10px] leading-relaxed text-sumi/50">
+              ご自身で追加されたものです。公式情報を持たないため、成分や効能の
+              確認はできません。上の検索から公式サイトを探せます。
+            </p>
+          )}
         </section>
       </div>
     </details>

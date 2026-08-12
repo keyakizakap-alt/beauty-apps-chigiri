@@ -63,7 +63,7 @@ describe("CommerceAdapter（静的カタログ）", () => {
 
   it("商品と販売者の組み合わせが食い違う offerId を拒否する", async () => {
     const kaoProduct = PRODUCTS.find((p) =>
-      p.officialUrl.includes("www.kao.co.jp"),
+      (p.officialUrl ?? "").includes("www.kao.co.jp"),
     );
     expect(kaoProduct).toBeDefined();
 

@@ -92,7 +92,7 @@ export default function EvidencePanel({
           </p>
         ) : null}
         <p className="mt-1.5 text-[11px] leading-relaxed text-sumi/50">
-          商品の選定・使用順・採用可否はすべてサーバー側の決定論的ロジックで確定しています。
+          商品の選定・使用順・採用可否は、AIではなくサービス側で確定しています。
           AIは確定済みの内容を日本語で説明する役割のみを担当し、AIが失敗した場合もルーティンの中身は変わりません。
         </p>
         {ai.jsonValid === false && (
@@ -119,15 +119,21 @@ export default function EvidencePanel({
                 公式に確認できる表現：{e.claims.join("／") || "未確認"}
               </p>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                <a
-                  href={e.officialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-ai underline underline-offset-2"
-                >
-                  公式サイトを開く
-                </a>
-                {e.sourceCheckedAt ? (
+                {e.officialUrl && (
+                  <a
+                    href={e.officialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-ai underline underline-offset-2"
+                  >
+                    公式サイトを開く
+                  </a>
+                )}
+                {e.dataConfidence === "user" ? (
+                  <span className="rounded-full bg-kinari px-2 py-0.5 text-[10px] text-sumi/60">
+                    ご自身で追加されたもの（公式情報なし）
+                  </span>
+                ) : e.sourceCheckedAt ? (
                   <span className="rounded-full bg-ai/10 px-2 py-0.5 text-[10px] text-ai">
                     突合済み {e.sourceCheckedAt}
                   </span>
