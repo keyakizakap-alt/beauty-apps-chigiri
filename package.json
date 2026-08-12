@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "e2e": "node scripts/e2e-mobile.mjs",
     "icons": "node scripts/build-icons.mjs",
-    "orca:check": "node scripts/check-orcarouter.mjs"
+    "orca:check": "node scripts/check-orcarouter.mjs",
+    "verify:export": "node scripts/verify-export.mjs",
+    "verify:import": "node scripts/verify-import.mjs"
   },
   "dependencies": {
     "next": "^16.3.0",

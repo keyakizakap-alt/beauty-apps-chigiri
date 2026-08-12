@@ -315,6 +315,9 @@ npm run typecheck
 npm run e2e     # モバイル幅の E2E（別途 npm start が必要）
 npm run icons   # app/icon.svg から PWA/iOS 用 PNG を再生成
 npm run orca:check  # OrcaRouter への疎通確認（要 API キー）
+
+npm run verify:export  # 公式ページ突合のワークシートを書き出す（→ 13章）
+npm run verify:import  # 記入済みワークシートをカタログへ反映する
 ```
 
 ### アプリアイコンとオープニング
@@ -691,7 +694,8 @@ score =
 
 ## 13. 商品データについて（重要な制約）
 
-`data/products.json` は日本で購入できる日本・韓国コスメ **46点**（洗顔・化粧水・美容液・乳液クリーム・日焼け止め）の手動整備カタログです。
+`data/products.json` は日本で購入できるコスメ **92点** の手動整備カタログです
+（スキンケア 46 / メイク 15 / ヘア 12 / ネイル 10 / ボディ 9）。
 
 **現状、全商品が `sourceCheckedAt: null` / `dataConfidence: "seed"` です。**
 これは「公式ブランドサイトとの逐一の突合が未完了」であることを意味します。
@@ -701,8 +705,43 @@ score =
 - UI では該当商品に「公式突合 未完了（参考データ）」バッジを表示し、
   根拠が確認済みであるかのようには表示しません
 
-**本番運用の前に、全46点を公式ページと突合し `sourceCheckedAt` を埋める必要があります。**
-突合済みの商品は `dataConfidence: "official"` に変更してください。
+**本番運用の前に、全92点を公式ページと突合し `sourceCheckedAt` を埋める必要があります。**
+
+### 突合の手順
+
+突合は人が公式ページを開いて確認する作業です。自動では行いません
+（開発環境から外部サイトへ到達できないため、確認していないものを
+確認したことにしてしまう危険があります）。
+
+```bash
+npm run verify:export            # 全92点を CSV に書き出す
+npm run verify:export -- demo    # デモで使う7点だけ
+npm run verify:export -- haircare  # 分野を絞る
+```
+
+`verification/products-worksheet.csv` が出力されます（Git 管理外）。
+表計算ソフトで開き、公式ページを見ながら記入欄を埋めてください。
+
+| 列 | 記入内容 |
+|---|---|
+| 確認結果 | `ok`＝現在の値で正しい / `fix`＝直す / `drop`＝取り扱いをやめる |
+| 確認日 | `YYYY-MM-DD`。**必須**。無い行は反映されません |
+| 正しい公式URL / 正しい価格 / 正しい内容量 | `fix` のときだけ。空欄の項目は現状維持 |
+
+```bash
+npm run verify:import -- --dry-run   # 書き込まずに結果だけ見る
+npm run verify:import                # data/products.json へ反映
+```
+
+反映されるとその商品は `dataConfidence: "official"` になり、UI の
+「公式突合 未完了」バッジが消えます。安全側に倒すため:
+
+- **エラーが1件でもあれば、何も書き込まずに終了します**（部分適用を作らない）
+- 確認日の無い行、`https` でない URL、数値として読めない価格は反映しません
+- `drop` は削除候補として表示するだけで、自動削除はしません
+- 新しいホストを指定した場合は `data/merchants.json` への追加も必要です
+
+反映後は `npm test` でカタログの整合性を確認してください。
 
 ---
 
@@ -765,7 +804,7 @@ SNS・コミュニティ／ネイティブアプリ／ベクトルDB／ファイ
 | 項目 | 現状 | 必要な対応 |
 |---|---|---|
 | 在庫・価格・送料 | すべて未確認として表示 | 販売者APIまたはACP/UCP接続で実データを取得 |
-| 商品カタログ | 46点・`sourceCheckedAt: null` | 全点を公式ページと突合し `dataConfidence: "official"` へ |
+| 商品カタログ | 92点・`sourceCheckedAt: null` | `npm run verify:export` → 記入 → `npm run verify:import` で `dataConfidence: "official"` へ |
 | レート制限 | プロセス内メモリ | 複数インスタンスでは Redis 等の共有ストアへ |
 | 使用済みトークン | プロセス内メモリ | 同上（現状は再起動で使用済み記録が消える） |
 | 監査ログ | 標準出力＋直近200件 | 永続化と保持期間ポリシーの設定 |

@@ -15,3 +15,5 @@ next-env.d.ts
 coverage/
 
 .e2e-output/
+
+verification/
