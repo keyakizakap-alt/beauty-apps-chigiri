@@ -25,8 +25,11 @@ try {
 }
 
 const catalog = JSON.parse(readFileSync("data/products.json", "utf8"));
+const registry = JSON.parse(readFileSync("data/merchants.json", "utf8"));
+const allowedHosts = registry.merchants.flatMap((m) => m.hosts);
+
 const rows = parseCsv(csv);
-const result = applyVerification(catalog.products, rows);
+const result = applyVerification(catalog.products, rows, { allowedHosts });
 
 console.log(`読み込み: ${rows.length} 行`);
 console.log(`反映対象: ${result.applied.length} 件`);
@@ -40,6 +43,17 @@ if (result.errors.length > 0) {
   console.error("");
   console.error(`エラー ${result.errors.length} 件。何も書き込みませんでした。`);
   for (const e of result.errors) console.error(`  - ${e}`);
+
+  if (result.newHosts.length > 0) {
+    console.error("");
+    console.error("data/merchants.json に未登録のホストがあります:");
+    for (const h of result.newHosts) console.error(`  - ${h}`);
+    console.error("");
+    console.error("そのブランドの既存エントリの hosts に足すか、新しい販売者を足してください。");
+    console.error("例: { \"id\": \"...\", \"name\": \"... 公式サイト\", \"kind\": \"brand_official\",");
+    console.error("     \"hosts\": [\"example.com\"], \"shippingFeeYen\": null,");
+    console.error("     \"returnPolicyUrl\": null, \"affiliate\": false }");
+  }
   process.exit(1);
 }
 
@@ -58,12 +72,16 @@ catalog.products = result.products;
 writeFileSync("data/products.json", JSON.stringify(catalog, null, 2) + "\n", "utf8");
 
 const verified = catalog.products.filter((p) => p.sourceCheckedAt !== null).length;
+const remaining = catalog.products.length - verified;
 console.log("");
 console.log(`data/products.json を更新しました。`);
-console.log(`突合済み: ${verified} / ${catalog.products.length} 件`);
+console.log(`突合済み: ${verified} / ${catalog.products.length} 件（残り ${remaining} 件）`);
 console.log("");
 console.log("次に実行してください:");
 console.log("  npm test        （カタログの整合性を確認）");
 console.log("  npm run build");
-console.log("");
-console.log("新しいホストを指定した場合は、data/merchants.json への追加も必要です。");
+if (remaining > 0) {
+  console.log("");
+  console.log("残りを続けるとき:");
+  console.log("  npm run verify:export -- unchecked   （未確認だけ書き出す）");
+}

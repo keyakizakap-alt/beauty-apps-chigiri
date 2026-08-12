@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyVerification,
+  normalizeCheckedAt,
   parseCsv,
   toCsv,
   toWorksheetRows,
@@ -78,8 +79,8 @@ describe("記入結果の反映", () => {
     expect(r.products[0].sourceCheckedAt).toBeNull();
   });
 
-  it("確認日の形式が違う行も反映しない", () => {
-    const r = applyVerification([product()], [row({ 確認日: "2026/8/12" })]);
+  it("年の無い確認日は反映しない（どの年か決められないため）", () => {
+    const r = applyVerification([product()], [row({ 確認日: "8月12日" })]);
     expect(r.errors).toHaveLength(1);
     expect(r.products[0].sourceCheckedAt).toBeNull();
   });
@@ -137,6 +138,16 @@ describe("記入結果の反映", () => {
     expect(r.products[0].sourceCheckedAt).toBeNull();
   });
 
+  it("値が書かれている drop は、fix の書き間違いとみなして止める", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "drop", 正しい公式URL: "https://example.com/b" })],
+    );
+    expect(r.errors[0]).toContain("fix");
+    expect(r.dropped).toEqual([]);
+    expect(r.products[0].officialUrl).toBe("https://example.com/a");
+  });
+
   it("エラーがあっても、他の行の反映結果は壊さない", () => {
     const a = product({ id: "lo-a" });
     const b = product({ id: "lo-b" });
@@ -148,5 +159,77 @@ describe("記入結果の反映", () => {
     expect(r.errors).toHaveLength(1);
     // 呼び出し側はエラーがあれば書き込まない運用にしている
     expect(r.products.find((x) => x.id === "lo-b")!.sourceCheckedAt).toBeNull();
+  });
+});
+
+describe("確認日の受け取り方", () => {
+  it("年が明記されていれば、手書きしやすい形も受け取って正規化する", () => {
+    expect(normalizeCheckedAt("2026-08-12")).toBe("2026-08-12");
+    expect(normalizeCheckedAt("2026/08/12")).toBe("2026-08-12");
+    expect(normalizeCheckedAt("2026/8/12")).toBe("2026-08-12");
+    expect(normalizeCheckedAt("2026年8月12日")).toBe("2026-08-12");
+  });
+
+  it("年の無い日付は、いつ確認したか決められないので受け取らない", () => {
+    expect(normalizeCheckedAt("8月12日")).toBeNull();
+    expect(normalizeCheckedAt("08/12")).toBeNull();
+    expect(normalizeCheckedAt("")).toBeNull();
+    expect(normalizeCheckedAt("きのう")).toBeNull();
+  });
+
+  it("実在しない日付は受け取らない", () => {
+    expect(normalizeCheckedAt("2026-02-30")).toBeNull();
+    expect(normalizeCheckedAt("2026-13-01")).toBeNull();
+  });
+
+  it("正規化できる形なら反映され、確認日は YYYY-MM-DD で保存される", () => {
+    const r = applyVerification([product()], [row({ 確認日: "2026年8月12日" })]);
+    expect(r.errors).toEqual([]);
+    expect(r.products[0].sourceCheckedAt).toBe("2026-08-12");
+  });
+});
+
+describe("公式URLのホスト検査", () => {
+  const allowedHosts = ["example.com"];
+
+  it("許可リストに無いホストはエラーにし、追加すべきホストを返す", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい公式URL: "https://www.kao-kirei.com/curel/" })],
+      { allowedHosts },
+    );
+    expect(r.errors[0]).toContain("www.kao-kirei.com");
+    expect(r.newHosts).toEqual(["www.kao-kirei.com"]);
+    expect(r.applied).toEqual([]);
+    expect(r.products[0].officialUrl).toBe("https://example.com/a");
+  });
+
+  it("ドット境界のサブドメインは許可ホストとして通す", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい公式URL: "https://shop.example.com/item/1" })],
+      { allowedHosts },
+    );
+    expect(r.errors).toEqual([]);
+    expect(r.products[0].officialUrl).toBe("https://shop.example.com/item/1");
+  });
+
+  it("接尾辞が一致するだけの別ホストは通さない", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい公式URL: "https://evil-example.com/item/1" })],
+      { allowedHosts },
+    );
+    expect(r.newHosts).toEqual(["evil-example.com"]);
+    expect(r.applied).toEqual([]);
+  });
+
+  it("許可リストを渡さなければホスト検査はしない（既存の呼び出しを壊さない）", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい公式URL: "https://any-host.example.jp/x" })],
+    );
+    expect(r.errors).toEqual([]);
+    expect(r.products[0].officialUrl).toBe("https://any-host.example.jp/x");
   });
 });

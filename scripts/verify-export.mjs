@@ -1,9 +1,10 @@
 /**
  * 公式ページ突合のワークシートを書き出す。
  *
- *   npm run verify:export              全92点
- *   npm run verify:export -- skincare  分野を絞る
- *   npm run verify:export -- demo      デモで使う6点だけ
+ *   npm run verify:export                全件
+ *   npm run verify:export -- skincare    分野を絞る
+ *   npm run verify:export -- demo        デモで使う7点だけ
+ *   npm run verify:export -- unchecked   まだ突合していないものだけ
  *
  * 出力: verification/products-worksheet.csv
  */
@@ -27,6 +28,12 @@ const filter = process.argv[2];
 let products = catalog.products;
 if (filter === "demo") {
   products = products.filter((p) => DEMO_IDS.includes(p.id));
+} else if (filter === "unchecked") {
+  products = products.filter((p) => p.sourceCheckedAt === null);
+  if (products.length === 0) {
+    console.log("未確認の商品はありません。全件が突合済みです。");
+    process.exit(0);
+  }
 } else if (filter) {
   products = products.filter((p) => p.domain === filter);
   if (products.length === 0) {
@@ -51,7 +58,10 @@ console.log(`${path} に ${products.length} 件を書き出しました（未確
 console.log("");
 console.log("記入のしかた:");
 console.log("  確認結果   ok=現在の値で正しい / fix=直す / drop=取り扱いをやめる");
-console.log("  確認日     YYYY-MM-DD（必須。これが無い行は反映しません）");
+console.log("             値を直したいときは drop ではなく fix です");
+console.log("  確認日     YYYY-MM-DD（必須。2026/08/12・2026年8月12日 も可）");
 console.log("  fix のときだけ「正しい〜」の列を埋めてください（空欄は現状維持）");
+console.log("             = 空欄の項目は確認していなくても確認済みの印が付くので、");
+console.log("               見ていない項目があれば備考に残してください");
 console.log("");
 console.log("記入後: npm run verify:import");
