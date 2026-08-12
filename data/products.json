@@ -40,8 +40,8 @@
         "night"
       ],
       "officialUrl": "https://www.kao.co.jp/biore/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -126,8 +126,8 @@
         "night"
       ],
       "officialUrl": "https://www.shiseido.co.jp/senka/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -137,8 +137,8 @@
       "brand": "カウブランド",
       "name": "無添加 泡の洗顔料",
       "category": "cleanser",
-      "price": 605,
-      "volume": "200mL",
+      "price": 748,
+      "volume": "160mL",
       "skinTags": [
         "sensitive",
         "dry",
@@ -166,9 +166,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.cow-soap.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.cow-soap.co.jp/products/cow-mutenka-bubble-face-wash/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -220,8 +220,8 @@
       "brand": "d プログラム",
       "name": "エッセンスイン クレンジングフォーム",
       "category": "cleanser",
-      "price": 2750,
-      "volume": "120g",
+      "price": 2090,
+      "volume": "120mL",
       "skinTags": [
         "sensitive",
         "dry",
@@ -253,8 +253,8 @@
         "night"
       ],
       "officialUrl": "https://www.shiseido.co.jp/dp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -264,8 +264,8 @@
       "brand": "innisfree",
       "name": "グリーンティー クレンジングフォーム",
       "category": "cleanser",
-      "price": 1650,
-      "volume": "150mL",
+      "price": 1560,
+      "volume": "150g",
       "skinTags": [
         "combination",
         "oily",
@@ -296,9 +296,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.innisfree.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.innisfree.jp/products/greentea-amino-cleansing-foam-1842",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -308,7 +308,7 @@
       "brand": "VT COSMETICS",
       "name": "シカ マイルド フォームクレンザー",
       "category": "cleanser",
-      "price": 1980,
+      "price": 1815,
       "volume": "300mL",
       "skinTags": [
         "sensitive",
@@ -340,9 +340,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://vtcosmetics.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://vtcosmetics.jp/product/cica-%E3%83%9E%E3%82%A4%E3%83%AB%E3%83%89%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%82%AF%E3%83%AC%E3%83%B3%E3%82%B6%E3%83%BC/17/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -425,9 +425,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://jp.rohto.com/hadalabo/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://jp.rohto.com/hadalabo/shirojun-premium-lotion/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -468,8 +468,8 @@
         "night"
       ],
       "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -551,9 +551,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.shiseido.co.jp/ihada/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.shiseido.co.jp/ihada/products/skincare-lotion.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -563,7 +563,7 @@
       "brand": "ナチュリエ",
       "name": "ハトムギ化粧水",
       "category": "lotion",
-      "price": 715,
+      "price": 748,
       "volume": "500mL",
       "skinTags": [
         "oily",
@@ -596,9 +596,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.imju.jp/naturie/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.imju.jp/shop/g/g4903335693601/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -653,8 +653,8 @@
       "brand": "innisfree",
       "name": "グリーンティー シード ヒアルロン酸 トナー",
       "category": "lotion",
-      "price": 2860,
-      "volume": "200mL",
+      "price": 2090,
+      "volume": "170mL",
       "skinTags": [
         "combination",
         "normal",
@@ -684,9 +684,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.innisfree.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.innisfree.jp/products/greentea-hyaluronic-skin-1830",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -729,8 +729,8 @@
         "night"
       ],
       "officialUrl": "https://www.shiseido.co.jp/elixir/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -782,7 +782,7 @@
       "brand": "Torriden",
       "name": "ダイブイン 低分子ヒアルロン酸 トナー",
       "category": "lotion",
-      "price": 2200,
+      "price": 2310,
       "volume": "300mL",
       "skinTags": [
         "dry",
@@ -814,9 +814,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://torriden.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://torriden.jp/products/no0002",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -860,8 +860,8 @@
         "night"
       ],
       "officialUrl": "https://jp.rohto.com/melano-cc/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -1115,9 +1115,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/detail/4550583926687",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -1158,8 +1158,8 @@
         "night"
       ],
       "officialUrl": "https://www.obagi.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1210,8 +1210,8 @@
       "brand": "エリクシール",
       "name": "つや玉ミスト(化粧液タイプ美容液)",
       "category": "serum",
-      "price": 2200,
-      "volume": "80g",
+      "price": 1980,
+      "volume": "80mL",
       "skinTags": [
         "dry",
         "normal",
@@ -1240,9 +1240,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.shiseido.co.jp/elixir/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.shiseido.co.jp/sw/onlinestore/products/E58901.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1335,7 +1335,7 @@
       "brand": "無印良品",
       "name": "乳液・敏感肌用・高保湿タイプ",
       "category": "moisturizer",
-      "price": 850,
+      "price": 990,
       "volume": "200mL",
       "skinTags": [
         "sensitive",
@@ -1364,9 +1364,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/section/S1070201",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1407,9 +1407,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.nivea.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.nivea.co.jp/products/nivea-japan/all-purpose-creams/%E3%83%8B%E3%83%99%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0-%E5%A4%A7%E7%BC%B6",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1419,7 +1419,7 @@
       "brand": "IHADA",
       "name": "薬用バーム",
       "category": "moisturizer",
-      "price": 1650,
+      "price": 1485,
       "volume": "20g",
       "skinTags": [
         "sensitive",
@@ -1449,9 +1449,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.shiseido.co.jp/ihada/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.shiseido.co.jp/ihada/products/skincare-balm.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -1504,7 +1504,7 @@
       "brand": "VT COSMETICS",
       "name": "シカ クリーム",
       "category": "moisturizer",
-      "price": 2860,
+      "price": 2730,
       "volume": "50mL",
       "skinTags": [
         "sensitive",
@@ -1536,9 +1536,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://vtcosmetics.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://m.vtcosmetics.jp/product/cica-%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0/21",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -1591,7 +1591,7 @@
       "brand": "innisfree",
       "name": "グリーンティー バランシング クリーム",
       "category": "moisturizer",
-      "price": 3300,
+      "price": 2970,
       "volume": "50mL",
       "skinTags": [
         "combination",
@@ -1623,9 +1623,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.innisfree.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.innisfree.jp/products/greentea-seed-hyaluronic-cream",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -1667,8 +1667,8 @@
         "morning"
       ],
       "officialUrl": "https://www.kao.co.jp/biore/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1678,7 +1678,7 @@
       "brand": "アネッサ",
       "name": "パーフェクトUV スキンケアミルク N SPF50+ PA++++",
       "category": "sunscreen",
-      "price": 3300,
+      "price": 3058,
       "volume": "60mL",
       "skinTags": [
         "normal",
@@ -1708,9 +1708,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.shiseido.co.jp/anessa/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.shiseido.co.jp/anessa/products/suncare/perfect_uv_sm/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1752,8 +1752,8 @@
         "morning"
       ],
       "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -1763,8 +1763,8 @@
       "brand": "スキンアクア",
       "name": "トーンアップUV エッセンス SPF50+ PA++++",
       "category": "sunscreen",
-      "price": 869,
-      "volume": "80g",
+      "price": 1210,
+      "volume": "70g",
       "skinTags": [
         "normal",
         "combination",
@@ -1796,9 +1796,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://jp.rohto.com/skinaqua/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://jp.rohto.com/skin-aqua/tone-up-essence/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1966,8 +1966,8 @@
         "morning"
       ],
       "officialUrl": "https://www.allie-uv.com/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -2086,9 +2086,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon-body/product/hair-shampoo.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -2099,7 +2099,7 @@
       "name": "薬用コンディショナー",
       "category": "conditioner",
       "price": 1320,
-      "volume": "450g",
+      "volume": "450mL",
       "skinTags": [
         "sensitive",
         "dry"
@@ -2123,9 +2123,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.daiichisankyo-hc.co.jp/site_minon-body/product/hair-conditioner.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -2164,8 +2164,8 @@
         "night"
       ],
       "officialUrl": "https://www.kracie.co.jp/himawari/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2204,8 +2204,8 @@
         "night"
       ],
       "officialUrl": "https://www.kracie.co.jp/ichikami/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2297,8 +2297,8 @@
       "brand": "ラ・カスタ",
       "name": "アロマエステ ヘアエマルジョン",
       "category": "hair_outbath",
-      "price": 2200,
-      "volume": "100mL",
+      "price": 3410,
+      "volume": "80mL",
       "skinTags": [
         "normal",
         "dry"
@@ -2329,9 +2329,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.lacasta.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://shop.lacasta.jp/shop/r/r2202/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2383,7 +2383,7 @@
       "id": "ha-fino-mask",
       "domain": "haircare",
       "brand": "フィーノ",
-      "name": "プレミアムタッチ 浸透美容液ヘアマスク",
+      "name": "プレミアムタッチ 濃厚美容液ヘアマスク",
       "category": "hair_treatment",
       "price": 1078,
       "volume": "230g",
@@ -2416,8 +2416,8 @@
         "night"
       ],
       "officialUrl": "https://www.shiseido.co.jp/fino/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2534,8 +2534,8 @@
         "night"
       ],
       "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -2575,9 +2575,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.nivea.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.nivea.co.jp/products/nivea-japan/body-care/body-lotion",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2585,7 +2585,7 @@
       "id": "bo-curel-lotion",
       "domain": "bodycare",
       "brand": "キュレル",
-      "name": "潤浸保湿 ボディローション",
+      "name": "ローション",
       "category": "body_moisturizer",
       "price": 1650,
       "volume": "220mL",
@@ -2616,9 +2616,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.kao.co.jp/curel/choice/body/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -2626,7 +2626,7 @@
       "id": "bo-vaseline-body",
       "domain": "bodycare",
       "brand": "ヴァセリン",
-      "name": "アドバンスドリペア ボディローション",
+      "name": "アドバンスドリペア ボディローション 無香料",
       "category": "body_moisturizer",
       "price": 990,
       "volume": "400mL",
@@ -2658,9 +2658,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.vaseline.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.vaseline.jp/p/advanced_repair_lotion.html/04902111742144",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2670,8 +2670,8 @@
       "brand": "無印良品",
       "name": "マッサージオイル スイートアーモンド",
       "category": "body_special",
-      "price": 1290,
-      "volume": "100mL",
+      "price": 1890,
+      "volume": "200mL",
       "skinTags": [
         "dry",
         "normal"
@@ -2699,9 +2699,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/detail/4550584085499",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2865,8 +2865,8 @@
         "morning"
       ],
       "officialUrl": "https://www.cezanne.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2905,9 +2905,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.sofina.co.jp/primavista/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.kao-kirei.com/ja/official/sofina-primavista/products/makeup-base/protectbase_uv50/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -2955,7 +2955,7 @@
       "brand": "マキアージュ",
       "name": "ドラマティックスキンセンサーベース EX",
       "category": "foundation",
-      "price": 3520,
+      "price": 2970,
       "volume": "25mL",
       "skinTags": [
         "combination",
@@ -2984,9 +2984,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.shiseido.co.jp/maquillage/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.shiseido.co.jp/sw/onlinestore/products/G60301.html",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3024,8 +3024,8 @@
         "morning"
       ],
       "officialUrl": "https://www.cezanne.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3035,7 +3035,7 @@
       "brand": "innisfree",
       "name": "ノーセバム ミネラルパウダー",
       "category": "face_powder",
-      "price": 880,
+      "price": 899,
       "volume": "5g",
       "skinTags": [
         "oily",
@@ -3061,9 +3061,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.innisfree.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.innisfree.jp/products/no-sebum-mineral-powder-1624",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr"
     },
@@ -3073,7 +3073,7 @@
       "brand": "キャンメイク",
       "name": "マシュマロフィニッシュパウダー",
       "category": "face_powder",
-      "price": 1078,
+      "price": 1034,
       "volume": "10g",
       "skinTags": [
         "normal",
@@ -3100,9 +3100,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.canmake.com/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.canmake.com/item/detail/marshmallow-finish-powder/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3112,7 +3112,7 @@
       "brand": "オペラ",
       "name": "リップティント N",
       "category": "lip",
-      "price": 1650,
+      "price": 1760,
       "volume": "2g",
       "skinTags": [
         "normal"
@@ -3139,9 +3139,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.operacosmetics.com/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.opera-net.jp/item/liptint/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3218,8 +3218,8 @@
         "night"
       ],
       "officialUrl": "https://www.dhc.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -3262,10 +3262,10 @@
       "id": "mk-excel-eye",
       "domain": "makeup",
       "brand": "excel",
-      "name": "スキニーリッチシャドウ",
+      "name": "スキニーリッチシャドウ N",
       "category": "eye_makeup",
       "price": 1650,
-      "volume": "5.4g",
+      "volume": "5g",
       "skinTags": [
         "normal"
       ],
@@ -3290,9 +3290,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.noevirgroup.jp/excel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://noevirgroup.jp/excel/g/g78305/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3372,8 +3372,8 @@
         "night"
       ],
       "officialUrl": "https://www.kose-cosmeport.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3383,7 +3383,7 @@
       "brand": "ファンケル",
       "name": "マイルドクレンジング オイル",
       "category": "makeup_remover",
-      "price": 1870,
+      "price": 1980,
       "volume": "120mL",
       "skinTags": [
         "sensitive",
@@ -3411,9 +3411,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.fancl.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.fancl.co.jp/beauty/item/3727b/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3458,8 +3458,8 @@
         "night"
       ],
       "officialUrl": "https://uka.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3509,7 +3509,7 @@
       "name": "ネイルケアオイル",
       "category": "nail_oil",
       "price": 890,
-      "volume": "5mL",
+      "volume": "3.2g",
       "skinTags": [
         "sensitive",
         "dry",
@@ -3536,9 +3536,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/detail/4550583916923",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3580,8 +3580,8 @@
         "night"
       ],
       "officialUrl": "https://www.kao.co.jp/atrix/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },
@@ -3620,8 +3620,8 @@
         "night"
       ],
       "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -3631,7 +3631,7 @@
       "brand": "ユースキン",
       "name": "ユースキンA",
       "category": "hand_cream",
-      "price": 935,
+      "price": 1639,
       "volume": "120g",
       "skinTags": [
         "dry",
@@ -3662,9 +3662,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.yuskin.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.yuskin.co.jp/?pdid=y120&tabid=73",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp"
     },
@@ -3674,8 +3674,8 @@
       "brand": "カウブランド",
       "name": "無添加 ハンドソープ 泡タイプ",
       "category": "hand_wash",
-      "price": 495,
-      "volume": "250mL",
+      "price": 506,
+      "volume": "360mL",
       "skinTags": [
         "sensitive",
         "dry",
@@ -3702,9 +3702,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.cow-soap.co.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.cow-soap.co.jp/products/cow-mutenka-hand-soap/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp"
     },

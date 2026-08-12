@@ -20,6 +20,7 @@ export const COLUMNS = [
   "現在の内容量",
   // ここから記入欄
   "確認結果",
+  "正しい商品名",
   "正しい公式URL",
   "正しい価格",
   "正しい内容量",
@@ -117,6 +118,7 @@ export function toWorksheetRows(products) {
     現在の参考価格: p.price,
     現在の内容量: p.volume ?? "",
     確認結果: "",
+    正しい商品名: "",
     正しい公式URL: "",
     正しい価格: "",
     正しい内容量: "",
@@ -230,7 +232,7 @@ export function applyVerification(products, rows, options = {}) {
     if (RESULT_DROP.includes(result)) {
       // 「正しい〜」が埋まっている drop は、fix の書き間違いである可能性が高い。
       // そのまま流すと修正内容が黙って捨てられるので、ここで止める
-      const filled = ["正しい公式URL", "正しい価格", "正しい内容量"].filter(
+      const filled = ["正しい商品名", "正しい公式URL", "正しい価格", "正しい内容量"].filter(
         (c) => (row[c] ?? "").trim().length > 0,
       );
       if (filled.length > 0) {
@@ -262,6 +264,7 @@ export function applyVerification(products, rows, options = {}) {
     }
 
     if (isFix) {
+      const name = (row["正しい商品名"] ?? "").trim();
       const url = (row["正しい公式URL"] ?? "").trim();
       const price = (row["正しい価格"] ?? "").trim();
       const volume = (row["正しい内容量"] ?? "").trim();
@@ -297,6 +300,9 @@ export function applyVerification(products, rows, options = {}) {
         product.price = Math.round(n);
       }
       if (volume.length > 0) product.volume = volume;
+      // リニューアルで商品名が変わることがある。
+      // 名前が古いまま「公式確認済み」にすると、公式ページと突き合わせられなくなる
+      if (name.length > 0) product.name = name;
     }
 
     product.sourceCheckedAt = checkedAt;

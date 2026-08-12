@@ -317,7 +317,8 @@
       "name": "ラ・カスタ 公式サイト",
       "kind": "brand_official",
       "hosts": [
-        "www.lacasta.co.jp"
+        "www.lacasta.co.jp",
+        "shop.lacasta.jp"
       ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
@@ -350,7 +351,8 @@
       "name": "ノエビアグループ 公式サイト",
       "kind": "brand_official",
       "hosts": [
-        "www.noevirgroup.jp"
+        "www.noevirgroup.jp",
+        "noevirgroup.jp"
       ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,
@@ -361,7 +363,8 @@
       "name": "オペラ 公式サイト",
       "kind": "brand_official",
       "hosts": [
-        "www.operacosmetics.com"
+        "www.operacosmetics.com",
+        "www.opera-net.jp"
       ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,

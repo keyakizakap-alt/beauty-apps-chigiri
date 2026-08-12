@@ -26,6 +26,7 @@ const row = (over: Record<string, string> = {}) => ({
   id: "lo-test",
   確認結果: "ok",
   確認日: "2026-08-12",
+  正しい商品名: "",
   正しい公式URL: "",
   正しい価格: "",
   正しい内容量: "",
@@ -136,6 +137,21 @@ describe("記入結果の反映", () => {
     expect(r.dropped).toEqual(["lo-test"]);
     expect(r.products).toHaveLength(1);
     expect(r.products[0].sourceCheckedAt).toBeNull();
+  });
+
+  it("リニューアルで名前が変わった商品は、商品名も直せる", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい商品名: "スキニーリッチシャドウ N" })],
+    );
+    expect(r.errors).toEqual([]);
+    expect(r.products[0].name).toBe("スキニーリッチシャドウ N");
+    expect(r.products[0].dataConfidence).toBe("official");
+  });
+
+  it("商品名が空欄なら現在の名前を残す", () => {
+    const r = applyVerification([product()], [row({ 確認結果: "fix" })]);
+    expect(r.products[0].name).toBe("化粧水, 高保湿");
   });
 
   it("値が書かれている drop は、fix の書き間違いとみなして止める", () => {
