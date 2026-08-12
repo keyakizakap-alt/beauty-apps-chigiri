@@ -8,7 +8,8 @@
       "name": "花王 公式サイト",
       "kind": "brand_official",
       "hosts": [
-        "www.kao.co.jp"
+        "www.kao.co.jp",
+        "www.kao-kirei.com"
       ],
       "shippingFeeYen": null,
       "returnPolicyUrl": null,

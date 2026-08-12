@@ -82,9 +82,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.kao-kirei.com/ja/official/curel/products/skincare_cleansing/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -384,9 +384,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://jp.rohto.com/hadalabo/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://jp.rohto.com/hadalabo/gokujun-lotion/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -480,7 +480,7 @@
       "name": "化粧水・敏感肌用・高保湿タイプ",
       "category": "lotion",
       "price": 790,
-      "volume": "200mL",
+      "volume": "300mL",
       "skinTags": [
         "sensitive",
         "dry",
@@ -509,9 +509,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/detail/4550583434991",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1030,9 +1030,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://torriden.jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://torriden.jp/products/no0001",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "kr",
       "domain": "skincare"
@@ -1282,9 +1282,9 @@
       "usageTiming": [
         "night"
       ],
-      "officialUrl": "https://www.kao.co.jp/curel/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.kao-kirei.com/ja/official/curel/products/skincare_moisturizers/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": true,
       "origin": "jp",
       "domain": "skincare"
@@ -1323,9 +1323,9 @@
         "morning",
         "night"
       ],
-      "officialUrl": "https://jp.rohto.com/hadalabo/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://jp.rohto.com/hadalabo/gokujun-milk/",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
@@ -1881,9 +1881,9 @@
       "usageTiming": [
         "morning"
       ],
-      "officialUrl": "https://www.muji.com/jp/",
-      "sourceCheckedAt": null,
-      "dataConfidence": "seed",
+      "officialUrl": "https://www.muji.com/jp/ja/store/cmdty/detail/4550584464959",
+      "sourceCheckedAt": "2026-08-12",
+      "dataConfidence": "official",
       "isQuasiDrug": false,
       "origin": "jp",
       "domain": "skincare"
