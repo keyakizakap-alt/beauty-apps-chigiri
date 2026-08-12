@@ -4,7 +4,7 @@
 引き継ぐためのものです。仕様の詳細は `README.md`、設計の詳細は `docs/ARCHITECTURE.md` を参照してください。
 ここには「今どこまで進んでいて、次に何をすべきか」だけをまとめます。
 
-最終更新: 2026-08-12（ネットワーク再確認の結果を 3-2 に反映）
+最終更新: 2026-08-12（突合55点の反映、価格突合の分離、販売終了17点の入れ替えまで）
 
 ---
 
@@ -28,7 +28,7 @@
 ## 2. 今の状態（何ができているか）
 
 - Next.js 16 / React 19 / TypeScript strict / Tailwind / Zod / Vitest。
-- `npx vitest run` → **340 tests / 22 files すべて green**
+- `npx vitest run` → **356 tests / 22 files すべて green**
 - `npm run build` → 通過
 - 5分野すべてで対話・商品選択・ルーティン組み立てが動く
 - コンシェルジュ選択画面（ARCA/SILQA/SOMA/TINTA/UNEA、未対応は「準備中」表示）実装済み
@@ -39,7 +39,7 @@
 - マイアイテム: カタログから選ぶだけでなく、ユーザーが自分の持ち物を自由記述で追加できる
 - 開発者向け画面（`/ops`）はサーバー側で `CHIGIRI_OPS=1` が無ければ 404
 - Vercel へのデプロイ手順は README 済み、`vercel.json` で Framework を `nextjs` に固定
-- ブランチ: `main` と `claude/chigiri-beauty-mvp-cn3wlv` は同期済み（最新コミット `4c88609`）
+- 作業ブランチ: `claude/md-file-continue-slmelp`
 
 ---
 
@@ -71,8 +71,6 @@
 - ネイルホリック「ベース&トップコート」は現行ラインでは『ベースコート』『トップコート』が
   別商品。カタログを2件に分けるか、片方に寄せるかの判断が要る（保留に回してある）
 
-
-
 **2026-08-12: デモで使うスキンケア7点を人手で突合し、反映済み**
 （`sourceCheckedAt: "2026-08-12"` / `dataConfidence: "official"`）。
 公式URLを商品ページ単位の URL に差し替え、無印の高保湿化粧水は内容量を 200mL → **300mL** に修正。
@@ -98,9 +96,9 @@ UI 側は「公式突合 未完了（参考データ）」バッジで正直に�
 そのため「人が公式ページを見て、結果だけを反映する」ワークシートの仕組みを用意しました。
 
 ```bash
-npm run verify:export            # 全92点を CSV に書き出す（未確認を先頭に並べる）
-npm run verify:export -- demo    # デモで使う7点だけ（優先度高）
-npm run verify:export -- skincare  # 分野を絞る
+npm run verify:export                # 全92点を CSV に書き出す（未確認を先頭に並べる）
+npm run verify:export -- unchecked   # まだ突合していないものだけ
+npm run verify:export -- skincare    # 分野を絞る
 
 # → verification/products-worksheet.csv を Excel 等で開いて記入
 #    確認結果: ok / fix / drop、確認日: YYYY-MM-DD（必須）
@@ -115,7 +113,7 @@ npm run verify:import                # data/products.json へ反映
 - `drop` は削除候補として出すだけで自動削除はしない
 
 詳細手順は `README.md` 13章。ロジックは `scripts/verification-lib.mjs`、
-テストは `tests/verification.test.ts`（14件）。
+テストは `tests/verification.test.ts`（25件）。
 
 記入時の注意（2026-08-12 の実作業で実際に起きたこと。いずれも import 側で検査するようにした）:
 - `drop` は「取り扱いをやめる」。値を直したいときは **`fix`**。
@@ -127,8 +125,8 @@ npm run verify:import                # data/products.json へ反映
 - 「正しい〜」列を空欄にすると現状維持。つまり**確認していない項目も「確認済み」の印が付く**ので、
   価格まで見たかどうかは備考欄に残すとよい（ここだけは機械的に検査できない）
 
-**次の一手**: `npm run verify:export -- unchecked` で未確認85点を書き出し、分野ごとに区切って埋める。
-残りの内訳は スキンケア39 / メイク15 / ヘア12 / ネイル10 / ボディ9。
+**次の一手**: `npm run verify:export -- unchecked` で未確認30点を書き出して埋める。
+内訳は 補充した17点 ＋ 保留13点。補充分は価格・内容量・URL がすべて参考値なので優先度が高い。
 
 ### 3-2. 開発コンテナのネットワークポリシー
 
@@ -187,7 +185,7 @@ npm install           # 新しいコンテナ／クローン直後は最初に�
 npm run dev           # http://localhost:3000
 npm run build          # 本番ビルド
 npm run typecheck
-npx vitest run          # 単体テスト（340件）
+npx vitest run          # 単体テスト（356件）
 npm run e2e             # モバイル幅 E2E（別途 npm start が必要）
 npm run verify:export / verify:import   # 3-1 参照
 ```
