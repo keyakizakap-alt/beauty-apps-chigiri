@@ -134,9 +134,16 @@ export default function EvidencePanel({
                     ご自身で追加されたもの（公式情報なし）
                   </span>
                 ) : e.sourceCheckedAt ? (
-                  <span className="rounded-full bg-ai/10 px-2 py-0.5 text-[10px] text-ai">
-                    突合済み {e.sourceCheckedAt}
-                  </span>
+                  <>
+                    <span className="rounded-full bg-ai/10 px-2 py-0.5 text-[10px] text-ai">
+                      突合済み {e.sourceCheckedAt}
+                    </span>
+                    {e.priceCheckedAt === null && (
+                      <span className="rounded-full bg-kinari px-2 py-0.5 text-[10px] text-sumi/60">
+                        価格は参考値（公式に価格の表示なし）
+                      </span>
+                    )}
+                  </>
                 ) : (
                   <span className="rounded-full bg-sakuraSoft px-2 py-0.5 text-[10px] text-sakura">
                     公式突合 未完了（参考データ）

@@ -106,6 +106,7 @@ export function customItemToProduct(item: {
     usageTiming: item.usageTiming,
     officialUrl: null,
     sourceCheckedAt: null,
+    priceCheckedAt: null,
     dataConfidence: "user",
     isQuasiDrug: false,
     origin: "other",

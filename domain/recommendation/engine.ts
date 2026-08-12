@@ -161,6 +161,7 @@ export function buildRecommendation(profile: Profile): EngineResult {
     name: p.name,
     officialUrl: p.officialUrl,
     sourceCheckedAt: p.sourceCheckedAt,
+    priceCheckedAt: p.priceCheckedAt,
     dataConfidence: p.dataConfidence,
     claims: p.allowedClaims
       .map((c) => claimText(c))

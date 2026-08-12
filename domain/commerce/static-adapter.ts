@@ -79,7 +79,9 @@ export function buildOffer(product: Product, now = new Date()): ProductOffer | n
     availability: "unknown",
     productUrl: product.officialUrl ?? "",
     checkedAt: now.toISOString(),
-    priceSourceCheckedAt: product.sourceCheckedAt,
+    // 商品の突合日ではなく、価格を確認した日を使う。
+    // 公式に価格表示が無い商品は、商品が突合済みでもここは null のまま
+    priceSourceCheckedAt: product.priceCheckedAt,
     officialSeller: merchant.kind === "brand_official",
     returnPolicyUrl: merchant.returnPolicyUrl,
     affiliate: merchant.affiliate,

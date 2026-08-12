@@ -306,6 +306,13 @@ export function applyVerification(products, rows, options = {}) {
     }
 
     product.sourceCheckedAt = checkedAt;
+    // 価格を確認したと言えるのは、
+    //   ok  = 現在の値が正しいと確認した
+    //   fix = 正しい価格を書いた
+    // のどちらか。fix で価格欄が空欄の場合は「直さない」であって
+    // 「確認した」ではないので、参考価格のままにしておく
+    const priceConfirmed = isOk || (row["正しい価格"] ?? "").trim().length > 0;
+    if (priceConfirmed) product.priceCheckedAt = checkedAt;
     product.dataConfidence = "official";
     byId.set(id, product);
     applied.push(id);

@@ -192,6 +192,15 @@ export const ProductSchema = z.object({
    * UI 上で根拠ありとして扱わない。推測で埋めないこと。
    */
   sourceCheckedAt: z.string().nullable(),
+  /**
+   * 価格そのものを公式ページで確認した日付。
+   *
+   * sourceCheckedAt とは分ける。公式ページに価格が出ていない商品
+   * （オープン価格・希望小売価格なし）は珍しくなく、商品自体は突合できても
+   * 価格は編集時点の参考値のまま、ということが起こるため。
+   * null のときは承認画面で「参考価格」として警告する。
+   */
+  priceCheckedAt: z.string().nullable().default(null),
   dataConfidence: z.enum(["official", "seed", "user"]),
   isQuasiDrug: z.boolean(),
   origin: z.enum(["jp", "kr", "other"]),

@@ -127,6 +127,8 @@ export const EvidenceSchema = z.object({
   name: z.string(),
   officialUrl: z.string().nullable(),
   sourceCheckedAt: z.string().nullable(),
+  /** 価格そのものを公式で確認した日付。null なら参考価格 */
+  priceCheckedAt: z.string().nullable().default(null),
   dataConfidence: z.enum(["official", "seed", "user"]),
   /** 表示に使った許可表現 */
   claims: z.array(z.string()),

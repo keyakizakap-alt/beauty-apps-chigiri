@@ -37,6 +37,29 @@ describe("CommerceAdapter（静的カタログ）", () => {
     }
   });
 
+  it("価格を確認していない商品は、商品が突合済みでも参考価格として警告する", async () => {
+    // 公式に価格表示が無い商品は珍しくないので、突合済み＝価格確認済みにしない
+    const p = PRODUCTS.find(
+      (x) => x.sourceCheckedAt !== null && x.priceCheckedAt === null,
+    );
+    expect(p, "商品は突合済みだが価格は未確認、という商品が必要").toBeDefined();
+
+    const offer = buildOffer(p!)!;
+    expect(offer.priceSourceCheckedAt).toBeNull();
+
+    const v = await adapter.validateOffer(
+      offer.offerId,
+      profileWith({ budgetYen: 100000 }),
+    );
+    expect(v.warnings.some((w) => w.includes("参考価格"))).toBe(true);
+  });
+
+  it("価格まで確認した商品は、その日付をオファーに載せる", () => {
+    const p = PRODUCTS.find((x) => x.priceCheckedAt !== null);
+    expect(p).toBeDefined();
+    expect(buildOffer(p!)!.priceSourceCheckedAt).toBe(p!.priceCheckedAt);
+  });
+
   it("送料が未確認なら合計額を出さない", () => {
     const offer = buildOffer(sunscreens[0]);
     expect(offer?.shippingFee).toBeNull();

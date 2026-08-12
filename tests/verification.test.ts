@@ -18,6 +18,7 @@ const product = (over: Record<string, unknown> = {}) => ({
   volume: "170mL",
   officialUrl: "https://example.com/a",
   sourceCheckedAt: null,
+  priceCheckedAt: null,
   dataConfidence: "seed",
   ...over,
 });
@@ -152,6 +153,31 @@ describe("記入結果の反映", () => {
   it("商品名が空欄なら現在の名前を残す", () => {
     const r = applyVerification([product()], [row({ 確認結果: "fix" })]);
     expect(r.products[0].name).toBe("化粧水, 高保湿");
+  });
+
+  it("ok なら価格も確認したものとして priceCheckedAt を入れる", () => {
+    const r = applyVerification([product()], [row({ 確認結果: "ok" })]);
+    expect(r.products[0].priceCheckedAt).toBe("2026-08-12");
+  });
+
+  it("fix で正しい価格を書いたなら priceCheckedAt を入れる", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい価格: "1,320円" })],
+    );
+    expect(r.products[0].price).toBe(1320);
+    expect(r.products[0].priceCheckedAt).toBe("2026-08-12");
+  });
+
+  it("fix で価格欄が空欄なら、商品は突合済みでも価格は参考値のまま", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 正しい内容量: "200mL" })],
+    );
+    expect(r.products[0].sourceCheckedAt).toBe("2026-08-12");
+    expect(r.products[0].dataConfidence).toBe("official");
+    // 公式に価格表示が無い商品があるので、ここを埋めてはいけない
+    expect(r.products[0].priceCheckedAt).toBeNull();
   });
 
   it("値が書かれている drop は、fix の書き間違いとみなして止める", () => {

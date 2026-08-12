@@ -57,6 +57,25 @@ if (result.errors.length > 0) {
   process.exit(1);
 }
 
+// ブランドのトップページは、どの商品を確認したのかを示せない。
+// 反映は止めないが、突合としては弱いので名指しで警告する
+const weak = result.products
+  .filter((p) => result.applied.includes(p.id))
+  .filter((p) => {
+    if (!p.officialUrl) return false;
+    try {
+      return new URL(p.officialUrl).pathname.replace(/\//g, "").length === 0;
+    } catch {
+      return false;
+    }
+  });
+if (weak.length > 0) {
+  console.log("");
+  console.log(`注意: ${weak.length} 件は公式URLがブランドのトップページのままです。`);
+  console.log("      どの商品を確認したのかを示せないため、商品ページのURLに差し替えてください。");
+  for (const p of weak) console.log(`  - ${p.id}  ${p.officialUrl}`);
+}
+
 if (result.applied.length === 0) {
   console.log("反映する行がありませんでした。");
   process.exit(0);
