@@ -5,6 +5,7 @@ import { CATEGORY_LABEL, productsInDomain } from "@/domain/recommendation/catalo
 import { domainConfig } from "@/domain/recommendation/domains";
 import type { Category, Domain } from "@/schemas/product";
 import type { CustomItem } from "@/schemas/profile";
+import ProductThumb from "./ProductThumb";
 
 /**
  * 手持ち商品の選択。
@@ -150,6 +151,7 @@ export default function ProductSelector({
                       >
                         {on ? "\u2713" : ""}
                       </span>
+                      <ProductThumb product={c} size={44} className="shrink-0" />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] text-sumi/60">
                           {c.brand}
@@ -286,6 +288,7 @@ export default function ProductSelector({
                 >
                   {on ? "✓" : ""}
                 </span>
+                <ProductThumb product={p} size={44} className="shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[13px] text-sumi/60">
                     {p.brand}

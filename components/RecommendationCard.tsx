@@ -7,6 +7,7 @@ import type { Product } from "@/schemas/product";
 import type { Recommendation } from "@/schemas/recommendation";
 import type { Profile } from "@/schemas/profile";
 import ProductInsight from "./ProductInsight";
+import ProductThumb from "./ProductThumb";
 import RoutinePlans from "./RoutinePlans";
 import SavingSummary from "./SavingSummary";
 import EvidencePanel from "./EvidencePanel";
@@ -66,11 +67,16 @@ export default function RecommendationCard({
           <ul className="mt-3 space-y-2.5">
             {ownedInUse.map((p) => (
               <li key={p.id} className="rounded-xl border border-beige/70 px-3 py-2.5">
-                <p className="text-[11px] text-sumi/60">{p.brand}</p>
-                <p className="text-sm font-medium leading-snug">{p.name}</p>
-                <p className="mt-0.5 text-[11px] text-sumi/55">
-                  {CATEGORY_LABEL[p.category]}
-                </p>
+                <div className="flex items-start gap-3">
+                  <ProductThumb product={p} size={56} className="shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] text-sumi/60">{p.brand}</p>
+                    <p className="text-sm font-medium leading-snug">{p.name}</p>
+                    <p className="mt-0.5 text-[11px] text-sumi/55">
+                      {CATEGORY_LABEL[p.category]}
+                    </p>
+                  </div>
+                </div>
                 <ProductInsight
                   product={p}
                   profile={profile}
@@ -91,17 +97,26 @@ export default function RecommendationCard({
         <h3 className="text-base font-semibold">買い足すなら、この1点</h3>
         {suggestion && suggested ? (
           <div className="mt-3 rounded-lg border border-ai/25 bg-white p-3">
-            <p className="text-[11px] font-medium tracking-wide text-ai">
-              {CATEGORY_LABEL[suggestion.category]}の役割が不足
-            </p>
-            <p className="mt-0.5 text-sm text-sumi/60">{suggested.brand}</p>
-            <p className="text-[15px] font-medium leading-snug">{suggested.name}</p>
-            <p className="mt-1 text-sm tabular-nums">
-              参考価格 {suggestion.price.toLocaleString()}円
-              {suggested.volume && (
-                <span className="ml-1 text-xs text-sumi/50">／ {suggested.volume}</span>
-              )}
-            </p>
+            <div className="flex items-start gap-3">
+              <ProductThumb product={suggested} size={72} className="shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-medium tracking-wide text-ai">
+                  {CATEGORY_LABEL[suggestion.category]}の役割が不足
+                </p>
+                <p className="mt-0.5 text-sm text-sumi/60">{suggested.brand}</p>
+                <p className="text-[15px] font-medium leading-snug">
+                  {suggested.name}
+                </p>
+                <p className="mt-1 text-sm tabular-nums">
+                  参考価格 {suggestion.price.toLocaleString()}円
+                  {suggested.volume && (
+                    <span className="ml-1 text-xs text-sumi/50">
+                      ／ {suggested.volume}
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
             <p className="mt-2 text-xs leading-relaxed text-sumi/70">
               {suggestion.reason}
             </p>

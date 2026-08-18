@@ -93,7 +93,20 @@ npm run verify:import                # data/products.json へ反映
 `curl -I https://www.kao.co.jp/curel/` が 200 を返せば、突合を自動化できる可能性がある。
 それでも通らない場合は 3-1 のワークシートで人力運用を継続する。
 
-### 3-3. 口コミ機能の扱い（要注意・実装方針を忘れないこと）
+### 3-3. 商品写真（未登録・要注意）
+
+**92点すべて写真が未登録です。** 現在は役割とブランドから決まる線画を
+表示しており、詳細画面には「写真未登録」と明記しています。
+
+写真を入れる場合は、**メーカーの配布素材を許諾を確認したうえで**
+`public/products/<商品id>.jpg` に置き、突合ワークシートの
+「商品写真ファイル名」列から反映します（README 13章）。
+
+やってはいけないこと:
+- 公式サイトの画像への直リンク（CSP で塞いでおり、規約・著作権の問題もある）
+- 商品の外観を推測して画像を生成すること（実在する商品の見た目を偽ることになる）
+
+### 3-4. 口コミ機能の扱い（要注意・実装方針を忘れないこと）
 
 `domain/analysis/reviews.ts` の `REVIEW_SOURCES` は**意図的に空配列**。
 存在しない口コミを創作しないという方針のため、実データ取得ができるようになるまで
@@ -112,6 +125,8 @@ npm run verify:import                # data/products.json へ反映
 | 商品・プロフィールの Zod スキーマ | `schemas/product.ts`, `schemas/profile.ts` |
 | 商品カタログ（92点） | `data/products.json` |
 | 公式サイトのホスト許可リスト | `data/merchants.json` |
+| 商品サムネイルの図案 / 描画 | `domain/recommendation/product-image.ts`, `components/ProductThumb.tsx` |
+| 商品写真の置き場 | `public/products/`（許諾を確認したものだけ。README 13章） |
 | 成分読み解き・比較・継続目安 | `domain/analysis/insight.ts` |
 | 口コミサイト導線（本文取得はしていない） | `domain/analysis/reviews.ts` |
 | 開発者向け画面のサーバー側ゲート | `lib/ops-visibility.ts`, `app/ops/page.tsx` |

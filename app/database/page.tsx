@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChigiriMark } from "@/components/AppSplash";
+import ProductThumb from "@/components/ProductThumb";
 import { CATEGORY_LABEL, PRODUCTS, claimText } from "@/domain/recommendation/catalog";
 import { CONCERN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL } from "@/domain/recommendation/filters";
@@ -223,6 +224,7 @@ export default function DatabasePage() {
                 aria-expanded={open}
                 className="chigiri-tap flex w-full items-start gap-3 p-4 text-left"
               >
+                <ProductThumb product={p} size={52} className="shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block text-[11px] text-sumi/60">{p.brand}</span>
                   <span className="block text-sm font-medium leading-snug text-sumi">
@@ -245,6 +247,16 @@ export default function DatabasePage() {
 
               {open && (
                 <div className="border-t border-beige px-4 py-4">
+                  <div className="mb-3 flex items-start gap-3">
+                    <ProductThumb product={p} size={96} caption className="shrink-0" />
+                    <p className="flex-1 text-[11px] leading-relaxed text-sumi/55">
+                      商品写真は、メーカーが配布しているものを許諾のうえで
+                      登録したときだけ表示します。未登録のあいだは、
+                      役割とブランドから決まる図案を出しています。
+                      これは商品の外観を再現したものではありません。
+                    </p>
+                  </div>
+
                   <Field label="公式に確認できる表現">
                     {p.allowedClaims
                       .map((c) => claimText(c))

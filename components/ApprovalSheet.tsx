@@ -7,8 +7,9 @@ import type {
   PurchaseHandoff,
   UnverifiedField,
 } from "@/schemas/commerce";
-import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
+import { CATEGORY_LABEL, getProduct } from "@/domain/recommendation/catalog";
 import type { Category } from "@/schemas/product";
+import ProductThumb from "./ProductThumb";
 
 /**
  * 購入承認画面（設計書 §6.3）。
@@ -55,6 +56,8 @@ export default function ApprovalSheet({
   const [acknowledged, setAcknowledged] = useState(false);
   const offer = row.offer;
   const hasUnverified = offer.unverified.length > 0;
+  // 承認行はカタログの id しか持たないため、表示用の情報はここで引き直す
+  const thumbProduct = getProduct(offer.productId);
 
   // 引き継ぎリンクが発行済みなら、最後の確認だけを見せる
   if (handoff) {
@@ -74,12 +77,21 @@ export default function ApprovalSheet({
         {/* 商品 */}
         <div>
           <p className="chigiri-label">買うもの</p>
-          <p className="mt-1 text-xs text-sumi/55">{row.brand}</p>
-          <p className="text-[15px] font-medium leading-snug">{row.productName}</p>
-          <p className="mt-0.5 text-xs text-sumi/60">
-            {CATEGORY_LABEL[category]}の役割
-            {row.volume && ` ／ 容量 ${row.volume}`}
-          </p>
+          <div className="mt-1 flex items-start gap-3">
+            {thumbProduct && (
+              <ProductThumb product={thumbProduct} size={64} className="shrink-0" />
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="text-xs text-sumi/55">{row.brand}</p>
+              <p className="text-[15px] font-medium leading-snug">
+                {row.productName}
+              </p>
+              <p className="mt-0.5 text-xs text-sumi/60">
+                {CATEGORY_LABEL[category]}の役割
+                {row.volume && ` ／ 容量 ${row.volume}`}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* 金額 */}

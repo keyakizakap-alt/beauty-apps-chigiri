@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { CATEGORY_LABEL, getProduct } from "@/domain/recommendation/catalog";
 import { useLedger, type Followup } from "@/lib/ledger";
 import ConsentGate from "@/components/ConsentGate";
+import ProductThumb from "@/components/ProductThumb";
 
 /**
  * 「買わずに済んだ記録」と、購入後の継続フィードバック。
@@ -114,9 +115,12 @@ export default function LedgerPage() {
               if (!e.productId) return null;
               return (
                 <li key={e.id} className="rounded-xl border border-beige p-3">
-                  <p className="text-sm leading-snug">
-                    {p ? `${p.brand} ${p.name}` : e.productId}
-                  </p>
+                  <div className="flex items-start gap-2.5">
+                    {p && <ProductThumb product={p} size={44} className="shrink-0" />}
+                    <p className="min-w-0 flex-1 text-sm leading-snug">
+                      {p ? `${p.brand} ${p.name}` : e.productId}
+                    </p>
+                  </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(
                       [

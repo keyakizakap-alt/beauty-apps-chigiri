@@ -188,6 +188,19 @@ export const ProductSchema = z.object({
    */
   officialUrl: z.string().url().nullable(),
   /**
+   * 商品写真。public/products/ に置いた自分の配信元のファイルだけを指す。
+   *
+   * 外部ホストへの直リンクは受け付けない（形式を product-image.ts の
+   * IMAGE_PATH_RE で狭めている）。ブランドの商品写真は各社の著作物なので、
+   * 公式が配布しているものを許諾のうえで置いたときだけ入れること。
+   * 未登録のうちは省略するか null。推測した画像で埋めない。
+   */
+  imagePath: z
+    .string()
+    .regex(/^\/products\/[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp)$/)
+    .nullable()
+    .optional(),
+  /**
    * 公式ページと突合した日付。null は「未検証」を意味し、
    * UI 上で根拠ありとして扱わない。推測で埋めないこと。
    */

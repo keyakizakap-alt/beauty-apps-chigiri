@@ -28,6 +28,7 @@ const row = (over: Record<string, string> = {}) => ({
   正しい公式URL: "",
   正しい価格: "",
   正しい内容量: "",
+  商品写真ファイル名: "",
   ...over,
 });
 
@@ -135,6 +136,52 @@ describe("記入結果の反映", () => {
     expect(r.dropped).toEqual(["lo-test"]);
     expect(r.products).toHaveLength(1);
     expect(r.products[0].sourceCheckedAt).toBeNull();
+  });
+
+  it("商品写真は置いたファイル名だけを受け付ける", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 商品写真ファイル名: "lo-test.jpg" })],
+      { imageExists: () => true },
+    );
+    expect(r.errors).toHaveLength(0);
+    // ファイル名だけでも /products/ を補う
+    expect(r.products[0].imagePath).toBe("/products/lo-test.jpg");
+  });
+
+  it("外部サイトの画像URLは受け付けない", () => {
+    const r = applyVerification(
+      [product()],
+      [
+        row({
+          確認結果: "fix",
+          商品写真ファイル名: "https://www.kao.co.jp/img/a.jpg",
+        }),
+      ],
+      { imageExists: () => true },
+    );
+    expect(r.errors[0]).toContain("public/products/");
+    expect(r.products[0].imagePath).toBeUndefined();
+  });
+
+  it("置かれていない画像を指した行は反映しない", () => {
+    const r = applyVerification(
+      [product()],
+      [row({ 確認結果: "fix", 商品写真ファイル名: "no-such.jpg" })],
+      { imageExists: () => false },
+    );
+    expect(r.errors[0]).toContain("見つかりません");
+    expect(r.applied).toHaveLength(0);
+    expect(r.products[0].sourceCheckedAt).toBeNull();
+  });
+
+  it("画像を書かなければ現状のまま", () => {
+    const r = applyVerification(
+      [product({ imagePath: "/products/keep.jpg" })],
+      [row({ 確認結果: "fix", 正しい価格: "1200" })],
+    );
+    expect(r.errors).toHaveLength(0);
+    expect(r.products[0].imagePath).toBe("/products/keep.jpg");
   });
 
   it("エラーがあっても、他の行の反映結果は壊さない", () => {

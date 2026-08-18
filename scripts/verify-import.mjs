@@ -8,7 +8,7 @@
  * エラーが1件でもあれば、何も書き込まずに終了する。
  * 一部だけ反映されて「どこまで進んだか分からない」状態を作らないため。
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { applyVerification, parseCsv } from "./verification-lib.mjs";
 
 const args = process.argv.slice(2);
@@ -26,7 +26,10 @@ try {
 
 const catalog = JSON.parse(readFileSync("data/products.json", "utf8"));
 const rows = parseCsv(csv);
-const result = applyVerification(catalog.products, rows);
+const result = applyVerification(catalog.products, rows, {
+  // 置かれていない画像を指したまま「確認済み」にしない
+  imageExists: (p) => existsSync(`public${p}`),
+});
 
 console.log(`読み込み: ${rows.length} 行`);
 console.log(`反映対象: ${result.applied.length} 件`);

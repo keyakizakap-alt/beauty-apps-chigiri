@@ -3,6 +3,7 @@
 import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
 import type { Product } from "@/schemas/product";
 import type { Routine } from "@/schemas/recommendation";
+import ProductThumb from "./ProductThumb";
 
 /**
  * 朝・夜ルーティンのタイムライン表示。
@@ -57,6 +58,8 @@ export default function RoutineTimeline({
                 >
                   {step.order}
                 </span>
+
+                {p && <ProductThumb product={p} size={44} className="shrink-0" />}
 
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-medium tracking-wide text-ai">

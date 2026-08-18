@@ -10,6 +10,7 @@ export type VerificationProduct = {
   price: number;
   volume?: string;
   officialUrl: string | null;
+  imagePath?: string | null;
   sourceCheckedAt: string | null;
   dataConfidence: string;
   [key: string]: unknown;
@@ -24,6 +25,7 @@ export declare function toWorksheetRows(
 export declare function applyVerification(
   products: VerificationProduct[],
   rows: Record<string, string>[],
+  options?: { imageExists?: (path: string) => boolean },
 ): {
   products: VerificationProduct[];
   applied: string[];

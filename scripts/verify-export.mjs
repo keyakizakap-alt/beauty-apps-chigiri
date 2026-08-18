@@ -54,4 +54,10 @@ console.log("  確認結果   ok=現在の値で正しい / fix=直す / drop=�
 console.log("  確認日     YYYY-MM-DD（必須。これが無い行は反映しません）");
 console.log("  fix のときだけ「正しい〜」の列を埋めてください（空欄は現状維持）");
 console.log("");
+console.log("商品写真を登録する場合:");
+console.log("  1. メーカーが配布している画像を、許諾を確認したうえで用意する");
+console.log("  2. public/products/<商品id>.jpg として置く（png/webp も可）");
+console.log("  3. 「商品写真ファイル名」に置いたファイル名を書き、確認結果を fix にする");
+console.log("  外部サイトの画像URLは受け付けません（直リンクはしない方針のため）");
+console.log("");
 console.log("記入後: npm run verify:import");

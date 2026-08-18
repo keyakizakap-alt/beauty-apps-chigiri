@@ -1,12 +1,19 @@
 "use client";
 
 import type { ComparisonRow, OfferComparison } from "@/schemas/commerce";
-import { CATEGORY_LABEL } from "@/domain/recommendation/catalog";
+import { CATEGORY_LABEL, getProduct } from "@/domain/recommendation/catalog";
+import ProductThumb from "./ProductThumb";
 
 /**
  * 候補比較。
  * 「なぜこれを選んだか」と同じ強さで「なぜ他を選ばなかったか」を出す。
  */
+
+/** 候補行はカタログの id しか持たないため、表示用の情報はここで引き直す */
+function thumbFor(productId: string) {
+  const p = getProduct(productId);
+  return p ? <ProductThumb product={p} size={56} className="shrink-0" /> : null;
+}
 export default function OfferComparisonPanel({
   comparison,
   selectedOfferId,
@@ -66,7 +73,8 @@ export default function OfferComparisonPanel({
                     : "border-beige bg-white hover:border-ai/40"
                 }`}
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2.5">
+                  {thumbFor(row.offer.productId)}
                   <div className="min-w-0 flex-1">
                     {row.selected && (
                       <span className="inline-block rounded-full bg-ai px-2 py-0.5 text-[10px] text-white">

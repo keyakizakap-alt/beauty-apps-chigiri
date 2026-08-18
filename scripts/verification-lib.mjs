@@ -18,11 +18,13 @@ export const COLUMNS = [
   "現在の公式URL",
   "現在の参考価格",
   "現在の内容量",
+  "現在の商品写真",
   // ここから記入欄
   "確認結果",
   "正しい公式URL",
   "正しい価格",
   "正しい内容量",
+  "商品写真ファイル名",
   "確認日",
   "備考",
 ];
@@ -116,10 +118,12 @@ export function toWorksheetRows(products) {
     現在の公式URL: p.officialUrl ?? "",
     現在の参考価格: p.price,
     現在の内容量: p.volume ?? "",
+    現在の商品写真: p.imagePath ?? "",
     確認結果: "",
     正しい公式URL: "",
     正しい価格: "",
     正しい内容量: "",
+    商品写真ファイル名: "",
     確認日: "",
     備考: "",
   }));
@@ -136,6 +140,13 @@ const RESULT_DROP = ["drop", "DROP", "削除", "×", "廃番"];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
+ * 商品写真は public/products/ に置いたものだけを指す。
+ * 外部URLを書かれても受け付けない（直リンクはしない方針のため）。
+ * domain/recommendation/product-image.ts の IMAGE_PATH_RE と同じ形。
+ */
+const IMAGE_PATH_RE = /^\/products\/[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp)$/;
+
+/**
  * 記入済みの行をカタログへ反映する。
  *
  * - 「確認結果」が空の行は手つかずとみなし、何もしない
@@ -144,9 +155,14 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
  *   （確認日の無い「確認済み」を作らないため）
  * - drop の行は削除対象として返すだけで、ここでは消さない
  *
+ * @param options.imageExists 画像ファイルが実在するかを返す関数。
+ *   渡すと、置かれていないファイル名を指した行をエラーにする
+ *   （読み込めない画像を指したまま「確認済み」にしないため）。
+ *
  * @returns {{products: any[], applied: string[], dropped: string[], skipped: string[], errors: string[]}}
  */
-export function applyVerification(products, rows) {
+export function applyVerification(products, rows, options = {}) {
+  const imageExists = options.imageExists ?? (() => true);
   const byId = new Map(products.map((p) => [p.id, { ...p }]));
   const applied = [];
   const dropped = [];
@@ -212,6 +228,23 @@ export function applyVerification(products, rows) {
         product.price = Math.round(n);
       }
       if (volume.length > 0) product.volume = volume;
+
+      const image = (row["商品写真ファイル名"] ?? "").trim();
+      if (image.length > 0) {
+        // ファイル名だけ書かれた場合も受け付ける
+        const path = image.startsWith("/") ? image : `/products/${image}`;
+        if (!IMAGE_PATH_RE.test(path)) {
+          errors.push(
+            `${id}: 商品写真は public/products/ に置いた jpg/png/webp のファイル名で指定してください（${image}）`,
+          );
+          continue;
+        }
+        if (!imageExists(path)) {
+          errors.push(`${id}: public${path} が見つかりません`);
+          continue;
+        }
+        product.imagePath = path;
+      }
     }
 
     product.sourceCheckedAt = checkedAt;
