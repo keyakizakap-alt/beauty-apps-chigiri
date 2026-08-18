@@ -318,6 +318,9 @@ npm run orca:check  # OrcaRouter への疎通確認（要 API キー）
 
 npm run verify:export  # 公式ページ突合のワークシートを書き出す（→ 13章）
 npm run verify:import  # 記入済みワークシートをカタログへ反映する
+
+npm run images:plan    # 商品写真の作業リストを出す（→ 13章）
+npm run images:add <フォルダ>   # 用意した写真を取り込む
 ```
 
 ### アプリアイコンとオープニング
@@ -751,12 +754,52 @@ npm run verify:import                # data/products.json へ反映
 外部ホストの画像への直リンクはしません（CSP の `img-src` を `'self' data:`
 に保つため、そもそも読み込めません）。商品の外観を推測した画像も作りません。
 
-登録の手順:
+#### 登録の手順
 
-1. メーカーの配布素材を、許諾を確認したうえで用意する
-2. `public/products/<商品id>.jpg` として置く（`png` / `webp` も可）
-3. ワークシートの「商品写真ファイル名」に置いたファイル名を書き、確認結果を `fix` にする
-4. `npm run verify:import`
+**1. どのファイル名で保存するかを確認する**
+
+```bash
+npm run images:plan            # 写真が無いもの全部
+npm run images:plan -- demo    # デモで使う7点だけ
+npm run images:plan -- makeup  # 分野を絞る
+```
+
+商品ごとに「保存すべきファイル名・ブランド名と商品名・公式サイトのURL」が
+並びます。同じ内容が `verification/images-todo.txt` にも出ます。
+
+**2. 画像を用意して、そのファイル名で1つのフォルダに保存する**
+
+メーカーの配布素材を、利用許諾を確認したうえでお使いください。
+ファイル名は `<商品id>.jpg` の形にします（`png` / `webp` も可）。
+
+**3. 取り込む**
+
+```bash
+npm run images:add ~/Downloads/chigiri-images -- --dry-run   # 確認だけ
+npm run images:add ~/Downloads/chigiri-images
+```
+
+800×800 に収めて `webp` へ変換し、`public/products/` に置いたうえで
+`data/products.json` の `imagePath` を更新します。Exif の向きを反映してから
+向き情報は捨てるので、スマホで撮った写真が横倒しになることもありません。
+
+安全側の作り:
+
+- ファイル名が商品 id と一致しないものは**取り込まず、一覧で報告**します
+  （推測で割り当てると、違う商品の写真が出てしまうため）
+- 拡張子ではなく**中身のバイト列で画像形式を判定**します。`.jpg` という名前の
+  別形式は弾きます
+- 12MB を超えるファイルは受け付けません
+- **写真を入れても「公式ページ突合」の状態は変えません**。写真があることと、
+  価格やURLを確認したことは別のためです
+
+#### ワークシートから登録する場合
+
+突合作業のついでに登録したいときは、こちらでも入れられます。
+
+1. `public/products/<商品id>.jpg` に自分でファイルを置く
+2. ワークシートの「商品写真ファイル名」に書き、確認結果を `fix` にする
+3. `npm run verify:import`
 
 `verify:import` は、指定されたファイルが `public/products/` に実在するかを
 確認します。置かれていないファイル名を指した行はエラーになり、

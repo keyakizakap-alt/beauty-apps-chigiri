@@ -48,7 +48,12 @@ export default function ProductThumb({
     <span className={`block ${className}`}>
       <span
         className="block overflow-hidden rounded-xl border border-black/[0.06]"
-        style={{ width: size, height: size, backgroundColor: tone.bg }}
+        style={{
+          width: size,
+          height: size,
+          // 写真は白地に収めて取り込むため、下地の色は敷かない
+          backgroundColor: photo ? "#FFFFFF" : tone.bg,
+        }}
       >
         {photo ? (
           // 自分の配信元に置いた画像のみ。外部ホストは productImagePath が弾く

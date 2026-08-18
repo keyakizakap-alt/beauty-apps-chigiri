@@ -14,7 +14,9 @@
     "icons": "node scripts/build-icons.mjs",
     "orca:check": "node scripts/check-orcarouter.mjs",
     "verify:export": "node scripts/verify-export.mjs",
-    "verify:import": "node scripts/verify-import.mjs"
+    "verify:import": "node scripts/verify-import.mjs",
+    "images:plan": "node scripts/images-plan.mjs",
+    "images:add": "node scripts/images-add.mjs"
   },
   "dependencies": {
     "next": "^16.3.0",
@@ -30,6 +32,7 @@
     "autoprefixer": "10.4.20",
     "playwright": "^1.62.1",
     "postcss": "8.5.1",
+    "sharp": "^0.35.3",
     "tailwindcss": "3.4.17",
     "typescript": "5.7.3",
     "vitest": "2.1.8"
