@@ -793,6 +793,103 @@ npm run images:add ~/Downloads/chigiri-images
 - **写真を入れても「公式ページ突合」の状態は変えません**。写真があることと、
   価格やURLを確認したことは別のためです
 
+#### 楽天 / Amazon から引く場合
+
+自分で画像を用意する代わりに、外部サービスの商品画像を表示できます。
+
+**構成**
+
+```
+data/products.json          jan / rakutenItemCode / asin を持つ
+        │
+        ▼
+app/api/product-media/route.ts   ← ブラウザはここだけを叩く
+        │                           （鍵はこの先から出さない）
+        ▼
+server/media/resolve.ts     楽天 →（無ければ）Amazon の順で解決・キャッシュ
+        ├── server/media/rakuten.ts   楽天商品検索API
+        ├── server/media/amazon.ts    PA-API v5（SigV4署名）
+        └── server/media/cache.ts     保持期間と呼び出し間隔の制御
+        │
+        ▼
+components/ProductMediaProvider.tsx   画面の入口で1回だけまとめて引く
+        ▼
+components/ProductThumb.tsx           各社CDNの画像を表示
+```
+
+**鍵を入れる場所**
+
+`.env.local`（ローカル）と Vercel の Project Settings > Environment Variables
+（本番）です。`.env.example` をコピーして使ってください。
+
+```bash
+cp .env.example .env.local
+```
+
+| 変数 | 用途 |
+|---|---|
+| `RAKUTEN_APP_ID` | 楽天ウェブサービスのアプリID。**これだけで動きます** |
+| `RAKUTEN_AFFILIATE_ID` | 任意。入れると提携リンクが返ります |
+| `AMAZON_ACCESS_KEY` / `AMAZON_SECRET_KEY` / `AMAZON_PARTNER_TAG` | PA-API v5。3つ揃わないと照会しません |
+| `MEDIA_CACHE_TTL_MS` | 保持時間。既定6時間、**上限24時間**（規約上これ以上は保持しません） |
+
+`NEXT_PUBLIC_` は付けないでください。付けるとブラウザへ露出します。
+
+**先に楽天をおすすめする理由**
+
+楽天はアプリIDを取るだけで即日使えます。Amazon PA-API は
+アソシエイト・プログラムの承認済みアカウントが必要で、一定期間内に
+適格販売がないと利用資格が失われます。ハッカソン期間では通らない
+可能性が高いです。
+
+**使い方**
+
+商品を外部サービスの商品と対応づける識別子が要ります。
+`jan` / `rakutenItemCode` / `asin` のどれかを `data/products.json` に入れます。
+
+下調べ用のスクリプトがあります。
+
+```bash
+RAKUTEN_APP_ID=xxx npm run media:find -- cl-curel-foam
+RAKUTEN_APP_ID=xxx npm run media:find -- demo
+```
+
+キーワードで検索して候補を並べます。**カタログは書き換えません。**
+同一商品と確認できたものだけ、自分で `data/products.json` に書いてください。
+
+```json
+{
+  "id": "cl-curel-foam",
+  "rakutenItemCode": "myshop:10000001",
+  "jan": "4901301234567"
+}
+```
+
+**キーワード検索の結果を自動採用しない理由**
+
+「キュレル 泡洗顔料」で検索すると、詰め替え用・旧品・セット品・
+別ブランドの類似品が混ざります。これを自動で採用すると、
+別商品の写真が堂々と表示されます。写真が出ないことより有害なので、
+識別子が確定しているものだけを照会する作りにしています。
+
+**規約まわりで実装に反映していること**
+
+- 画像は**各社のCDNから配信**します。取得した画像を自分の配信元へ
+  保存し直しません（両社とも認めていないため）。CSP の `img-src` に
+  画像配信ホストだけを追加しています
+- 保持は既定6時間、**上限24時間**で打ち切ります。設定で延ばそうとしても
+  上限を超えません
+- 呼び出しは提供元ごとに直列化し、**1.1秒以上の間隔**を空けます
+  （両APIとも概ね毎秒1リクエストが上限）
+- 詳細画面に**提供元を明記**します（「画像・価格は楽天市場の提供です」）
+- 提携リンクは `https` のみ受け付けます
+
+**引けなかったときの挙動**
+
+鍵が未設定・APIが落ちている・識別子が無い・応答の形が変わった、
+いずれの場合も**写真が出ないだけ**で、ルーティンの計算結果は変わりません。
+サムネイルは線画に戻ります。
+
 #### ワークシートから登録する場合
 
 突合作業のついでに登録したいときは、こちらでも入れられます。

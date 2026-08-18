@@ -201,6 +201,32 @@ export const ProductSchema = z.object({
     .nullable()
     .optional(),
   /**
+   * 外部サービスで同一商品を指すための識別子。
+   *
+   * 写真や在庫を外部APIから引くときに使う。**キーワード検索の結果を
+   * 自動で割り当てない**（同名・類似名の別商品の写真が出てしまうため）。
+   * ここに識別子が入っているものだけを、外部APIの照会対象にする。
+   *
+   * jan: JANコード（13桁または8桁）
+   * rakutenItemCode: 楽天市場の itemCode（例 "shop:10000001"）
+   * asin: Amazon の ASIN（10桁）
+   */
+  jan: z
+    .string()
+    .regex(/^(\d{13}|\d{8})$/)
+    .nullable()
+    .optional(),
+  rakutenItemCode: z
+    .string()
+    .regex(/^[a-z0-9_-]+:[a-z0-9_-]+$/i)
+    .nullable()
+    .optional(),
+  asin: z
+    .string()
+    .regex(/^[A-Z0-9]{10}$/)
+    .nullable()
+    .optional(),
+  /**
    * 公式ページと突合した日付。null は「未検証」を意味し、
    * UI 上で根拠ありとして扱わない。推測で埋めないこと。
    */

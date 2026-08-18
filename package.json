@@ -16,7 +16,8 @@
     "verify:export": "node scripts/verify-export.mjs",
     "verify:import": "node scripts/verify-import.mjs",
     "images:plan": "node scripts/images-plan.mjs",
-    "images:add": "node scripts/images-add.mjs"
+    "images:add": "node scripts/images-add.mjs",
+    "media:find": "node scripts/media-find.mjs"
   },
   "dependencies": {
     "next": "^16.3.0",

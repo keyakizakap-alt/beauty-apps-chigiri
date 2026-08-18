@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChigiriMark } from "@/components/AppSplash";
 import ProductThumb from "@/components/ProductThumb";
+import ProductMediaProvider from "@/components/ProductMediaProvider";
 import { CATEGORY_LABEL, PRODUCTS, claimText } from "@/domain/recommendation/catalog";
 import { CONCERN_LABEL } from "@/domain/recommendation/routine-builder";
 import { INGREDIENT_LABEL } from "@/domain/recommendation/filters";
@@ -92,6 +93,12 @@ export default function DatabasePage() {
       return true;
     });
   }, [query, origin, domain, category, band, concern]);
+
+  // 外部APIの呼び出し回数を抑えるため、写真を引くのは先頭の一画面分だけにする
+  const visibleIds = useMemo(
+    () => filtered.slice(0, 30).map((p) => p.id),
+    [filtered],
+  );
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-8">
@@ -213,6 +220,7 @@ export default function DatabasePage() {
         {filtered.length} 件 / {counts.total} 件
       </p>
 
+      <ProductMediaProvider productIds={visibleIds}>
       <ul className="mt-3 space-y-2.5">
         {filtered.map((p) => {
           const open = openId === p.id;
@@ -315,6 +323,7 @@ export default function DatabasePage() {
           </li>
         )}
       </ul>
+      </ProductMediaProvider>
     </main>
   );
 }

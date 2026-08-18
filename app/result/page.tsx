@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import RecommendationCard from "@/components/RecommendationCard";
+import ProductMediaProvider from "@/components/ProductMediaProvider";
+import { collectProductIds } from "@/lib/product-media";
 import { RecommendationSchema, type Recommendation } from "@/schemas/recommendation";
 import { markStated, type Profile } from "@/schemas/profile";
 import { useProfile } from "@/lib/storage";
@@ -39,6 +41,12 @@ export default function ResultPage() {
       setLoading(false);
     }
   }, []);
+
+  // 画面に出る商品の写真は、まとめて1回だけ引く
+  const mediaIds = useMemo(
+    () => (rec ? collectProductIds(rec) : []),
+    [rec],
+  );
 
   useEffect(() => {
     if (hydrated && profile.ownedProductIds.length > 0) void run(profile);
@@ -135,7 +143,11 @@ export default function ResultPage() {
             </div>
           )}
 
-          {rec && <RecommendationCard rec={rec} profile={profile} />}
+          {rec && (
+            <ProductMediaProvider productIds={mediaIds}>
+              <RecommendationCard rec={rec} profile={profile} />
+            </ProductMediaProvider>
+          )}
         </>
       )}
     </main>

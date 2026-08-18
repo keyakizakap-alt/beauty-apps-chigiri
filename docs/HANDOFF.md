@@ -110,9 +110,21 @@ npm run images:add ~/Downloads/画像フォルダ   # 縮小・webp変換して�
 未対応として報告します。突合ワークシートの「商品写真ファイル名」列からも
 登録できます。
 
+もう一つの経路として、楽天商品検索API / Amazon PA-API から引く実装が
+入っています（README 13章に構成図と手順）。`RAKUTEN_APP_ID` を入れるだけで
+動きます。**ただし `data/products.json` に `rakutenItemCode` / `jan` / `asin` が
+未記入なので、現状は何も引きません。**識別子を入れるのが次の作業です。
+
+```bash
+RAKUTEN_APP_ID=xxx npm run media:find -- demo   # 候補を出す（自動採用はしない）
+```
+
 やってはいけないこと:
-- 公式サイトの画像への直リンク（CSP で塞いでおり、規約・著作権の問題もある）
+- ブランド公式サイトの画像への直リンク（CSP で塞いでおり、規約・著作権の問題もある）
 - 商品の外観を推測して画像を生成すること（実在する商品の見た目を偽ることになる）
+- **キーワード検索の結果を自動で `rakutenItemCode` に入れること**
+  （詰め替え用・旧品・別ブランドの類似品を拾い、別商品の写真が出る）
+- 楽天/Amazon から取得した画像を `public/products/` へ保存し直すこと（規約違反）
 
 ### 3-4. 口コミ機能の扱い（要注意・実装方針を忘れないこと）
 
@@ -135,7 +147,8 @@ npm run images:add ~/Downloads/画像フォルダ   # 縮小・webp変換して�
 | 公式サイトのホスト許可リスト | `data/merchants.json` |
 | 商品サムネイルの図案 / 描画 | `domain/recommendation/product-image.ts`, `components/ProductThumb.tsx` |
 | 商品写真の置き場 | `public/products/`（許諾を確認したものだけ。README 13章） |
-| 商品写真の取り込み | `scripts/images-plan.mjs`, `scripts/images-add.mjs`, `scripts/images-lib.mjs` |
+| 商品写真の取り込み（自前） | `scripts/images-plan.mjs`, `scripts/images-add.mjs`, `scripts/images-lib.mjs` |
+| 商品写真の取得（楽天/Amazon） | `server/media/*`, `app/api/product-media/route.ts`, `components/ProductMediaProvider.tsx` |
 | 成分読み解き・比較・継続目安 | `domain/analysis/insight.ts` |
 | 口コミサイト導線（本文取得はしていない） | `domain/analysis/reviews.ts` |
 | 開発者向け画面のサーバー側ゲート | `lib/ops-visibility.ts`, `app/ops/page.tsx` |

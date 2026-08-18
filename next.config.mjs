@@ -7,12 +7,27 @@
  *   （API キーがクライアントへ出ない構成であることを、ブラウザ側でも担保する）。
  * - form-action 'self'。フォーム送信先を外部に差し替えられないようにする。
  * - frame-ancestors 'none'。クリックジャッキングで承認ボタンを押させない。
- * - img-src に data: を許可（インライン装飾のみ。外部画像は読み込まない）。
+ * - img-src は 'self' と data: に加えて、商品写真の提供元だけを許可する。
+ *   楽天・Amazon は取得した画像の自前配信を認めていないため、
+ *   各社の CDN から読む必要がある。許可するのは画像配信ホストだけで、
+ *   API のホストは含めない（connect-src は 'self' のまま）。
  *
  * 'unsafe-inline' は Next.js のハイドレーション用インラインスクリプトのために
  * 必要になる。nonce 方式へ移すにはミドルウェアでの nonce 配布が要るため、
  * MVP では style/script の inline を許可しつつ、外部オリジンを塞ぐ方針を取る。
  */
+/**
+ * 商品写真の提供元。schemas/media.ts の MEDIA_IMAGE_HOSTS と一致させる。
+ * next.config.mjs から TS を読めないため、ここは手で揃える
+ * （ずれると画像が読めなくなるので、tests/media.test.ts で突き合わせている）。
+ */
+const MEDIA_IMAGE_HOSTS = [
+  "https://thumbnail.image.rakuten.co.jp",
+  "https://image.rakuten.co.jp",
+  "https://m.media-amazon.com",
+  "https://images-na.ssl-images-amazon.com",
+];
+
 const csp = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -21,7 +36,7 @@ const csp = [
   "form-action 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  `img-src 'self' data: ${MEDIA_IMAGE_HOSTS.join(" ")}`,
   "font-src 'self' data:",
   "connect-src 'self'",
   "upgrade-insecure-requests",
