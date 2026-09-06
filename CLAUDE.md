@@ -7,9 +7,13 @@
 - **`ai-product-playbook`** — LLM の境界、API の防御、出荷と品質ゲート
 
 正本: [keyakizakap-alt/dxworkrepository](https://github.com/keyakizakap-alt/dxworkrepository) の
-`.claude/skills/`（全プロジェクトで自動ロードさせる手順は同リポジトリの `README.md`）。
+`.claude/skills/`。
 
 **作業を始める前に `work-directives`、設計を変える前に `ai-product-playbook` を読むこと。**
+スキル一覧に出てこない場合は、正本がこのセッションに無い。先に取得する。
+
+- Claude Code on the web: `add_repo` で `keyakizakap-alt/dxworkrepository` を追加する
+- ローカル: `~/.claude/skills/` へ入れておけば常時読み込まれる（手順は正本の `README.md`）
 
 ## このリポジトリで壊してはいけないもの
 
