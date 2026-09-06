@@ -1,12 +1,15 @@
-## 実装方針の正本
+## 方針の正本
 
-このリポジトリの設計判断は、スキル **`ai-product-playbook`** に集約してある。
+このリポジトリの進め方と設計判断は、2 つのスキルに集約してある。
 複製せず参照する（複製すると更新時に内容がずれるため）。
 
-- 正本: [keyakizakap-alt/dxworkrepository](https://github.com/keyakizakap-alt/dxworkrepository) の `.claude/skills/ai-product-playbook/`
-- 全プロジェクトで自動ロードさせる手順: 同リポジトリの `README.md`
+- **`work-directives`** — 作業の進め方、確認を取る操作、成果物の禁則、リサーチの裏取り
+- **`ai-product-playbook`** — LLM の境界、API の防御、出荷と品質ゲート
 
-設計を変える前に必ず読むこと。
+正本: [keyakizakap-alt/dxworkrepository](https://github.com/keyakizakap-alt/dxworkrepository) の
+`.claude/skills/`（全プロジェクトで自動ロードさせる手順は同リポジトリの `README.md`）。
+
+**作業を始める前に `work-directives`、設計を変える前に `ai-product-playbook` を読むこと。**
 
 ## このリポジトリで壊してはいけないもの
 
