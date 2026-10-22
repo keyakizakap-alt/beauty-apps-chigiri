@@ -8,7 +8,7 @@
  */
 export default function ConsentGate({ onAccept }: { onAccept: () => void }) {
   return (
-    <section className="chigiri-card border-ai/25 bg-ai/[0.03] p-4">
+    <section className="chigiri-card border-ai/25 bg-ai/3 p-4">
       <p className="text-sm font-medium">判断の記録を残しますか</p>
       <ul className="mt-2 space-y-1 text-xs leading-relaxed text-sumi/70">
         <li>・保存先はこの端末の中だけです。サーバーへは送りません。</li>

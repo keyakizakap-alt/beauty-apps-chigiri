@@ -16,7 +16,7 @@ export default function SavingSummary({
   const rate = Math.round(savings.utilizationRate * 100);
 
   return (
-    <section className="rounded-card border border-ai/15 bg-gradient-to-b from-white to-kinari/70 p-4 sm:p-5">
+    <section className="rounded-card border border-ai/15 bg-linear-to-b from-white to-kinari/70 p-4 sm:p-5">
       <p className="text-[15px] font-medium leading-relaxed sm:text-base">
         {summary}
       </p>

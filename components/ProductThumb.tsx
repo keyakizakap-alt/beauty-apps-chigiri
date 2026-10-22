@@ -64,7 +64,7 @@ export default function ProductThumb({
   return (
     <span className={`block ${className}`}>
       <span
-        className="block overflow-hidden rounded-xl border border-black/[0.06]"
+        className="block overflow-hidden rounded-xl border border-black/6"
         style={{
           width: size,
           height: size,

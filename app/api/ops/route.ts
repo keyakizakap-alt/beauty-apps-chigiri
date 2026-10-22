@@ -4,6 +4,7 @@ import { recentLlmLogs } from "@/server/logger";
 import { commerceKpi, recentCommerceEvents } from "@/server/commerce-log";
 import { externalAiEnabledByOperator } from "@/server/ai-policy";
 import { checkRateLimit, clientKey, RATE_LIMITS } from "@/server/rate-limit";
+import { opsVisible } from "@/lib/ops-visibility";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,6 +17,9 @@ export const dynamic = "force-dynamic";
  * 動作指標（モデル・応答時間・成否）だけで、入力本文は含まない。
  */
 export async function GET(req: Request) {
+  // 画面（/ops）と同じく、運用者が有効にした環境以外では存在しないものとして扱う
+  if (!opsVisible()) return new NextResponse(null, { status: 404 });
+
   const limit = checkRateLimit(clientKey(req, "ops"), RATE_LIMITS.recommend);
   if (!limit.allowed) {
     return NextResponse.json(

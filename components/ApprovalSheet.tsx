@@ -365,7 +365,7 @@ function Row({
 function Unknown({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-sumi/60">
-      <span className="rounded bg-beige/70 px-1.5 py-0.5 text-[11px]">未確認</span>{" "}
+      <span className="rounded-sm bg-beige/70 px-1.5 py-0.5 text-[11px]">未確認</span>{" "}
       {children}
     </span>
   );

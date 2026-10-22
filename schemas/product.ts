@@ -161,6 +161,12 @@ export const CautionTagSchema = z.enum([
 ]);
 export type CautionTag = z.infer<typeof CautionTagSchema>;
 
+/**
+ * 画面でリンク（href）として描画する外部 URL。
+ * javascript: などの危険なスキームを描画面へ流さないため https のみ受け付ける。
+ */
+export const HttpsUrlSchema = z.url({ protocol: /^https$/ });
+
 export const UsageTimingSchema = z.enum(["morning", "night"]);
 export type UsageTiming = z.infer<typeof UsageTimingSchema>;
 
@@ -186,7 +192,7 @@ export const ProductSchema = z.object({
    * 公式ページ。利用者が自分で追加したものは持たないため null を許す。
    * 空文字やダミーURLで埋めない（存在しない出典を作らないため）。
    */
-  officialUrl: z.string().url().nullable(),
+  officialUrl: HttpsUrlSchema.nullable(),
   /**
    * 商品写真。public/products/ に置いた自分の配信元のファイルだけを指す。
    *

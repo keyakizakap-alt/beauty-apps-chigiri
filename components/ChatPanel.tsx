@@ -441,7 +441,7 @@ export default function ChatPanel() {
 
       {/* 対話 */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 border-b border-beige/60 bg-blush/85 backdrop-blur">
+        <header className="sticky top-0 z-20 border-b border-beige/60 bg-blush/85 backdrop-blur-sm">
           <div className="flex items-center gap-2 px-4 py-3 sm:px-6">
             {/*
               1024px 未満ではサイドバーを畳むため、履歴への入口はこのボタンだけになる。
@@ -741,7 +741,7 @@ export default function ChatPanel() {
           <div ref={endRef} />
         </main>
 
-        <footer className="sticky bottom-0 border-t border-beige/60 bg-blush/90 backdrop-blur">
+        <footer className="sticky bottom-0 border-t border-beige/60 bg-blush/90 backdrop-blur-sm">
           <div className="mx-auto max-w-3xl px-4 py-3 sm:px-6">
             {error && (
               <p className="mb-2 rounded-lg border border-sakura/40 bg-sakuraSoft/50 px-3 py-2 text-xs text-sumi/80">
@@ -767,7 +767,7 @@ export default function ChatPanel() {
                 rows={1}
                 placeholder="肌の悩み、予算、持っている化粧品など"
                 aria-label="メッセージ"
-                className="max-h-32 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-sm outline-none"
+                className="max-h-32 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-sm outline-hidden"
               />
               <button
                 type="submit"

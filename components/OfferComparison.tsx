@@ -69,7 +69,7 @@ export default function OfferComparisonPanel({
                 aria-pressed={isSelected}
                 className={`w-full rounded-xl border p-3.5 text-left transition-colors ${
                   isSelected
-                    ? "border-ai bg-ai/[0.04]"
+                    ? "border-ai bg-ai/4"
                     : "border-beige bg-white hover:border-ai/40"
                 }`}
               >
@@ -158,7 +158,7 @@ function TippingPointNote({ comparison }: { comparison: OfferComparison }) {
   if (t.kind === "none" && t.budgetYen === null && !t.message) return null;
 
   return (
-    <div className="mt-4 rounded-xl border border-ai/20 bg-ai/[0.03] p-3.5">
+    <div className="mt-4 rounded-xl border border-ai/20 bg-ai/3 p-3.5">
       <p className="flex items-center gap-1.5 text-xs font-medium text-ai">
         <span aria-hidden>⇄</span>
         この結論が変わる境目
