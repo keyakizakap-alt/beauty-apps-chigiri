@@ -50,7 +50,7 @@ export function checkRateLimit(
   rule: RateLimitRule,
   now = Date.now(),
 ): RateLimitResult {
-  if (buckets.size > MAX_KEYS) buckets.clear();
+  if (buckets.size >= MAX_KEYS) evict(now);
 
   const bucket = buckets.get(key) ?? { hits: [] };
   const cutoff = now - rule.windowMs;
@@ -76,17 +76,40 @@ export function checkRateLimit(
 }
 
 /**
+ * 記録が上限に達したときの間引き。
+ * 以前は全件を消していたため、多数の発信元から一斉に叩けば
+ * 全員のレート制限をまとめて解除できた。期限切れを消し、それでも溢れる分は
+ * 記録の少ない（＝制限から最も遠い）発信元から消す。制限中の発信元は残る。
+ */
+function evict(now: number): void {
+  const longestWindow = Math.max(...Object.values(RATE_LIMITS).map((r) => r.windowMs));
+  for (const [key, bucket] of buckets) {
+    if (!bucket.hits.some((t) => t > now - longestWindow)) buckets.delete(key);
+  }
+  if (buckets.size < MAX_KEYS) return;
+  const byActivity = [...buckets.entries()].sort((a, b) => a[1].hits.length - b[1].hits.length);
+  for (const [key] of byActivity.slice(0, buckets.size - Math.floor(MAX_KEYS * 0.9))) {
+    buckets.delete(key);
+  }
+}
+
+/**
  * クライアント識別子。
  * 個人を特定するためではなく、同一発信元からの連打を抑えるためだけに使う。
  * 生 IP はログにも保存しない（呼び出し側でこの値のみを使う）。
  */
 export function clientKey(req: Request, scope: string): string {
-  const forwarded = req.headers.get("x-forwarded-for") ?? "";
+  // Vercel は x-vercel-forwarded-for / x-forwarded-for を上書きするため偽装できない。
+  // Vercel 以外で動かす場合は、手前のプロキシがこれらを上書きする構成にすること。
+  const forwarded =
+    req.headers.get("x-vercel-forwarded-for") ??
+    req.headers.get("x-forwarded-for") ??
+    "";
   const ip =
     forwarded.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     "unknown";
-  return `${scope}:${ip}`;
+  return `${scope}:${ip.slice(0, 64)}`;
 }
 
 /** テスト用 */
