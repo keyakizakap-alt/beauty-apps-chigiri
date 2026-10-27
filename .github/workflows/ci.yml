@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # 依存に新しい脆弱性が見つかったことに気づけるよう、変更がなくても毎週実行する
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          # ランナーにキャッシュされた 24.x はセキュリティ修正前の場合があるため、常に最新を取得する
+          check-latest: true
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Unit and security tests
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          CHIGIRI_HANDOFF_SECRET: ci-build-only-secret-not-used-at-runtime-000
