@@ -1,22 +1,112 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  color-scheme: light;
+/*
+  CHIGIRI Beauty デザイントークン（Tailwind CSS v4 の @theme）。
+
+  「静かで上質、清潔感があり、相談しやすい美容相談室」を目指す。
+  管理画面にも派手な EC にもしない。
+
+  NOTE: トークン名は既存のまま、値だけをブランドの配色（温かみのある
+  アイボリー〜淡いセージの地に、深いフォレストグリーン）へ差し替えている。
+  名前の意味と色がずれている点は将来の整理対象。
+  注意喚起の色（sakura など）は色だけに意味を持たせず、必ず文言を添える。
+*/
+@theme {
+  --color-washi: #f3f6f1;
+  --color-kinari: #e9eee6;
+  --color-beige: #dfe4db;
+  --color-sumi: #1b2a20;
+  --color-ai: #24402f;
+  --color-aiDeep: #182c20;
+  --color-sakura: #8f5a42;
+  --color-sakuraSoft: #f4eae3;
+  --color-matcha: #4a6b52;
+  --color-matchaSoft: #e4ede3;
+  --color-blush: #eff3ec;
+  --color-blushSoft: #faf9f5;
+  --color-mori: #24402f;
+  --color-moriSoft: #7e9885;
+  --color-champagne: #c6a868;
+  --color-champagneSoft: #f1e7d3;
+
+  --font-sans:
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+
+  --radius-card: 20px;
+  --radius-panel: 28px;
+
+  --shadow-soft: 0 6px 24px rgba(36, 64, 47, 0.05);
+  --shadow-lift: 0 12px 36px rgba(36, 64, 47, 0.09);
+
+  --tracking-eyebrow: 0.16em;
+  --tracking-brand: 0.22em;
 }
 
-html,
-body {
-  /* モバイルで横スクロールが発生しないようにする（受け入れ条件） */
-  max-width: 100%;
-  overflow-x: hidden;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
 }
 
-body {
-  background-color: #f3f6f1;
-  color: #1b2a20;
-  -webkit-font-smoothing: antialiased;
+@utility chigiri-card {
+  @apply rounded-card border border-beige/70 bg-white shadow-soft;
+}
+
+@utility chigiri-eyebrow {
+  /* 字間を広げた英字・小見出し */
+  @apply text-[11px] font-medium tracking-eyebrow text-moriSoft;
+}
+
+@utility chigiri-tap {
+  /* タップ領域は 44px 以上 */
+  @apply min-h-[44px];
+}
+
+@utility chigiri-label {
+  @apply text-xs font-medium tracking-wide text-sumi/60;
+}
+
+@utility chigiri-chip {
+  @apply inline-flex min-h-[40px] items-center rounded-full border px-4 py-2 text-sm transition-colors;
+}
+
+@utility chigiri-chip-off {
+  @apply border-beige bg-white text-sumi/80 hover:border-moriSoft;
+}
+
+@utility chigiri-chip-on {
+  @apply border-moriSoft bg-matchaSoft text-mori;
+}
+
+@layer utilities {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    /* モバイルで横スクロールが発生しないようにする（受け入れ条件） */
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-color: #f3f6f1;
+    color: #1b2a20;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 @layer base {
@@ -24,38 +114,6 @@ body {
     outline: 2px solid #24402f;
     outline-offset: 2px;
     border-radius: 8px;
-  }
-}
-
-@layer components {
-  .chigiri-card {
-    @apply rounded-card border border-beige/70 bg-white shadow-soft;
-  }
-
-  /* 字間を広げた英字・小見出し */
-  .chigiri-eyebrow {
-    @apply text-[11px] font-medium tracking-eyebrow text-moriSoft;
-  }
-
-  /* タップ領域は 44px 以上 */
-  .chigiri-tap {
-    @apply min-h-[44px];
-  }
-
-  .chigiri-label {
-    @apply text-xs font-medium tracking-wide text-sumi/60;
-  }
-
-  .chigiri-chip {
-    @apply inline-flex min-h-[40px] items-center rounded-full border px-4 py-2 text-sm transition-colors;
-  }
-
-  .chigiri-chip-off {
-    @apply border-beige bg-white text-sumi/80 hover:border-moriSoft;
-  }
-
-  .chigiri-chip-on {
-    @apply border-moriSoft bg-matchaSoft text-mori;
   }
 }
 

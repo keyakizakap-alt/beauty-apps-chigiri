@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CategorySchema } from "./product";
+import { CategorySchema, HttpsUrlSchema } from "./product";
 import { ProfileSchema } from "./profile";
 
 /**
@@ -25,7 +25,7 @@ export const MerchantSchema = z.object({
   hosts: z.array(z.string().min(1)).min(1),
   /** 公式に確認できた送料。確認できていない場合は null（0 円と混同しない） */
   shippingFeeYen: z.number().int().nonnegative().nullable(),
-  returnPolicyUrl: z.string().url().nullable(),
+  returnPolicyUrl: HttpsUrlSchema.nullable(),
   /** 提携報酬の有無。MVP では常に false。UI に必ず表示する。 */
   affiliate: z.boolean(),
 });
@@ -62,13 +62,13 @@ export const ProductOfferSchema = z.object({
   shippingFee: z.number().int().nonnegative().nullable(),
   currency: z.literal("JPY"),
   availability: z.enum(["in_stock", "out_of_stock", "unknown"]),
-  productUrl: z.string().url(),
+  productUrl: HttpsUrlSchema,
   /** このオファーのスナップショットを生成した時刻 */
   checkedAt: z.string(),
   /** 価格を公式ページと突合した日付。null は未突合。 */
   priceSourceCheckedAt: z.string().nullable(),
   officialSeller: z.boolean(),
-  returnPolicyUrl: z.string().url().nullable(),
+  returnPolicyUrl: HttpsUrlSchema.nullable(),
   affiliate: z.boolean(),
   unverified: z.array(UnverifiedFieldSchema),
   /**

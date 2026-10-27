@@ -12,6 +12,7 @@ import {
 } from "@/server/ai-policy";
 import { budgetStatus } from "@/server/llm-cost";
 import { checkRateLimit, clientKey, RATE_LIMITS } from "@/server/rate-limit";
+import { opsVisible } from "@/lib/ops-visibility";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,6 +33,9 @@ const PROBE_SYSTEM =
 const PROBE_USER = "接続確認";
 
 export async function POST(req: Request) {
+  // 画面（/ops）と同じく、運用者が有効にした環境以外では存在しないものとして扱う
+  if (!opsVisible()) return new NextResponse(null, { status: 404 });
+
   const limit = checkRateLimit(clientKey(req, "probe"), RATE_LIMITS.probe);
   if (!limit.allowed) {
     return NextResponse.json(

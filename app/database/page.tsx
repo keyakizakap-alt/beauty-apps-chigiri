@@ -153,7 +153,7 @@ export default function DatabasePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`${brands.slice(0, 3).join("、")} など`}
-            className="chigiri-tap w-full rounded-xl border border-beige bg-white px-4 text-sm outline-none focus:border-ai"
+            className="chigiri-tap w-full rounded-xl border border-beige bg-white px-4 text-sm outline-hidden focus:border-ai"
           />
         </div>
 

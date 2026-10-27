@@ -165,7 +165,7 @@ export default function OpsPage() {
                     : "認証の段階で失敗しています。APIキーと接続先を確認してください。"}
                 </p>
                 {probe.detail && (
-                  <p className="break-all rounded bg-white/70 px-2 py-1 font-mono text-[10px] text-sumi/60">
+                  <p className="break-all rounded-sm bg-white/70 px-2 py-1 font-mono text-[10px] text-sumi/60">
                     {probe.detail}
                   </p>
                 )}

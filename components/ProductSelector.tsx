@@ -90,7 +90,7 @@ export default function ProductSelector({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="ブランド名・商品名で探す"
           aria-label="商品を検索"
-          className="w-full rounded-lg border border-beige bg-white px-3 py-2 text-sm outline-none focus:border-ai"
+          className="w-full rounded-lg border border-beige bg-white px-3 py-2 text-sm outline-hidden focus:border-ai"
         />
       </div>
 
@@ -189,7 +189,7 @@ export default function ProductSelector({
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   maxLength={40}
-                  className="chigiri-tap w-full rounded-lg border border-beige bg-white px-3 text-sm outline-none focus:border-ai"
+                  className="chigiri-tap w-full rounded-lg border border-beige bg-white px-3 text-sm outline-hidden focus:border-ai"
                 />
               </div>
               <div>
@@ -201,7 +201,7 @@ export default function ProductSelector({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   maxLength={80}
-                  className="chigiri-tap w-full rounded-lg border border-beige bg-white px-3 text-sm outline-none focus:border-ai"
+                  className="chigiri-tap w-full rounded-lg border border-beige bg-white px-3 text-sm outline-hidden focus:border-ai"
                 />
               </div>
               <div>
@@ -264,7 +264,7 @@ export default function ProductSelector({
       </p>
 
       <ul
-        className={`space-y-1.5 overflow-y-auto pr-1 ${compact ? "max-h-64" : "max-h-[28rem]"}`}
+        className={`space-y-1.5 overflow-y-auto pr-1 ${compact ? "max-h-64" : "max-h-112"}`}
       >
         {filtered.map((p) => {
           const on = selected.has(p.id);

@@ -18,7 +18,7 @@ export default function AiConsentCard({
   current?: boolean | null;
 }) {
   return (
-    <section className="chigiri-card border-ai/25 bg-ai/[0.03] p-4">
+    <section className="chigiri-card border-ai/25 bg-ai/3 p-4">
       <p className="text-sm font-medium">説明文の作り方</p>
       <p className="mt-1.5 text-xs leading-relaxed text-sumi/70">
         どちらを選んでも、<span className="font-medium">結論は変わりません</span>。
