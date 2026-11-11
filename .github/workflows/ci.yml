@@ -25,8 +25,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24
-          # ランナーにキャッシュされた 24.x はセキュリティ修正前の場合があるため、常に最新を取得する
+          node-version: 24.22.3
+          # 2026-11 のセキュリティ修正版。setup-node の配布一覧が未更新でも nodejs.org から直接取得される。次の修正版が出たら engines と一緒に上げる
           check-latest: true
           cache: npm
           cache-dependency-path: package-lock.json
