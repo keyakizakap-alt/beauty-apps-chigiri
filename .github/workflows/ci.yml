@@ -31,8 +31,10 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - name: Dependency audit
-        run: npm audit --audit-level=high
+      - name: Dependency audit (production, no exceptions)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Dependency audit (all, reviewed exceptions only)
+        run: node .github/scripts/audit-gate.mjs
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Unit and security tests
