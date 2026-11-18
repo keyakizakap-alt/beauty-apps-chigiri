@@ -5,13 +5,9 @@
 // 使い方: 監査したい package-lock.json があるディレクトリで `node <このファイル>` を実行する。
 import { execSync } from 'node:child_process';
 
-const ACCEPTED = new Map([
-  [
-    'GHSA-fc5q-39xc-vjpf',
-    'picomatch <= 4.0.7 の ReDoS。2026-11-18 時点で修正版が無い（最新が 4.0.7）。vite・vitest・eslint・Nest CLI など' +
-      '開発用ツールだけが使い、読み込むグロブはリポジトリ内のもので利用者の入力ではない。修正版が出たら削除する。',
-  ],
-]);
+// 例: ['GHSA-xxxx-xxxx-xxxx', '修正版が無い理由と、開発用ツールだけで使われる根拠'],
+// 2026-11-18: GHSA-fc5q-39xc-vjpf（picomatch）は GitHub が勧告を取り下げたため削除した。
+const ACCEPTED = new Map([]);
 
 let report;
 try {
